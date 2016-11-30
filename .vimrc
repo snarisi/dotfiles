@@ -22,6 +22,8 @@ Plugin 'sjl/vitality.vim'
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'felixhummel/setcolors.vim'
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -95,3 +97,14 @@ set backspace=indent,eol,start
 
 " airline
 let g:airline#extensions#tabline#enabled = 1
+
+" ultisnips
+" Trigger configuration. Do not use <tab> if you use 
+" https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<c-k>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsListSnippets="<c-l>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"

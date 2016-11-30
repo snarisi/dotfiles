@@ -10,6 +10,12 @@ if [ -f ~/.git-completion.bash ]; then
 	. ~/.git-completion.bash
 fi
 
+# Turn on 256 color support...
+if [ "x$TERM" = "xxterm"  ]
+then
+	export TERM="xterm-256color"
+fi
+
  source ~/.git-prompt.sh
 # export PS1="➜ \e[1;36m\]\W \e[0;37m\e[1;31m\$(__git_ps1)\] \e[0;37m\]"
 
