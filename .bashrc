@@ -17,3 +17,4 @@ export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
 
 alias cl="clear"
+alias tm="bash ~/tmstart"

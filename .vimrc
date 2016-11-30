@@ -19,33 +19,38 @@ Plugin 'rking/ag.vim'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'tpope/vim-fugitive'
 Plugin 'sjl/vitality.vim'
+Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'flazz/vim-colorschemes'
+Plugin 'felixhummel/setcolors.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 
 syntax on
 filetype plugin indent on
-colorscheme desert
+set t_Co=256
+colorscheme tropikos
 set number
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set fileformat=unix
 set autoread
+set visualbell
 au FocusGained,BufEnter * :checktime
 
 " keybindings
 noremap <silent> \ :NERDTreeToggle<CR>
 noremap <silent> 09 :tabp<CR>
 noremap <silent> 90 :tabn<CR>
-noremap <S-Up> :wincmd k<CR>
-noremap <S-Down> :wincmd j<CR>
-noremap <S-Left> :wincmd h<CR>
-noremap <S-Right> :wincmd l<CR>
 noremap <C-k> :wincmd k<CR>
 noremap <C-j> :wincmd j<CR>
 noremap <C-h> :wincmd h<CR>
 noremap <C-l> :wincmd l<CR>
+noremap <M-Up> :wincmd k<CR>
+noremap <M-Down> :wincmd j<CR>
+noremap <M-Left> :wincmd h<CR>
+noremap <M-Right> :wincmd l<CR>
 let mapleader=","
 
 " pythn indentation
@@ -75,4 +80,18 @@ let g:ag_working_path_mode="r"
 
 " pathogen
 " execute pathogen#infect()
-                                                        "
+
+" cursor
+if exists('$TMUX')
+	let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+	let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+else
+	let &t_SI = "\<Esc>]50;CursorShape=0\x7"
+	let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
+
+" make backspace work again
+set backspace=indent,eol,start
+
+" airline
+let g:airline#extensions#tabline#enabled = 1
