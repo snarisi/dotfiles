@@ -10,7 +10,7 @@ Plugin 'editorconfig/editorconfig-vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'vim-scripts/indentpython'
-Plugin 'ervandew/supertab'
+"Plugin 'ervandew/supertab'
 Plugin 'vim-syntastic/syntastic'
 Plugin 'terryma/vim-multiple-cursors'
 Plugin 'jiangmiao/auto-pairs'
@@ -24,6 +24,14 @@ Plugin 'flazz/vim-colorschemes'
 Plugin 'felixhummel/setcolors.vim'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
+Plugin 'reedes/vim-pencil'
+Plugin 'junegunn/goyo.vim'
+Plugin 'vim-airline/vim-airline'
+Plugin 'tmux-plugins/vim-tmux-focus-events'
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'mattn/emmet-vim'
+Plugin 'Valloric/YouCompleteMe'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -64,6 +72,14 @@ au BufNewFile,BufRead *.py
 	   \ set expandtab |
 	   \ set autoindent |
 	   \ set fileformat=unix |
+
+" airline
+set laststatus=2
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_theme='term'
+
+" fugitive
+set statusline+=%{fugitive#statusline()}
 
 " syntastic
 set statusline+=%#warningmsg#
@@ -108,3 +124,11 @@ let g:UltiSnipsListSnippets="<c-l>"
 
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
+
+" pencil
+let g:pencil#textwidth = 120
+let g:pencil#wrapModeDefault = 'soft'
+augroup pencil
+	autocmd!
+	autocmd FileType markdown,mkd,text call pencil#init()
+augroup END
