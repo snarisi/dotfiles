@@ -9,8 +9,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'editorconfig/editorconfig-vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'scrooloose/nerdcommenter'
-Plugin 'vim-scripts/indentpython'
-"Plugin 'ervandew/supertab'
+Plugin 'Vimjas/vim-python-pep8-indent'
 Plugin 'vim-syntastic/syntastic'
 Plugin 'terryma/vim-multiple-cursors'
 Plugin 'jiangmiao/auto-pairs'
@@ -32,6 +31,8 @@ Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'mattn/emmet-vim'
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'Glench/Vim-Jinja2-Syntax'
+Plugin 'JamshedVesuna/vim-markdown-preview'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -92,12 +93,10 @@ let g:syntastic_check_on_wq = 1
 
 " NERDTree 
 let NERDTreeShowHidden=1
+let NERDTreeIgnore=['\.swp$', '\.swo$']
 
 " Ag
 let g:ag_working_path_mode="r"
-
-" pathogen
-" execute pathogen#infect()
 
 " cursor
 if exists('$TMUX')
@@ -123,7 +122,7 @@ let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 let g:UltiSnipsListSnippets="<c-l>"
 
 " If you want :UltiSnipsEdit to split your window.
-let g:UltiSnipsEditSplit="vertical"
+let g:UltiSnipsEditSplit="normal"
 
 " pencil
 let g:pencil#textwidth = 120
@@ -132,3 +131,12 @@ augroup pencil
 	autocmd!
 	autocmd FileType markdown,mkd,text call pencil#init()
 augroup END
+
+" youcompleteme
+nnoremap <leader>gt :YcmCompleter GoTo<cr>
+let g:ycm_autoclose_preview_window_after_completion = 1
+
+" markdown preview
+let vim_markdown_preview_hotkey='<C-m>'
+let vim_markdown_preview_browser='Google Chrome'
+let vim_markdown_preview_github=1
