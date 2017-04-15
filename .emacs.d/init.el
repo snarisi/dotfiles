@@ -21,6 +21,8 @@
 			 no-easy-keys
 			 editorconfig
 			 js2-mode
+			 yasnippet
+			 highlight-numbers
 			 ))
 
 (defun uninstalled-packages (packages)
