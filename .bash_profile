@@ -14,3 +14,4 @@ fi
 if [ "x$TERM" = "xxterm"  ]; then
 	export TERM="xterm-256color"
 fi
+export PATH="/usr/local/opt/redis@2.8/bin:$PATH"

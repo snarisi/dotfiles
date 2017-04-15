@@ -1,0 +1,388 @@
+((("underscore" .
+   [0 0 0 0 0 0 0 0 0 1])
+  ("_navigate_to_page" .
+   [0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("next_page_element" .
+   [0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0])
+  ("target_page" .
+   [1 0 0 0 0 0 0 0 0 1 0])
+  ("False" .
+   [0 0 1 0 0])
+  ("_get_visible_element" .
+   [0 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0])
+  ("force" .
+   [3 0 0 0 0])
+  ("TimeoutException" .
+   [0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("exceptions" .
+   [0 0 0 0 0 0 0 0 0 1])
+  ("page" .
+   [3 0 0 0])
+  ("row_elements" .
+   [0 0 0 0 1 0 0 0 0 0 0 0])
+  ("el" .
+   [1 0])
+  ("_get_dom" .
+   [0 0 0 0 0 0 0 1])
+  ("outer_html" .
+   [0 0 0 0 0 1 0 0 0 0])
+  ("HTML" .
+   [1 0 0 0])
+  ("etree" .
+   [1 0 0 0 0])
+  ("dom" .
+   [4 0 0])
+  ("branch" .
+   [1 0 0 0 0 0])
+  ("LOCATION_XPATH" .
+   [0 0 0 1 0 0 0 0 0 0 0 0 0 0])
+  ("MORE_VEHICLE_TYPES_XPATH" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1])
+  ("SALE_INFO_XPATH" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 1])
+  ("sweep_vehicles" .
+   [3 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("target_xpath" .
+   [0 0 0 0 0 0 0 1 1 0 0 0])
+  ("sweep_vehicle_count" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("oct" .
+   [0 1 0])
+  ("unicode_literals" .
+   [0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0])
+  ("__future__" .
+   [0 0 0 0 0 0 0 0 0 1])
+  ("INVENTORY_URL" .
+   [0 0 0 1 0 0 0 0 0 0 0 0 0])
+  ("Exception" .
+   [0 0 0 0 0 0 3 0 0])
+  ("filter_element_xpath" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1])
+  ("mouse_over_xpath" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1])
+  ("click" .
+   [1 0 0 0 0])
+  ("find_by_xp" .
+   [0 0 0 0 0 0 0 0 0 1])
+  ("ALL_VEHICLE_TYPES_XPATH" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2])
+  ("b" .
+   [1])
+  ("elements" .
+   [2 0 0 0 0 0 0 0])
+  ("SELECT_VEHICLE_XPATH" .
+   [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("_find_and_mouseover" .
+   [0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 5])
+  ("_find_and_click" .
+   [1 0 0 0 1 1 2 0 0 0 0 0 0 0 2])
+  ("mouseover" .
+   [0 0 0 0 0 0 0 0 2])
+  ("find_by_xpath" .
+   [1 0 0 0 1 0 0 1 0 0 0 0 1])
+  ("find_by_xpat" .
+   [1 0 0 0 0 0 0 0 0 0 0 1])
+  ("find" .
+   [3 0 0 0])
+  ("_wait_for_element_to_be_visible" .
+   [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 7])
+  ("by" .
+   [1 0])
+  ("driver" .
+   [1 0 0 0 0 0])
+  ("By" .
+   [2 0])
+  ("visibility_of_element_located" .
+   [0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("visibility_of" .
+   [0 0 0 0 0 0 1 0 0 0 0 0 0])
+  ("WebDriverWait" .
+   [0 0 0 1 0 0 0 0 0 0 0 0 0])
+  ("xpath" .
+   [17 0 0 0 2])
+  ("browser" .
+   [14 0 1 0 2 1 1])
+  ("region" .
+   [1 0 0 0 0 0])
+  ("format" .
+   [1 0 0 0 0 0])
+  ("getenv" .
+   [0 0 0 0 0 1])
+  ("getopt" .
+   [0 0 0 1 0 0])
+  ("zipcodes" .
+   [1 0 0 0 0 0 0 0])
+  ("day_of_year" .
+   [0 0 0 0 0 0 0 0 0 0 1])
+  ("regions" .
+   [3 0 0 0 0 0 0])
+  ("presentation" .
+   [0 0 0 0 1 0 0 0 1 0 0 1])
+  ("tool-bar-mode" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("toggle-scroll-bar" .
+   [0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0])
+  ("menu-bar-mode" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("item" .
+   [2 0 0 0])
+  ("item_name" .
+   [2 0 0 0 0 0 0 0 0])
+  ("description" .
+   [1 0 0 0 0 0 0 0 0 0 0])
+  ("item_url" .
+   [2 0 0 0 0 0 0 0])
+  ("kbd" .
+   [1 0 0])
+  ("tmux-cmd" .
+   [0 0 0 0 0 0 1 0])
+  ("shell-command" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 1])
+  ("nil" .
+   [3 0 0])
+  ("interactive" .
+   [1 0 0 0 0 0 0 0 0 0 0])
+  ("ir" .
+   [1 0])
+  ("w" .
+   [1])
+  ("defun" .
+   [1 0 0 0 0])
+  ("value" .
+   [1 0 0 0 0])
+  ("_clean_excel_column_name" .
+   [0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("sub" .
+   [2 0 0])
+  ("replace" .
+   [6 0 0 0 0 0 0])
+  ("snake_case" .
+   [0 0 0 0 0 0 0 0 0 1])
+  ("try" .
+   [0 0 3])
+  ("yas-global-mode" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 1])
+  ("number-font-lock-mode" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("python-mode-hook" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0])
+  ("number-font-lock" .
+   [0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0])
+  ("global-auto-revert-mode" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1])
+  ("load-theme" .
+   [0 0 0 0 0 0 0 0 0 1])
+  ("zenburn-fg" .
+   [1 0 0 0 0 0 0 0 0 0])
+  ("zenburn-green" .
+   [3 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("zenburn-magenta" .
+   [0 0 0 0 0 0 0 0 0 0 2 0 0 0 0])
+  ("zenburn-red" .
+   [2 0 0 0 0 0 0 0 0 0 0])
+  ("bundled_data" .
+   [0 0 0 0 1 0 0 0 0 0 0 0])
+  ("get_sheqel_queue" .
+   [0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0])
+  ("diff-hl-margin-mode" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0])
+  ("diff-hl-margin" .
+   [0 0 0 0 0 0 0 0 0 1 0 0 0 0])
+  ("diff-hl-mode" .
+   [1 0 0 0 0 0 0 0 0 0 0 0])
+  ("doctest" .
+   [0 0 1 0 0 0 0])
+  ("general-config" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 1])
+  ("gensym" .
+   [0 0 0 0 0 1])
+  ("require" .
+   [4 0 0 0 0 0 2])
+  ("provide" .
+   [2 0 0 0 0 0 0])
+  ("jedi-starter" .
+   [0 0 0 0 0 0 0 0 0 0 0 1])
+  ("add-hook" .
+   [1 0 0 0 0 0 0 0])
+  ("git-gutter" .
+   [2 0 0 0 0 0 0 0 0 0])
+  ("lambda" .
+   [0 0 0 0 0 1])
+  ("after-save-hook" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("diff-hl-flydiff-mode" .
+   [0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0])
+  ("setq" .
+   [1 0 0 0])
+  ("diff-hl-margin-side" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1])
+  ("url" .
+   [2 0 0])
+  ("format_url" .
+   [0 0 0 0 0 0 0 0 0 1])
+  ("settings" .
+   [3 0 0 0 0 0 0 0])
+  ("ROUTES_URL" .
+   [0 0 0 0 0 1 0 0 0 0])
+  ("zenburn-orange" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("column" .
+   [4 0 1 1 0 1])
+  ("SECONDS" .
+   [0 0 1 0 0 0 0])
+  ("apply" .
+   [0 0 0 1 0])
+  ("append_to_buffer" .
+   [0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0])
+  ("first_id" .
+   [0 0 0 0 1 0 0 0])
+  ("last_id" .
+   [0 0 0 0 1 0 0])
+  ("def" .
+   [0 0 1])
+  ("delay" .
+   [0 0 0 0 1])
+  ("track_appends" .
+   [0 0 0 0 0 1 0 0 0 0 0 0 0])
+  ("logger" .
+   [2 0 0 0 0 0])
+  ("debug" .
+   [1 0 0 0 1])
+  ("alias" .
+   [0 0 0 0 1])
+  ("set_trace" .
+   [0 0 0 0 3 0 0 0 1])
+  ("no" .
+   [1 0])
+  ("data" .
+   [8 0 0 0])
+  ("except" .
+   [0 0 0 0 0 1])
+  ("highlight" .
+   [0 0 0 0 0 0 0 0 1])
+  ("highlight-numbers-number" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("http_profiler" .
+   [0 0 0 0 0 1 0 0 0 0 0 0 0])
+  ("yasnippet" .
+   [0 0 0 0 1 0 0 0 0])
+  ("global-set-key" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("no-easy-keys" .
+   [0 0 0 0 0 0 1 0 0 0 0 1])
+  ("total_queued_pages" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0])
+  ("scrape_vehicle" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("run_id" .
+   [2 0 0 0 0 0])
+  ("vehicle" .
+   [1 0 0 0 0 0 0])
+  ("sqla" .
+   [1 0 0 0])
+  ("Table" .
+   [0 0 0 0 1])
+  ("db" .
+   [2 0])
+  ("metadata" .
+   [0 0 0 0 1 0 0 0])
+  ("Unicode" .
+   [0 0 0 0 1 0 0])
+  ("X" .
+   [1])
+  ("CarCountByStockType" .
+   [0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("model" .
+   [1 0 0 0 0])
+  ("save_car_count_by_stock_type" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1])
+  ("run_uuid" .
+   [1 0 0 0 0 0 0 0])
+  ("stocktype" .
+   [0 0 0 0 0 1 0 0 0])
+  ("stock_type" .
+   [0 0 0 0 0 0 1 0 0 0])
+  ("total_cars" .
+   [0 0 0 0 0 0 1 0 0 0])
+  ("MOBILE_SEARCH_URL" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("dead_letter_max_retries" .
+   [0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0])
+  ("dumps" .
+   [2 0 0 0 0])
+  ("index" .
+   [1 0 0 0 0])
+  ("indent" .
+   [1 0 0 0 0 0])
+  ("N" .
+   [1])
+  ("common" .
+   [1 0 0 0 1 0])
+  ("get_browser" .
+   [0 0 0 0 0 0 0 0 0 0 1])
+  ("selenium" .
+   [1 0 0 0 0 1 0 0])
+  ("name" .
+   [1 0 0 0])
+  ("NAME" .
+   [2 0 0 0])
+  ("car_type" .
+   [2 0 0 0 0 0 0 0])
+  ("car" .
+   [2 0 0])
+  ("Boolean" .
+   [0 0 0 1 0 0 0])
+  ("asset_elements" .
+   [0 0 0 0 0 0 1 0 0 0 0 0 0 0])
+  ("element" .
+   [4 0 0 0 0 0 0])
+  ("child" .
+   [2 0 0 0 0])
+  ("tag" .
+   [1 0 0])
+  ("OrderedDict" .
+   [0 0 0 0 0 1 0 0 0 0 1])
+  ("asset" .
+   [6 0 0 0 0])
+  ("dataset" .
+   [2 0 0 0 0 0 0])
+  ("connect" .
+   [1 0 0 0 0 0 0])
+  ("assets" .
+   [5 0 0 0 0 0])
+  ("table" .
+   [1 0 0 0 0])
+  ("insert" .
+   [1 0 0 0 0 0])
+  ("pandas" .
+   [0 0 0 0 1 0])
+  ("nis" .
+   [0 1 0])
+  ("csv_file" .
+   [1 0 0 0 0 0 0 1])
+  ("DictReader" .
+   [0 0 0 0 1 0 0 0 0 0])
+  ("DictWriter" .
+   [0 0 0 0 0 1 0 0 0 0])
+  ("all_keys" .
+   [1 0 0 0 0 0 0 0])
+  ("restval" .
+   [0 0 0 0 0 1 0])
+  ("cvs_writer" .
+   [0 0 0 0 2 0 0 0 0 0])
+  ("writerows" .
+   [1 0 0 0 0 0 1 0 0])
+  ("writeheader" .
+   [0 0 0 0 0 0 0 0 0 0 1])
+  ("tree" .
+   [1 0 0 0])
+  ("iterchildren" .
+   [0 0 0 0 0 0 0 0 1 0 0 0])
+  ("URL" .
+   [1 0 0])
+  ("replace-string" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("region-beginning" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2])
+  ("region-end" .
+   [2 0 0 0 0 0 0 0 0 0])))

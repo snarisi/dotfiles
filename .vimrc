@@ -10,7 +10,8 @@ Plugin 'editorconfig/editorconfig-vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'Vimjas/vim-python-pep8-indent'
-Plugin 'vim-syntastic/syntastic'
+"Plugin 'vim-syntastic/syntastic'
+Plugin 'w0rp/ale'
 Plugin 'terryma/vim-multiple-cursors'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'pangloss/vim-javascript'
@@ -33,6 +34,10 @@ Plugin 'mattn/emmet-vim'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'Glench/Vim-Jinja2-Syntax'
 Plugin 'JamshedVesuna/vim-markdown-preview'
+Plugin 'hdima/python-syntax'
+Plugin 'mxw/vim-jsx'
+Plugin 'tpope/vim-surround'
+Plugin 'andrep/vimacs'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -40,7 +45,7 @@ call vundle#end()            " required
 syntax on
 filetype plugin indent on
 set t_Co=256
-colorscheme tropikos
+autocmd VimEnter * colorscheme tropikos
 set number
 set tabstop=4
 set shiftwidth=4
@@ -83,13 +88,24 @@ let g:airline_theme='term'
 set statusline+=%{fugitive#statusline()}
 
 " syntastic
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntax_auto_loc_list = 1
+"let g:syntax_check_on_open = 0
+"let g:syntastic_check_on_wq = 1
+
+" ALE
+let g:ale_linters = {
+\	'python': ['flake8'],
+\	'javascript': ['eslint']
+\}
+let g:ale_lint_on_text_changed=0
+let g:ale_lint_on_save=1
+let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
+set statusline+=%{ALEGetStatusLine()}
 set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntax_auto_loc_list = 1
-let g:syntax_check_on_open = 0
-let g:syntastic_check_on_wq = 1
 
 " NERDTree 
 let NERDTreeShowHidden=1
@@ -114,6 +130,7 @@ set backspace=indent,eol,start
 let g:airline#extensions#tabline#enabled = 1
 
 " ultisnips
+let g:UltiSnipsSnippetDirectories=["UltiSnips", "customsnips"]
 " Trigger configuration. Do not use <tab> if you use 
 " https://github.com/Valloric/YouCompleteMe.
 let g:UltiSnipsExpandTrigger="<c-k>"
@@ -135,8 +152,27 @@ augroup END
 " youcompleteme
 nnoremap <leader>gt :YcmCompleter GoTo<cr>
 let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 
 " markdown preview
 let vim_markdown_preview_hotkey='<C-m>'
 let vim_markdown_preview_browser='Google Chrome'
 let vim_markdown_preview_github=1
+
+" python syntax
+let python_version_2 = 1
+let python_highlight_space_errors = 0
+let python_highlight_all = 1
+
+" jsx syntax
+let g:jsx_ext_required = 0
+
+" ctrlp
+let g:ctrlp_custom_ignore = 'node_modules\|DS_Store\|git'
+
+" emmet
+let g:user_emmet_settings = {
+\  'javascript' : {
+\      'extends' : 'jsx',
+\  },
+\}

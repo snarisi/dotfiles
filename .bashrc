@@ -30,6 +30,9 @@ PS1='\W$(__git_ps1 "\[\e[32m\] [%s]\[\e[0m\]") '
 
 alias cl="clear"
 alias tm="bash ~/tmstart"
+alias em="emacs -nw"
+
+export PYTHONSTARTUP=~/.pystartup
 
 if [ -f ~/.bashrc_local ]; then
 	source ~/.bashrc_local
