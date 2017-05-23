@@ -28,6 +28,9 @@
 			 org
 			 desktop+
 			 multiple-cursors
+			 smart-mode-line
+			 smart-mode-line-powerline-theme
+			 readline-complete
 			 ))
 
 (defun uninstalled-packages (packages)
@@ -61,7 +64,7 @@
     ("#DF5F5F" "#DFAF87" "#F0DFAF" "#87AF5F" "#BFEBBF" "#93E0E3" "#94BFF3" "#AF87AF")))
  '(package-selected-packages
    (quote
-    (multiple-cursors desktop+ helm-ag web-mode helm-spotify smart-mode-line smart-mode-line-powerline-theme yasnippet highlight-numbers fastnav smart-tabs-mode virtualenvwrapper helm-projectile helm projectile magit jedi git-gutter-fringe+ git-gutter diff-hl)))
+    (readline-complete multiple-cursors desktop+ helm-ag web-mode helm-spotify smart-mode-line smart-mode-line-powerline-theme yasnippet highlight-numbers fastnav smart-tabs-mode virtualenvwrapper helm-projectile helm projectile magit jedi git-gutter-fringe+ git-gutter diff-hl)))
  '(pdf-view-midnight-colors (quote ("##AFAFAF" . "#383838")))
  '(sml/mode-width
    (if
@@ -164,9 +167,12 @@
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
 (require 'general-config)
-;; (require 'jedi-starter)
 (require 'navigation)
 (require 'underscore)
+
+;; spacemacs
+;; (setq spacemacs-start-directory "~/.emacs.d/spacemacs/")
+;; (load-file (concat spacemacs-start-directory "init.el"))
 
 (add-hook 'after-init-hook #'global-flycheck-mode)
 

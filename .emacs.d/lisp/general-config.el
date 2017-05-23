@@ -173,6 +173,14 @@ May be necessary for some GUI environments (e.g., Mac OS X)")
     (venv-initialize-interactive-shells)
     (venv-initialize-eshell)
 
+    ;; readline-complete (use autocomplete in shell buffer)
+    (setq explicit-shell-file-name "bash")
+    (setq explicit-bash-args '("-c" "export EMACS=; stty echo; bash"))
+    (setq comint-process-echoes t)
+    (require 'readline-complete)
+    (add-to-list 'ac-modes 'shell-mode)
+    (add-hook 'shell-mode-hook 'ac-rlc-setup-sources)
+
     ))
 
 
