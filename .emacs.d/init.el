@@ -1,182 +1,181 @@
-;; Package setup
+;; add directory for custom lisp
+(add-to-list 'load-path "~/.emacs.d/lisp/")
 
-(require 'package)
-(package-initialize)
-(add-to-list 'package-archives
-	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(add-to-list 'package-archives
-	     '("marmalade" . "http://marmalade-repo.org/packages/"))
+;; delete excess backup versions silently
+(setq delete-old-versions -1 )
 
-(defvar local-packages '(
-			 projectile
-			 auto-complete
-			 epc
-			 jedi
-			 magit
-			 git-gutter
-			 helm
-			 flycheck
-			 virtualenvwrapper
-			 fastnav
-			 no-easy-keys
-			 editorconfig
-			 js2-mode
-			 yasnippet
-			 highlight-numbers
-			 exec-path-from-shell
-			 powerline
-			 org
-			 desktop+
-			 multiple-cursors
-			 smart-mode-line
-			 smart-mode-line-powerline-theme
-			 readline-complete
-			 ))
+;; use version control
+(setq version-control t )
 
-(defun uninstalled-packages (packages)
-  (delq nil
-	(mapcar (lambda (p) (if (package-installed-p p nil) nil p)) packages)))
+;; make backups file even when in version controlled dir
+(setq vc-make-backup-files t )
 
-;; This delightful bit adapted from:
-;; http://batsov.com/articles/2012/02/19/package-management-in-emacs-the-good-the-bad-and-the-ugly/
+;; which directory to put backups file
+(setq backup-directory-alist `(("." . "~/.emacs.d/backups")) )
 
-(let ((need-to-install (uninstalled-packages local-packages)))
-  (when need-to-install
-    (progn
-      (package-refresh-contents)
-      (dolist (p need-to-install)
-	(package-install p)))))
+;; don't ask for confirmation when opening symlinked file
+(setq vc-follow-symlinks t )
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   ["#202020" "#DF5F5F" "#87AF5F" "#F0DFAF" "#8CD0D3" "#AF87AF" "#93E0E3" "##AFAFAF"])
- '(custom-safe-themes
-   (quote
-    ("48be3ae76022c204ce989159161ff247e0d4c600b6ec51290b2bd84a9cf6b8b9" "4e6b56ddacf26311f86f9d7b9a033d6543a11dec4847cb01576ce57deda63de1" "21631b14c53f3c37bf6d0dc11bc7167c8546337c74bebb88cc3531b513cf45b6" "82efad23e89715fa12ea9c537eac474d981e866765965fe304b56709edd41958" "5875a9e750c26133f43dd6bcf83b6ba4a5bbbf16e8410ff024141b8bd0a4e8fa" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "db72ce2042e725e4d6d1751e75c06f145418bd541bea214f77a178a0220e6a15" "962dacd99e5a99801ca7257f25be7be0cebc333ad07be97efd6ff59755e6148f" "b9e9ba5aeedcc5ba8be99f1cc9301f6679912910ff92fdf7980929c2fc83ab4d" "84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "0e1fc5a0476d05c1681e6f9ca84bddb94fa062fc3e4eb54f36c42708647ba3c6" "68a231d90b7001c4a481eabf6e3196cff1c4b43cc83200cdef9b3c71a3a03f83" "d3cf01a392661011c7dc3f4cf596c3796856177063b8e6c93a7483caea59f9fb" default)))
- '(fci-rule-color "#383838")
- '(git-gutter:update-interval 2)
- '(nrepl-message-colors
-   (quote
-    ("#DF5F5F" "#DFAF87" "#F0DFAF" "#87AF5F" "#BFEBBF" "#93E0E3" "#94BFF3" "#AF87AF")))
- '(package-selected-packages
-   (quote
-    (readline-complete multiple-cursors desktop+ helm-ag web-mode helm-spotify smart-mode-line smart-mode-line-powerline-theme yasnippet highlight-numbers fastnav smart-tabs-mode virtualenvwrapper helm-projectile helm projectile magit jedi git-gutter-fringe+ git-gutter diff-hl)))
- '(pdf-view-midnight-colors (quote ("##AFAFAF" . "#383838")))
- '(sml/mode-width
-   (if
-       (eq
-	(powerline-current-separator)
-	(quote arrow))
-       (quote right)
-     (quote full)))
- '(sml/pos-id-separator
-   (quote
-    (""
-     (:propertize " " face powerline-active1)
-     (:eval
-      (propertize " "
-		  (quote display)
-		  (funcall
-		   (intern
-		    (format "powerline-%s-%s"
-			    (powerline-current-separator)
-			    (car powerline-default-separator-dir)))
-		   (quote powerline-active1)
-		   (quote powerline-active2))))
-     (:propertize " " face powerline-active2))))
- '(sml/pos-minor-modes-separator
-   (quote
-    (""
-     (:propertize " " face powerline-active1)
-     (:eval
-      (propertize " "
-		  (quote display)
-		  (funcall
-		   (intern
-		    (format "powerline-%s-%s"
-			    (powerline-current-separator)
-			    (cdr powerline-default-separator-dir)))
-		   (quote powerline-active1)
-		   (quote sml/global))))
-     (:propertize " " face sml/global))))
- '(sml/pre-id-separator
-   (quote
-    (""
-     (:propertize " " face sml/global)
-     (:eval
-      (propertize " "
-		  (quote display)
-		  (funcall
-		   (intern
-		    (format "powerline-%s-%s"
-			    (powerline-current-separator)
-			    (car powerline-default-separator-dir)))
-		   (quote sml/global)
-		   (quote powerline-active1))))
-     (:propertize " " face powerline-active1))))
- '(sml/pre-minor-modes-separator
-   (quote
-    (""
-     (:propertize " " face powerline-active2)
-     (:eval
-      (propertize " "
-		  (quote display)
-		  (funcall
-		   (intern
-		    (format "powerline-%s-%s"
-			    (powerline-current-separator)
-			    (cdr powerline-default-separator-dir)))
-		   (quote powerline-active2)
-		   (quote powerline-active1))))
-     (:propertize " " face powerline-active1))))
- '(sml/pre-modes-separator (propertize " " (quote face) (quote sml/modes)))
- '(tool-bar-mode nil)
- '(vc-annotate-background "#2B2B2B")
- '(vc-annotate-color-map
-   (quote
-    ((20 . "#BC8383")
-     (40 . "#DF5F5F")
-     (60 . "#DFAF87")
-     (80 . "#D0BF8F")
-     (100 . "#E0CF9F")
-     (120 . "#F0DFAF")
-     (140 . "#5F7F5F")
-     (160 . "#87AF5F")
-     (180 . "#8FB28F")
-     (200 . "#9FC59F")
-     (220 . "#AFD8AF")
-     (240 . "#BFEBBF")
-     (260 . "#93E0E3")
-     (280 . "#6CA0A3")
-     (300 . "#7CB8BB")
-     (320 . "#8CD0D3")
-     (340 . "#94BFF3")
-     (360 . "#AF87AF"))))
- '(vc-annotate-very-old-color "#AF87AF"))
+;; transform backups file name
+(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)) )
+
+;; inhibit useless and old-school startup screen
+(setq inhibit-startup-screen t )
+
+;; silent bell when you make a mistake
+(setq ring-bell-function 'ignore )
+
+;; use utf-8 by default
+(setq coding-system-for-read 'utf-8 )
+(setq coding-system-for-write 'utf-8 )
+
+;; sentence SHOULD end with only a point.
+(setq sentence-end-double-space nil)
+
+;; print a default message in the empty scratch buffer opened at startup
+(setq initial-scratch-message "Hello World")
+
+;; enable fullscreen
+(menu-bar-mode -1)
+(toggle-scroll-bar -1)
+(tool-bar-mode -1)
+(blink-cursor-mode 0)
+
+;; set font
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:height 120 :family "Fira Mono for Powerline")))))
+ '(default ((t (:height 130 :family "Source Code Pro")))))
 
-(add-to-list 'load-path "~/.emacs.d/lisp/")
+;; show line numbers
+(global-linum-mode)
+(setq linum-format "%4d ")
+(require 'linum-off)
 
-(require 'general-config)
-(require 'navigation)
-(require 'underscore)
+;; autoclose pairs
+(electric-pair-mode 1)
 
-;; spacemacs
-;; (setq spacemacs-start-directory "~/.emacs.d/spacemacs/")
-;; (load-file (concat spacemacs-start-directory "init.el"))
+;; use ipython for python shell
+(setq python-shell-interpreter "ipython"
+      python-shell-interpreter-args "-i")
+(setenv "IPY_TEST_SIMPLE_PROMPT" "1")
 
-(add-hook 'after-init-hook #'global-flycheck-mode)
+(setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
+;; the following lines tell emacs where on the internet to look up
+;; for new packages.
+(setq package-archives '(("org"       . "http://orgmode.org/elpa/")
+                         ("gnu"       . "http://elpa.gnu.org/packages/")
+                         ("melpa"     . "https://melpa.org/packages/")
+                         ("marmalade" . "http://marmalade-repo.org/packages/")))
+(package-initialize) ; guess what this one does ?
 
-(provide 'init)
-;;; init.el ends here
-(put 'downcase-region 'disabled nil)
-(put 'upcase-region 'disabled nil)
+;; Bootstrap `use-package'
+(unless (package-installed-p 'use-package) ; unless it is already installed
+  (package-refresh-contents) ; updage packages archive
+  (package-install 'use-package)) ; and install the most recent version of use-package
+
+(require 'use-package) ; guess what this one does too ?
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("d5f17ae86464ef63c46ed4cb322703d91e8ed5e718bf5a7beb69dd63352b26b2" "c5a886cc9044d8e6690a60f33db45506221aa0777a82ad1f7fe11a96d203fa44" "15348febfa2266c4def59a08ef2846f6032c0797f001d7b9148f30ace0d08bcf" "9f3181dc1fabe5d58bbbda8c48ef7ece59b01bed606cfb868dd147e8b36af97c" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "e91ca866d6cbb79786e314e0466f4f1b8892b72e77ed702e53bf7565e0dfd469" default)))
+ '(package-selected-packages
+   (quote
+    (leuven-theme hydandata-light-theme flatui-theme flycheck exec-path-from-shell virtualenvwrapper jedi spaceline magit helm-projectile projectile helm auto-complete editorconfig spacemacs-theme doom-themes avy general use-package))))
+
+
+(use-package python :ensure t
+  :init
+  (defun chdir-to-project-root ()
+    "When opening a python shell while a projectile project is active, changes directory of python shell to project root"
+    (when (projectile-project-name)
+      (python-shell-send-string "import os")
+      (python-shell-send-string (format "os.chdir('%s')" (projectile-project-root)))))
+  (add-hook 'python-shell-first-prompt-hook #'chdir-to-project-root))
+
+(use-package general :ensure t
+  :config
+  (general-define-key "C-'" 'avy-goto-word-1)
+  (general-define-key "M-W" 'toggle-frame-fullscreen))
+
+(use-package avy :ensure t
+  :commands
+  (avy-goto-word-1))
+
+(use-package editorconfig :ensure t
+  :config
+  (editorconfig-mode 1))
+
+(use-package spacemacs-theme :ensure t
+  :defer t
+  :init
+  (load-theme 'spacemacs-dark t))
+
+(use-package auto-complete :ensure t
+  :config
+  (ac-config-default)
+  (add-to-list 'ac-sources 'ac-source-jedi-direct))
+
+(use-package helm :ensure t)
+(use-package projectile :ensure t
+  :config
+  (projectile-global-mode))
+(use-package helm-projectile :ensure t)
+
+(use-package magit :ensure t)
+
+(use-package spaceline :ensure t
+  :config
+  (require 'spaceline-config)
+  (spaceline-emacs-theme))
+
+(use-package exec-path-from-shell :ensure t
+  :config
+  (when (memq window-system '(mac ns x))
+  (exec-path-from-shell-copy-env "DEV_MODE")
+  (exec-path-from-shell-initialize)))
+
+(use-package virtualenvwrapper :ensure t
+  :config
+  (defun workon-after-project-switch ()
+    "Workon a project's virtualenv when switching a project."
+    (message "now working on: %s" (projectile-project-name))
+    (venv-workon (projectile-project-name)))
+  (venv-initialize-interactive-shells)
+  (venv-initialize-eshell)
+  (add-hook 'projectile-after-switch-project-hook #'workon-after-project-switch))
+
+(use-package epc :ensure t)
+(use-package jedi :ensure t
+  :init
+;;   ;; Global jedi config vars
+;;   (defvar jedi-config:use-system-python nil
+;;     "Will use system python and active environment for Jedi server.
+;; May be necessary for some GUI environments (e.g., Mac OS X)")
+;;   (defvar jedi-config:with-virtualenv nil
+;;     "Set to non-nil to point to a particular virtualenv.")
+;;   (defvar jedi-config:vcs-root-sentinel ".git")
+;;   (defvar jedi-config:python-module-sentinel "__init__.py")
+  :config
+  ;; (when venv-current-name
+  ;;   (setq jedi:server-args (list "--virtual-env" venv-current-name)))
+  (add-hook 'python-mode-hook 'jedi:setup)
+  (setq jedi:get-in-function-call-delay 10000000)
+  (setq jedi:environment-virtualenv (list (expand-file-name "~/.virtualenvs/")))
+  (setq jedi:complete-on-dot t)
+  (defun jedi-config:setup-keys ()
+    (local-set-key (kbd "M-.") 'jedi:goto-definition)
+    (local-set-key (kbd "M-,") 'jedi:goto-definition-pop-marker)
+    (local-set-key (kbd "M-?") 'jedi:show-doc)
+    (local-set-key (kbd "M-/") 'jedi:get-in-function-call))
+  (add-hook 'python-mode-hook 'jedi-config:setup-keys))
+
+(use-package flycheck :ensure t
+  :init
+  (global-flycheck-mode))
