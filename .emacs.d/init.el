@@ -33,7 +33,7 @@
 (setq sentence-end-double-space nil)
 
 ;; print a default message in the empty scratch buffer opened at startup
-(setq initial-scratch-message "Hello World")
+(setq initial-scratch-message "Hey")
 
 ;; enable fullscreen
 (menu-bar-mode -1)
@@ -95,10 +95,11 @@
     ("d5f17ae86464ef63c46ed4cb322703d91e8ed5e718bf5a7beb69dd63352b26b2" "c5a886cc9044d8e6690a60f33db45506221aa0777a82ad1f7fe11a96d203fa44" "15348febfa2266c4def59a08ef2846f6032c0797f001d7b9148f30ace0d08bcf" "9f3181dc1fabe5d58bbbda8c48ef7ece59b01bed606cfb868dd147e8b36af97c" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "e91ca866d6cbb79786e314e0466f4f1b8892b72e77ed702e53bf7565e0dfd469" default)))
  '(package-selected-packages
    (quote
-    (speed-type company-anaconda company-quickhelp ac-anaconda anaconda-mode auto-complete-c-headers auto-complete-clang-async projectile-speebar ggtags helm-gtags jedi auto-complete company-jedi ycmd epc web-mode company-ycmd company redis pyvenv ycmd-eldoc company-elisp helm-rtags rtags-helm rtags yasnippet multiple-cursors fastnav emmet-mode expand-region leuven-theme hydandata-light-theme flatui-theme flycheck exec-path-from-shell virtualenvwrapper spaceline magit helm-projectile projectile helm editorconfig spacemacs-theme doom-themes avy general use-package)))
+    (company-irony company-c-headers pdf-tools irony speed-type company-anaconda company-quickhelp ac-anaconda anaconda-mode auto-complete-c-headers auto-complete-clang-async projectile-speebar ggtags helm-gtags jedi auto-complete company-jedi ycmd epc web-mode company-ycmd company redis pyvenv ycmd-eldoc company-elisp helm-rtags rtags-helm rtags yasnippet multiple-cursors fastnav emmet-mode expand-region leuven-theme hydandata-light-theme flatui-theme flycheck exec-path-from-shell virtualenvwrapper spaceline magit helm-projectile projectile helm editorconfig spacemacs-theme doom-themes avy general use-package)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#839496")
- '(pos-tip-use-relative-coordinates nil))
+ '(pos-tip-use-relative-coordinates nil)
+ '(winner-mode t))
 (put 'narrow-to-region 'disabled nil)
 
 (use-package python :ensure t
@@ -294,6 +295,15 @@
   (add-hook 'c-mode-hook 'irony-mode)
   (add-hook 'objc-mode-hook 'irony-mode)
   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+
+(use-package company-irony :ensure t
+  :init
+  (eval-after-load 'company
+    '(add-to-list 'company-backends 'company-irony)))
+
+(use-package company-c-headers :ensure t
+  :init
+  (add-to-list 'company-backends 'company-c-headers))
 
 (defun python-xpath (url)
   "Open a python shell, download the page from URL, parse etree."
