@@ -95,10 +95,33 @@
     ("d5f17ae86464ef63c46ed4cb322703d91e8ed5e718bf5a7beb69dd63352b26b2" "c5a886cc9044d8e6690a60f33db45506221aa0777a82ad1f7fe11a96d203fa44" "15348febfa2266c4def59a08ef2846f6032c0797f001d7b9148f30ace0d08bcf" "9f3181dc1fabe5d58bbbda8c48ef7ece59b01bed606cfb868dd147e8b36af97c" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "e91ca866d6cbb79786e314e0466f4f1b8892b72e77ed702e53bf7565e0dfd469" default)))
  '(package-selected-packages
    (quote
-    (company-irony company-c-headers pdf-tools irony speed-type company-anaconda company-quickhelp ac-anaconda anaconda-mode auto-complete-c-headers auto-complete-clang-async projectile-speebar ggtags helm-gtags jedi auto-complete company-jedi ycmd epc web-mode company-ycmd company redis pyvenv ycmd-eldoc company-elisp helm-rtags rtags-helm rtags yasnippet multiple-cursors fastnav emmet-mode expand-region leuven-theme hydandata-light-theme flatui-theme flycheck exec-path-from-shell virtualenvwrapper spaceline magit helm-projectile projectile helm editorconfig spacemacs-theme doom-themes avy general use-package)))
+    (company-irony-c-headers cmake-ide rainbow-delimiters company-irony company-c-headers pdf-tools irony speed-type company-anaconda company-quickhelp ac-anaconda anaconda-mode auto-complete-c-headers auto-complete-clang-async projectile-speebar ggtags helm-gtags jedi auto-complete company-jedi ycmd epc web-mode company-ycmd company redis pyvenv ycmd-eldoc company-elisp helm-rtags rtags-helm rtags yasnippet multiple-cursors fastnav emmet-mode expand-region leuven-theme hydandata-light-theme flatui-theme flycheck exec-path-from-shell virtualenvwrapper spaceline magit helm-projectile projectile helm editorconfig spacemacs-theme doom-themes avy general use-package)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#839496")
  '(pos-tip-use-relative-coordinates nil)
+ '(safe-local-variable-values
+   (quote
+    ((eval setq company-clang-arguments
+           (list "-isystem /usr/include/qt" "-isystem /usr/include/qt/QtWidgets" "-isystem /usr/include/qt/QtGui" "-isystem /usr/include/qt/QtCore" "-isystem /usr/include/libdrm" "-I/usr/lib/qt/mkspecs/linux-g++" "std=c++11" "-fPIC")
+           flycheck-clang-include-path
+           (list "/usr/include/qt/QtWidgets" "/usr/include/qt/QtCore" "/usr/lib/qt/mkspecs/linux-g++" "/usr/include/qt/QtGui" "/usr/include/qt")
+           flycheck-clang-args
+           (list "-std=c++11" "-fPIC")
+           cmake-ide-build-dir "/home/ringo/projects/cpp/book/ch03/qapp")
+     (eval setq company-clang-arguments
+           (list "-isystem /usr/include/qt" "-isystem /usr/include/qt/QtWidgets" "-isystem /usr/include/qt/QtGui" "-isystem /usr/include/qt/QtCore" "-isystem /usr/include/libdrm" "-I/usr/lib/qt/mkspecs/linux-g++" "std=c++11" "-fPIC")
+           flycheck-clang-include-path
+           (list "/usr/include/qt/QtWidgets" "/usr/include/qt/QtCore" "/usr/lib/qt/mkspecs/linux-g++" "/usr/include/qt/QtGui" "/usr/include/qt")
+           flycheck-clang-args
+           (list "-std=c++11" "-fPIC")
+           irony-additional-clang-options
+           (list "-isystem /usr/include/qt" "-isystem /usr/include/qt/QtWidgets" "-isystem /usr/include/qt/QtGui" "-isystem /usr/include/qt/QtCore" "-isystem /usr/include/libdrm" "-I/usr/lib/qt/mkspecs/linux-g++" "std=c++11" "-fPIC"))
+     (eval setq company-clang-arguments
+           (list "-isystem /usr/include/qt" "-isystem /usr/include/qt/QtWidgets" "-isystem /usr/include/qt/QtGui" "-isystem /usr/include/qt/QtCore" "-isystem /usr/include/libdrm" "-I/usr/lib/qt/mkspecs/linux-g++" "std=c++11" "-fPIC")
+           flycheck-clang-include-path
+           (list "/usr/include/qt/QtWidgets" "/usr/include/qt/QtCore" "/usr/lib/qt/mkspecs/linux-g++" "/usr/include/qt/QtGui" "/usr/include/qt")
+           flycheck-clang-args
+           (list "-std=c++11" "-fPIC")))))
  '(winner-mode t))
 (put 'narrow-to-region 'disabled nil)
 
@@ -168,6 +191,8 @@
     (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
     (define-key company-active-map (kbd "<backtab>") 'company-complete-common-or-cycle-backward)
     (define-key company-active-map (kbd "S-TAB") 'company-complete-common-or-cycle-backward)
+    (define-key company-active-map (kbd "C-n") 'company-select-next)
+    (define-key company-active-map (kbd "C-p") 'company-select-previous)
     (global-company-mode)))
 
 (use-package company-statistics :ensure t
@@ -296,14 +321,34 @@
   (add-hook 'objc-mode-hook 'irony-mode)
   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
 
-(use-package company-irony :ensure t
-  :init
-  (eval-after-load 'company
-    '(add-to-list 'company-backends 'company-irony)))
+;; (use-package company-irony :ensure t
+;;   :init
+;;   (eval-after-load 'company
+;;     '(add-to-list
+;;       'company-backends 'company-irony)))
 
-(use-package company-c-headers :ensure t
-  :init
-  (add-to-list 'company-backends 'company-c-headers))
+(use-package company-irony :ensure t)
+
+(use-package company-irony-c-headers :ensure t
+  :config
+  (eval-after-load 'company
+    '(add-to-list
+      'company-backends '(company-irony-c-headers company-irony))))
+
+(use-package flycheck-irony :ensure t
+  :config
+  (eval-after-load 'flycheck
+    '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
+
+;; (use-package company-c-headers :ensure t
+;;   :init
+;;   (add-to-list 'company-backends 'company-c-headers)
+;;   :config
+;;   (add-to-list 'company-c-headers-path-system "/usr/include/qt"))
+
+(use-package cmake-ide :ensure t
+  :config
+  (cmake-ide-setup))
 
 (defun python-xpath (url)
   "Open a python shell, download the page from URL, parse etree."
@@ -315,4 +360,3 @@
 ;; run as server?
 (require 'server)
 (unless (server-running-p) (server-start))
-
