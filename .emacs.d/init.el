@@ -41,6 +41,9 @@
 (tool-bar-mode -1)
 (blink-cursor-mode 0)
 
+;; to get it to work in client mode
+(add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
+
 ;; set font
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -61,9 +64,21 @@
 (setq python-shell-interpreter "ipython"
       python-shell-interpreter-args "-i")
 (setenv "IPY_TEST_SIMPLE_PROMPT" "1")
+
 ;; 4 space tabs
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
+
+;; use bash for ansi-term -- doesn't work?
+(setq explicit-shell-file-name "/bin/bash")
+
+;; use C-c C-y to yank while in ansi-term
+(eval-after-load "term"
+  '(define-key term-raw-map (kbd "C-c C-y") 'term-paste))
+
+;; try to fix key binding for term
+;; (eval-after-load "term"
+;;   '(define-key term-raw-map (kbd "C-x C-j") 'term-line-mode))
 
 "Configure use-package and install it if it isn't there."
 (setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
@@ -95,7 +110,7 @@
     ("d5f17ae86464ef63c46ed4cb322703d91e8ed5e718bf5a7beb69dd63352b26b2" "c5a886cc9044d8e6690a60f33db45506221aa0777a82ad1f7fe11a96d203fa44" "15348febfa2266c4def59a08ef2846f6032c0797f001d7b9148f30ace0d08bcf" "9f3181dc1fabe5d58bbbda8c48ef7ece59b01bed606cfb868dd147e8b36af97c" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "e91ca866d6cbb79786e314e0466f4f1b8892b72e77ed702e53bf7565e0dfd469" default)))
  '(package-selected-packages
    (quote
-    (company-irony-c-headers cmake-ide rainbow-delimiters company-irony company-c-headers pdf-tools irony speed-type company-anaconda company-quickhelp ac-anaconda anaconda-mode auto-complete-c-headers auto-complete-clang-async projectile-speebar ggtags helm-gtags jedi auto-complete company-jedi ycmd epc web-mode company-ycmd company redis pyvenv ycmd-eldoc company-elisp helm-rtags rtags-helm rtags yasnippet multiple-cursors fastnav emmet-mode expand-region leuven-theme hydandata-light-theme flatui-theme flycheck exec-path-from-shell virtualenvwrapper spaceline magit helm-projectile projectile helm editorconfig spacemacs-theme doom-themes avy general use-package)))
+    (multi-term company-irony-c-headers cmake-ide rainbow-delimiters company-irony company-c-headers pdf-tools irony speed-type company-anaconda company-quickhelp ac-anaconda anaconda-mode auto-complete-c-headers auto-complete-clang-async projectile-speebar ggtags helm-gtags jedi auto-complete company-jedi ycmd epc web-mode company-ycmd company redis pyvenv ycmd-eldoc company-elisp helm-rtags rtags-helm rtags yasnippet multiple-cursors fastnav emmet-mode expand-region leuven-theme hydandata-light-theme flatui-theme flycheck exec-path-from-shell virtualenvwrapper spaceline magit helm-projectile projectile helm editorconfig spacemacs-theme doom-themes avy general use-package)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#839496")
  '(pos-tip-use-relative-coordinates nil)
@@ -152,14 +167,16 @@
 (use-package company-anaconda :ensure t
   :init
   ;; for some reason quickhelp doesn't work unless this is here
-  (defun my-annotation-function (candidate)
-    (let ((description (get-text-property 0 'description candidate)))
-      (when description
-        (concat "<" description ">"))))
-
-  (setq company-anaconda-annotation-function 'my-annotation-function)
+  ;; (defun my-annotation-function (candidate)
+  ;;   (let ((description (get-text-property 0 'description candidate)))
+  ;;     (when description
+  ;;       (concat "<" description ">"))))
   (eval-after-load "company"
     '(add-to-list 'company-backends 'company-anaconda)))
+
+;; (require 'company-anaconda)
+;; (eval-after-load "company"
+;;   '(add-to-list 'company-backends 'company-anaconda))
 
 (use-package virtualenvwrapper :ensure t
   :config
@@ -174,10 +191,10 @@
 (use-package company :ensure t
   :init
   (progn
-    (setq company-idle-delay 0.2
+    (setq company-idle-delay 0.1
           company-minimum-prefix-length 2
           company-require-match nil
-          company-dabbrev-ignore-case nil
+          company-dabbrev-ignorecom-case nil
           company-dabbrev-downcase nil))
   :config
   (progn
@@ -217,7 +234,8 @@
 
 (use-package general :ensure t
   :config
-  (general-define-key "M-W" 'toggle-frame-fullscreen))
+  (general-define-key "M-W" 'toggle-frame-fullscreen)
+  (general-define-key "C-x t" 'multi-term))
 
 (use-package editorconfig :ensure t
   :config
@@ -227,7 +245,10 @@
 (use-package spacemacs-theme :ensure t
   :defer t
   :init
-  (load-theme 'spacemacs-dark t))
+  (load-theme 'spacemacs-dark t)
+  (defun load-theme-for-client (_)
+    (load-theme 'spacemacs-dark t))
+  (add-to-list 'after-make-frame-functions #'load-theme-for-client))
 
 (use-package helm :ensure t)
 (use-package projectile :ensure t
@@ -278,7 +299,13 @@
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
-(use-package magit :ensure t)
+(use-package magit :ensure t
+  :config
+  (defun my-post-push-hook (orig-fun &rest args)
+    "Opens buildcentral after pushing code to a yipit branch."
+    (when (and (projectile-project-name) (string-match-p "Yipit" (magit-get "remote" "origin" "url")))
+      (shell-command-to-string (format "open -g https://builds.yipit.systems/%s" (projectile-project-name)))))
+  (advice-add 'magit-push :around #'my-post-push-hook))
 
 (use-package flycheck :ensure t
   :config
@@ -350,9 +377,18 @@
   :config
   (cmake-ide-setup))
 
+;; (use-package multi-term :ensure t
+;;   :config
+;;   (setq multi-term-program "/bin/bash")
+;;   (add-to-list 'term-bind-key-alist '("C-c C-j" . term-line-mode))
+;;   (add-to-list 'term-bind-key-alist '("M-DEL" . term-send-backward-kill-word))
+;;   (add-to-list 'term-bind-key-alist '("M-d" . kill-word))
+;;   (add-to-list 'term-bind-key-alist '("M-]" . multi-term-next))
+;;   (add-to-list 'term-bind-key-alist '("M-[" . multi-term-prev)))
+
 (defun python-xpath (url)
   "Open a python shell, download the page from URL, parse etree."
-  (interactive "sCount: ")
+  (interactive "sURL: ")
   (run-python)
   (python-shell-send-string (format "import requests; from lxml import etree; res = requests.get('%s'); root = etree.HTML(res.content)" url))
   (python-shell-switch-to-shell))
