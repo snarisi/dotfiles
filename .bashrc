@@ -6,6 +6,19 @@ export DEV_MODE=1
 export PATH=~/nand2tetris/tools:$PATH
 export PATH=/opt/local/bin:$PATH
 
+if [ -f `brew --prefix`/etc/bash_completion ]; then
+	. `brew --prefix`/etc/bash_completion
+fi
+
+if [ -f ~/.git-completion.bash ]; then
+	. ~/.git-completion.bash
+fi
+
+# Turn on 256 color support...
+if [ "x$TERM" = "xxterm"  ]; then
+	export TERM="xterm-256color"
+fi
+
 # Setting PATH for Python 3.5
 # The original version is saved in .bash_profile.pysave
 export PATH="/Library/Frameworks/Python.framework/Versions/3.5/bin:${PATH}"
@@ -37,3 +50,11 @@ export PYTHONSTARTUP=~/.pystartup
 if [ -f ~/.bashrc_local ]; then
 	source ~/.bashrc_local
 fi
+export PATH="/usr/local/opt/redis@2.8/bin:$PATH"
+
+# better history
+export HISTIGNORE="ls:ll:cd:pwd"
+export HISTFILESIZE=10000 # maybe too much?
+export HISTSIZE=10000 # maybe too much?
+export HISTCONTROL=ignoredups:erasedups
+export HISTTIMEFORMAT="[$(tput setaf 6)%F %T$(tput sgr0)]: " # colorful date

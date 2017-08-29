@@ -1,5 +1,6 @@
 ;; add directory for custom lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/")
+(add-to-list 'load-path "~/anaconda-mode")
 
 ;; delete excess backup versions silently
 (setq delete-old-versions -1 )
@@ -61,7 +62,8 @@
 (electric-pair-mode 1)
 
 ;; use ipython for python shell
-(setq python-shell-interpreter "ipython"
+;; use system ipython - make sure it doesn't break venv
+(setq python-shell-interpreter "/usr/local/bin/ipython"
       python-shell-interpreter-args "-i")
 (setenv "IPY_TEST_SIMPLE_PROMPT" "1")
 
@@ -71,10 +73,11 @@
 
 ;; use bash for ansi-term -- doesn't work?
 (setq explicit-shell-file-name "/bin/bash")
+(setenv "SHELL" "/bin/bash")
 
 ;; use C-c C-y to yank while in ansi-term
 (eval-after-load "term"
-  '(define-key term-raw-map (kbd "C-c C-y") 'term-paste))
+  '(define-key term-raw-map (kbd "C-y") 'term-paste))
 
 ;; try to fix key binding for term
 ;; (eval-after-load "term"
@@ -110,7 +113,7 @@
     ("d5f17ae86464ef63c46ed4cb322703d91e8ed5e718bf5a7beb69dd63352b26b2" "c5a886cc9044d8e6690a60f33db45506221aa0777a82ad1f7fe11a96d203fa44" "15348febfa2266c4def59a08ef2846f6032c0797f001d7b9148f30ace0d08bcf" "9f3181dc1fabe5d58bbbda8c48ef7ece59b01bed606cfb868dd147e8b36af97c" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "e91ca866d6cbb79786e314e0466f4f1b8892b72e77ed702e53bf7565e0dfd469" default)))
  '(package-selected-packages
    (quote
-    (multi-term company-irony-c-headers cmake-ide rainbow-delimiters company-irony company-c-headers pdf-tools irony speed-type company-anaconda company-quickhelp ac-anaconda anaconda-mode auto-complete-c-headers auto-complete-clang-async projectile-speebar ggtags helm-gtags jedi auto-complete company-jedi ycmd epc web-mode company-ycmd company redis pyvenv ycmd-eldoc company-elisp helm-rtags rtags-helm rtags yasnippet multiple-cursors fastnav emmet-mode expand-region leuven-theme hydandata-light-theme flatui-theme flycheck exec-path-from-shell virtualenvwrapper spaceline magit helm-projectile projectile helm editorconfig spacemacs-theme doom-themes avy general use-package)))
+    (helm-smex helm-projectile-ag helm-git-grep ox-gfm markdown-mode swoop helm-ag flycheck-irony multi-term company-irony-c-headers cmake-ide rainbow-delimiters company-irony company-c-headers pdf-tools irony speed-type company-anaconda company-quickhelp ac-anaconda anaconda-mode auto-complete-c-headers auto-complete-clang-async projectile-speebar ggtags helm-gtags jedi auto-complete company-jedi ycmd epc web-mode company-ycmd company redis pyvenv ycmd-eldoc company-elisp helm-rtags rtags-helm rtags yasnippet multiple-cursors fastnav emmet-mode expand-region leuven-theme hydandata-light-theme flatui-theme flycheck exec-path-from-shell virtualenvwrapper spaceline magit helm-projectile projectile helm editorconfig spacemacs-theme doom-themes avy general use-package)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#839496")
  '(pos-tip-use-relative-coordinates nil)
@@ -149,20 +152,18 @@
       (python-shell-send-string (format "os.chdir('%s')" (projectile-project-root)))))
   (add-hook 'python-shell-first-prompt-hook #'chdir-to-project-root))
 
+;; (require 'anaconda-mode)
+
 (use-package anaconda-mode :ensure t
   :defer t
-  :init
+  :config
   ;; (local-set-key (kbd "M-.") 'anaconda-mode-find-definitions)
   ;; (local-set-key (kbd "M-,") 'anaconda-mode-go-back)
   ;; (local-set-key (kbd "M-?") 'anaconda-mode-show-doc)
   ;; (local-set-key (kbd "M-/") 'anaconda-mode-find-assignments)
   ;; (local-set-key (kbd "M-r") 'anaconda-mode-find-references)
   (add-hook 'python-mode-hook 'anaconda-mode)
-  (defun init-anaconda-eldoc-mode ()
-    (progn
-      (eldoc-mode)
-      (anaconda-eldoc-mode)))
-  (add-hook 'python-mode-hook 'init-anaconda-eldoc-mode))
+  (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
 
 (use-package company-anaconda :ensure t
   :init
@@ -174,9 +175,9 @@
   (eval-after-load "company"
     '(add-to-list 'company-backends 'company-anaconda)))
 
-;; (require 'company-anaconda)
-;; (eval-after-load "company"
-;;   '(add-to-list 'company-backends 'company-anaconda))
+(require 'company-anaconda)
+(eval-after-load "company"
+  '(add-to-list 'company-backends 'company-anaconda))
 
 (use-package virtualenvwrapper :ensure t
   :config
@@ -235,7 +236,24 @@
 (use-package general :ensure t
   :config
   (general-define-key "M-W" 'toggle-frame-fullscreen)
-  (general-define-key "C-x t" 'multi-term))
+  (defun open-term-bash ()
+    "Opens a term buffer and runs bash"
+    (interactive)
+    (ansi-term "/bin/bash")
+    (let ((new-buffer-name (generate-new-buffer-name "term")))
+      (rename-buffer new-buffer-name)
+      (when (projectile-project-name)
+        (comint-send-string new-buffer-name (format "workon %s\n" (projectile-project-name))))))
+
+  (defun open-term-redis ()
+    "Opens a term buffer and launches redis-cli."
+    (interactive)
+    (ansi-term "~/redis_open.py")
+    (let ((new-buffer-name (generate-new-buffer-name "redis")))
+      (rename-buffer new-buffer-name)))
+  (general-define-key "C-c t" 'open-term-bash)
+  (general-define-key "C-c r" 'open-term-redis)
+  (general-define-key "C-c s" 'shell))
 
 (use-package editorconfig :ensure t
   :config
@@ -310,7 +328,8 @@
 (use-package flycheck :ensure t
   :config
   (global-flycheck-mode)
-  (message "flycheck started"))
+  (add-to-list 'flycheck-disabled-checkers 'javascript-jshint)
+  (flycheck-add-mode 'javascript-eslint 'web-mode))
 
 (use-package web-mode :ensure t
   :mode "\\.js[x]?\\'"
@@ -377,14 +396,77 @@
   :config
   (cmake-ide-setup))
 
-;; (use-package multi-term :ensure t
-;;   :config
-;;   (setq multi-term-program "/bin/bash")
-;;   (add-to-list 'term-bind-key-alist '("C-c C-j" . term-line-mode))
-;;   (add-to-list 'term-bind-key-alist '("M-DEL" . term-send-backward-kill-word))
-;;   (add-to-list 'term-bind-key-alist '("M-d" . kill-word))
-;;   (add-to-list 'term-bind-key-alist '("M-]" . multi-term-next))
-;;   (add-to-list 'term-bind-key-alist '("M-[" . multi-term-prev)))
+(use-package multi-term :ensure t
+  :config
+  (setq multi-term-program "/bin/bash")
+  (setq term-bind-key-alist
+        '(("C-c C-c" . term-interrupt-subjob)
+          ("C-c C-e" . term-send-esc)
+          ("C-c C-j" . term-line-mode)
+          ;; ("C-p" . previous-line)
+          ;; ("C-n" . next-line)
+          ("C-s" . isearch-forward)
+          ("C-r" . isearch-backward)
+          ("C-m" . term-send-return)
+          ("C-y" . term-paste)
+          ("M-f" . term-send-forward-word)
+          ("M-b" . term-send-backward-word)
+          ("M-o" . term-send-backspace)
+          ("M-p" . term-send-up)
+          ("M-n" . term-send-down)
+          ("M-M" . term-send-forward-kill-word)
+          ("M-N" . term-send-backward-kill-word)
+          ("<C-backspace>" . term-send-backward-kill-word)
+          ("M-r" . term-send-reverse-search-history)
+          ("M-d" . term-send-delete-word)
+          ("M-DEL" . term-send-backward-kill-word)
+          ("M-," . term-send-raw)
+          ("M-." . comint-dynamic-complete)
+          ("M-[" . multi-term-prev)
+          ("M-]" . multi-term-next))))
+
+(use-package org :ensure t
+  :config
+  (add-to-list 'org-export-backends 'md))
+
+(use-package markdown-mode :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
+
+(use-package ox-gfm :ensure t
+  :defer t
+  :init
+  (eval-after-load "org"
+  '(require 'ox-gfm nil t)))
+
+(use-package swoop :ensure t
+  :config
+  (setq swoop-font-size-change: nil)
+  (global-set-key (kbd "C-c o")   'swoop)
+  (global-set-key (kbd "C-S-c o") 'swoop-multi)
+  (global-set-key (kbd "C-M-s")   'swoop-pcre-regexp)
+  (global-set-key (kbd "C-S-o") 'swoop-back-to-last-position))
+
+(use-package helm-projectile-ag
+  :init
+  (global-set-key (kbd "C-c g") 'helm-projectile-ag))
+
+(use-package helm-git-grep :ensure t
+  :config
+  ;; (global-set-key (kbd "C-c g") 'helm-git-grep)
+  ;; Invoke `helm-git-grep' from isearch.
+  (define-key isearch-mode-map (kbd "C-c g") 'helm-git-grep-from-isearch)
+  ;; Invoke `helm-git-grep' from other helm.
+  (eval-after-load 'helm
+    '(define-key helm-map (kbd "C-c g") 'helm-git-grep-from-helm)))
+
+(use-package helm-smex :ensure t
+  :config
+  (global-set-key [remap execute-extended-command] #'helm-smex)
+  (global-set-key (kbd "M-X") #'helm-smex-major-mode-commands))
 
 (defun python-xpath (url)
   "Open a python shell, download the page from URL, parse etree."
@@ -393,6 +475,14 @@
   (python-shell-send-string (format "import requests; from lxml import etree; res = requests.get('%s'); root = etree.HTML(res.content)" url))
   (python-shell-switch-to-shell))
 
+(defun redis-cli (redis-uri)
+  (interactive "sREDIS_URI: ")
+  (if redis-uri
+      (ansi-term (format "REDIS_URI=%s ~/open_redis.py" redis-uri)))
+  (ansi-term "~/open_redis.py"))
+
 ;; run as server?
 (require 'server)
 (unless (server-running-p) (server-start))
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
