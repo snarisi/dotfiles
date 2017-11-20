@@ -481,6 +481,13 @@
       (ansi-term (format "REDIS_URI=%s ~/open_redis.py" redis-uri)))
   (ansi-term "~/open_redis.py"))
 
+(defun ipdb-set-trace ()
+  (interactive)
+  (insert-string "import ipdb; ipdb.set_trace()"))
+
+(eval-after-load 'python
+  '(define-key python-mode-map (kbd "C-c d") 'ipdb-set-trace))
+
 ;; run as server?
 (require 'server)
 (unless (server-running-p) (server-start))

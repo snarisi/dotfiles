@@ -5,6 +5,7 @@ export DEV_MODE=1
 
 export PATH=~/nand2tetris/tools:$PATH
 export PATH=/opt/local/bin:$PATH
+export PATH="$HOME/Library/Python/2.7/bin/":$PATH
 
 if [ -f `brew --prefix`/etc/bash_completion ]; then
 	. `brew --prefix`/etc/bash_completion
@@ -58,3 +59,7 @@ export HISTFILESIZE=10000 # maybe too much?
 export HISTSIZE=10000 # maybe too much?
 export HISTCONTROL=ignoredups:erasedups
 export HISTTIMEFORMAT="[$(tput setaf 6)%F %T$(tput sgr0)]: " # colorful date
+
+export Y_PATH=/Users/samnarisi/.yy
+export Y_DEV_PATH=/Users/samnarisi/Development
+source /Users/samnarisi/.yy/bin/y
