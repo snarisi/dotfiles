@@ -63,3 +63,7 @@ export HISTTIMEFORMAT="[$(tput setaf 6)%F %T$(tput sgr0)]: " # colorful date
 export Y_PATH=/Users/samnarisi/.yy
 export Y_DEV_PATH=/Users/samnarisi/Development
 source /Users/samnarisi/.yy/bin/y
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
