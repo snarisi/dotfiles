@@ -59,6 +59,15 @@
 
 ;; autoclose pairs
 (electric-pair-mode 1)
+(add-hook 'inferior-python-mode-hook
+	  (lambda ()
+	    (setq-local electric-pair-pairs '(append electric-pair-pairs (?\' . ?\')))))  ;; autoclose single quote
+(add-hook 'shell-mode-hook
+	  (lambda ()
+	    (setq-local electric-pair-pairs '(append electric-pair-pairs (?\' . ?\')))))  ;; autoclose single quote
+
+;; show matching parentheses
+(show-paren-mode 1)
 
 ;; use ipython for python shell
 ;; use system ipython - make sure it doesn't break venv
@@ -93,7 +102,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (virtualenvwrapper company-tern xref-js2 js2-refactor rjsx-mode winner-mode flycheck multiple-cursors markdown-mode company-statistics yasnippet swoop exec-path-from-shell helm-smex helm-git-grep helm-ag magit spaceline spacemacs-theme expand-region general helm-projectile projectile helm company-anaconda company pyvenv anaconda-mode use-package)))
+    (transpose-frame tao-theme arjen-grey-theme material-theme nimbus-theme grayscale-theme iedit editorconfig fastnav virtualenvwrapper company-tern xref-js2 js2-refactor rjsx-mode winner-mode flycheck multiple-cursors markdown-mode company-statistics yasnippet swoop exec-path-from-shell helm-smex helm-git-grep helm-ag magit spaceline spacemacs-theme expand-region general helm-projectile projectile helm company-anaconda company pyvenv anaconda-mode use-package)))
  '(safe-local-variable-values
    (quote
     ((eval progn
@@ -111,6 +120,10 @@
 
 (global-set-key (kbd "C-c s") 'shell)
 
+(use-package editorconfig :ensure t
+  :config
+  (editorconfig-mode 1))
+
 (use-package expand-region :ensure t
   :config
   (global-set-key (kbd "C-=") 'er/expand-region))
@@ -125,6 +138,29 @@
 (use-package winner-mode :ensure t
   :init
   (winner-mode t))
+
+(use-package transpose-frame :ensure t)
+
+(use-package fastnav :ensure t
+  :config
+  (global-set-key "\M-z" 'fastnav-zap-up-to-char-forward)
+  (global-set-key "\M-Z" 'fastnav-zap-up-to-char-backward)
+  (global-set-key "\M-s" 'fastnav-jump-to-char-forward)
+  (global-set-key "\M-S" 'fastnav-jump-to-char-backward)
+  (global-set-key "\M-r" 'fastnav-replace-char-forward)
+  (global-set-key "\M-R" 'fastnav-replace-char-backward)
+  (global-set-key "\M-i" 'fastnav-insert-at-char-forward)
+  (global-set-key "\M-I" 'fastnav-insert-at-char-backward)
+  (global-set-key "\M-j" 'fastnav-execute-at-char-forward)
+  (global-set-key "\M-J" 'fastnav-execute-at-char-backward)
+  (global-set-key "\M-k" 'fastnav-delete-char-forward)
+  (global-set-key "\M-K" 'fastnav-delete-char-backward)
+  (global-set-key "\M-m" 'fastnav-mark-to-char-forward)
+  (global-set-key "\M-M" 'fastnav-mark-to-char-backward))
+
+(defun to-underscore ()
+  (interactive)
+  (progn (replace-regexp "\\([A-Z]\\)" "_\\1" nil (region-beginning) (region-end)) (downcase-region (region-beginning) (region-end))))
 
 ;; Themes
 (use-package spacemacs-theme :ensure t
@@ -180,7 +216,11 @@
   (yas-global-mode 1))
 
 ;; Project, navigation, etc.
-(use-package helm :ensure t)
+(use-package helm :ensure t
+  :config
+  (global-set-key (kbd "C-x b") 'helm-mini)
+  (setq helm-split-window-in-side-p t))
+
 (use-package projectile :ensure t
   :config
   (projectile-mode))
@@ -203,6 +243,7 @@
 (use-package swoop :ensure t
   :config
   (setq swoop-font-size-change: nil)
+  (setq swoop-window-split-current-window: t)
   (global-set-key (kbd "C-c o")   'swoop)
   (global-set-key (kbd "C-S-c o") 'swoop-multi)
   (global-set-key (kbd "C-M-s")   'swoop-pcre-regexp)
@@ -227,7 +268,8 @@
   :defer t
   :config
   (add-hook 'python-mode-hook 'anaconda-mode)
-  (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
+  (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
+  (define-key anaconda-mode-map (kbd "M-,") 'anaconda-mode-go-back))
 
 (use-package company-anaconda :ensure t
   :init
@@ -275,6 +317,23 @@
   :config
   (add-to-list 'company-backends 'company-tern)
   (add-hook 'rjsx-mode-hook (lambda () (tern-mode))))
+
+;; C# stuff
+(use-package omnisharp :ensure t
+  :init
+  (defun my-csharp-mode-setup ()
+    (require 'omnisharp-settings)
+    (require 'omnisharp-utils)
+    (setq indent-tabs-mode nil)
+    (setq c-syntactic-indentation t)
+    (c-set-style "ellemtel")
+    (setq c-basic-offset 4)
+    (setq tab-width 4)
+    (setq evil-shift-width 4)
+    (local-set-key (kbd "C-c C-c") 'recompile))
+  (add-hook 'csharp-mode-hook 'omnisharp-mode)
+  (add-hook 'csharp-mode-hook 'my-csharp-mode-setup t)
+  (eval-after-load 'company '(add-to-list 'company-backends 'company-omnisharp)))
 
 ;; Magit
 (use-package magit :ensure t)
