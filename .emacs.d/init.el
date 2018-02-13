@@ -1,6 +1,10 @@
 ;; add directory for custom lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
+;; increase garbage collection threshold
+;; copied from spacemacs: https://github.com/syl20bnr/spacemacs/blob/582f9aa45c2c90bc6ec98bccda33fc428e4c6d48/init.el#L17
+;; (setq gc-cons-threshold 100000000)
+
 ;; delete excess backup versions silently
 (setq delete-old-versions -1 )
 
@@ -52,7 +56,7 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:height 130 :family "Source Code Pro")))))
 
-;; show line numbers
+;; Show line numbers
 (global-linum-mode)
 (setq linum-format "%4d ")
 (require 'linum-off)
@@ -102,7 +106,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (transpose-frame tao-theme arjen-grey-theme material-theme nimbus-theme grayscale-theme iedit editorconfig fastnav virtualenvwrapper company-tern xref-js2 js2-refactor rjsx-mode winner-mode flycheck multiple-cursors markdown-mode company-statistics yasnippet swoop exec-path-from-shell helm-smex helm-git-grep helm-ag magit spaceline spacemacs-theme expand-region general helm-projectile projectile helm company-anaconda company pyvenv anaconda-mode use-package)))
+    (memory-usage helm-gtags disable-mouse disable-moouse zenburn-theme doom-themes atom-one-dark-theme atom-dark-theme dracula-theme transpose-frame tao-theme arjen-grey-theme material-theme nimbus-theme grayscale-theme iedit editorconfig fastnav virtualenvwrapper company-tern xref-js2 js2-refactor rjsx-mode winner-mode flycheck multiple-cursors markdown-mode company-statistics yasnippet swoop exec-path-from-shell helm-smex helm-git-grep helm-ag magit spaceline spacemacs-theme expand-region general helm-projectile projectile helm company-anaconda company pyvenv anaconda-mode use-package)))
  '(safe-local-variable-values
    (quote
     ((eval progn
@@ -135,11 +139,16 @@
     (exec-path-from-shell-copy-env "DEV_MODE")
     (exec-path-from-shell-initialize)))
 
-(use-package winner-mode :ensure t
+;; not on an mirror?
+(use-package winner-mode
   :init
   (winner-mode t))
 
-(use-package transpose-frame :ensure t)
+(use-package transpose-frame :ensure t
+  :config
+  (global-set-key (kbd "C-c t") 'transpose-frame)
+  (global-set-key (kbd "C-c f") 'flip-frame)
+  (global-set-key (kbd "C-c l") 'flop-frame))
 
 (use-package fastnav :ensure t
   :config
@@ -153,14 +162,18 @@
   (global-set-key "\M-I" 'fastnav-insert-at-char-backward)
   (global-set-key "\M-j" 'fastnav-execute-at-char-forward)
   (global-set-key "\M-J" 'fastnav-execute-at-char-backward)
-  (global-set-key "\M-k" 'fastnav-delete-char-forward)
-  (global-set-key "\M-K" 'fastnav-delete-char-backward)
+  ;; (global-set-key "\M-k" 'fastnav-delete-char-forward)
+  ;; (global-set-key "\M-K" 'fastnav-delete-char-backward)
   (global-set-key "\M-m" 'fastnav-mark-to-char-forward)
   (global-set-key "\M-M" 'fastnav-mark-to-char-backward))
 
 (defun to-underscore ()
   (interactive)
   (progn (replace-regexp "\\([A-Z]\\)" "_\\1" nil (region-beginning) (region-end)) (downcase-region (region-beginning) (region-end))))
+
+(use-package disable-moouse :ensure t
+  :init
+  (global-disable-mouse-mode))
 
 ;; Themes
 (use-package spacemacs-theme :ensure t
@@ -223,6 +236,7 @@
 
 (use-package projectile :ensure t
   :config
+  (setq projectile-enable-caching t)
   (projectile-mode))
 (use-package helm-projectile :ensure t)
 
@@ -255,7 +269,7 @@
   (add-to-list 'org-export-backends 'md))
 
 ;; Python stuff
-(use-package python :ensure t
+(use-package python
   :init
   (defun chdir-to-project-root ()
     "When opening a python shell while a projectile project is active, changes directory of python shell to project root"
@@ -265,7 +279,6 @@
   (add-hook 'python-shell-first-prompt-hook #'chdir-to-project-root))
 
 (use-package anaconda-mode :ensure t
-  :defer t
   :config
   (add-hook 'python-mode-hook 'anaconda-mode)
   (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
@@ -275,15 +288,6 @@
   :init
   (eval-after-load "company"
     '(add-to-list 'company-backends 'company-anaconda)))
-
-;; figure out which of these works better
-;; (use-package pyvenv :ensure t
-;;   :config
-;;   (defun workon-after-project-switch ()
-;;     "Workon a project's virtualenv when switching a project."
-;;     (message "now working on: %s" (projectile-project-name))
-;;     (pyvenv-workon (projectile-project-name)))
-;;   (add-hook 'projectile-after-switch-project-hook #'workon-after-project-switch))
 
 (use-package virtualenvwrapper :ensure t
   :config
@@ -309,6 +313,7 @@
   (add-hook 'js2-mode-hook
 	    (lambda ()
 	      (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
+  (setq js2-basic-offset 2)
   (define-key js2-mode-map (kbd "M-.") nil)
   (define-key js2-mode-map (kbd "M-*") 'xref-pop-marker-stack)
   (define-key js2-mode-map (kbd "M-r") 'xref-find-references))
@@ -330,13 +335,17 @@
     (setq c-basic-offset 4)
     (setq tab-width 4)
     (setq evil-shift-width 4)
-    (local-set-key (kbd "C-c C-c") 'recompile))
+    (local-set-key (kbd "C-c C-c") 'recompile)
+    (define-key omnisharp-mode-map (kbd "M-.") 'omnisharp-go-to-definition)
+    (define-key omnisharp-mode-map (kbd "M-r") 'omnisharp-helm-find-usages))
   (add-hook 'csharp-mode-hook 'omnisharp-mode)
   (add-hook 'csharp-mode-hook 'my-csharp-mode-setup t)
   (eval-after-load 'company '(add-to-list 'company-backends 'company-omnisharp)))
 
 ;; Magit
-(use-package magit :ensure t)
+(use-package magit :ensure t
+  :init
+  (global-set-key (kbd "C-c m") 'magit-status))
 
 ;; Markdown
 (use-package markdown-mode
