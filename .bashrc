@@ -7,7 +7,8 @@ export PATH=~/nand2tetris/tools:$PATH
 export PATH=/opt/local/bin:$PATH
 export PATH="$HOME/Library/Python/2.7/bin/":$PATH
 
-if [ -f `brew --prefix`/etc/bash_completion ]; then
+if [[ ( -z "$INSIDE_EMACS" || "$EMACS_BASH_COMPLETE" = "t" ) &&\
+	  -f `brew --prefix`/etc/bash_completion ]]; then
 	. `brew --prefix`/etc/bash_completion
 fi
 

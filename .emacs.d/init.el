@@ -106,7 +106,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (memory-usage helm-gtags disable-mouse disable-moouse zenburn-theme doom-themes atom-one-dark-theme atom-dark-theme dracula-theme transpose-frame tao-theme arjen-grey-theme material-theme nimbus-theme grayscale-theme iedit editorconfig fastnav virtualenvwrapper company-tern xref-js2 js2-refactor rjsx-mode winner-mode flycheck multiple-cursors markdown-mode company-statistics yasnippet swoop exec-path-from-shell helm-smex helm-git-grep helm-ag magit spaceline spacemacs-theme expand-region general helm-projectile projectile helm company-anaconda company pyvenv anaconda-mode use-package)))
+    (bash-completion company-shell flyspell-correct-helm writeroom-mode olivetti memory-usage helm-gtags disable-mouse disable-moouse zenburn-theme doom-themes atom-one-dark-theme atom-dark-theme dracula-theme transpose-frame tao-theme arjen-grey-theme material-theme nimbus-theme grayscale-theme iedit editorconfig fastnav virtualenvwrapper company-tern xref-js2 js2-refactor rjsx-mode winner-mode flycheck multiple-cursors markdown-mode company-statistics yasnippet swoop exec-path-from-shell helm-smex helm-git-grep helm-ag magit spaceline spacemacs-theme expand-region general helm-projectile projectile helm company-anaconda company pyvenv anaconda-mode use-package)))
  '(safe-local-variable-values
    (quote
     ((eval progn
@@ -118,6 +118,10 @@
 
 
 ;; General stuff
+(eval-after-load 'autorevert
+  (lambda ()
+    (diminish 'auto-revert-mode)))
+
 (use-package general :ensure t
   :config
   (general-define-key "M-W" 'toggle-frame-fullscreen))
@@ -125,6 +129,7 @@
 (global-set-key (kbd "C-c s") 'shell)
 
 (use-package editorconfig :ensure t
+  :diminish editorconfig-mode
   :config
   (editorconfig-mode 1))
 
@@ -172,8 +177,10 @@
   (progn (replace-regexp "\\([A-Z]\\)" "_\\1" nil (region-beginning) (region-end)) (downcase-region (region-beginning) (region-end))))
 
 (use-package disable-moouse :ensure t
+  :diminish disable-mouse-global-mode
   :init
-  (global-disable-mouse-mode))
+  (global-disable-mouse-mode)
+  (diminish 'disable-mouse-global-mode))
 
 ;; Themes
 (use-package spacemacs-theme :ensure t
@@ -197,6 +204,7 @@
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
 (use-package flycheck :ensure t
+  :diminish flycheck-mode
   :config
   (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
   (add-to-list 'flycheck-disabled-checkers 'javascript-jshint)
@@ -204,6 +212,7 @@
 
 ;; Auto-Complete
 (use-package company :ensure t
+  :diminish company-mode
   :init
   (progn
     (setq company-idle-delay 0.1
@@ -221,7 +230,16 @@
     (setq company-statistics-file "~/.emacs.d/company-statistics-cache.el")
     (add-hook 'company-mode-hook 'company-statistics-mode)))
 
+(use-package bash-completion :ensure t
+  :init
+  (autoload 'bash-completion-dynamic-complete
+    "bash-completion"
+    "BASH completion hook")
+  (add-hook 'shell-dynamic-complete-functions
+	    'bash-completion-dynamic-complete))
+
 (use-package yasnippet :ensure t
+  :diminish yas-minor-mode
   :config
   (setq yas-snippet-dirs
 	'("~/.emacs.d/snippets"
@@ -235,6 +253,7 @@
   (setq helm-split-window-in-side-p t))
 
 (use-package projectile :ensure t
+  :diminish projectile-mode
   :config
   (setq projectile-enable-caching t)
   (projectile-mode))
@@ -279,6 +298,8 @@
   (add-hook 'python-shell-first-prompt-hook #'chdir-to-project-root))
 
 (use-package anaconda-mode :ensure t
+  :diminish anaconda-mode
+  :diminish eldoc-mode
   :config
   (add-hook 'python-mode-hook 'anaconda-mode)
   (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
@@ -356,6 +377,11 @@
          ("\\.markdown\\'" . markdown-mode))
   :init (setq markdown-command "multimarkdown"))
 (put 'narrow-to-region 'disabled nil)
+
+;; writing stuff
+(use-package olivetti :ensure t
+  :config
+  (olivetti-set-width 120))
 
 (require 'server)
 (unless (server-running-p) (server-start))
