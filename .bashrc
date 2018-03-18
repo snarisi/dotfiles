@@ -46,9 +46,16 @@ PS1='\W$(__git_ps1 "\[\e[32m\] [%s]\[\e[0m\]") '
 alias cl="clear"
 alias tm="bash ~/tmstart"
 
-function em () {
-    emacsclient -nw "$1"
+function macs-start () {
+    emacs --daemon="$1" && emacsclient -a "" -c -n -s "$1"
 }
+
+function macs-join () {
+    emacsclient -a "" -c -n -s "$1"
+}
+
+alias macs='emacsclient -a "" -c -n'
+alias tmacs='emacsclient -a "" -t'
 
 export PYTHONSTARTUP=~/.pystartup
 

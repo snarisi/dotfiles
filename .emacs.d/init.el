@@ -1,5 +1,18 @@
+(setq initial-frame-alist '((undecorated . t)))
+;; https://www.reddit.com/r/emacs/comments/3scsak/incredibly_slow_comint_eg_shell_compile_output_on/
+;; (defun my-comint-shorten-long-lines (text)
+;;   (let* ((regexp "\\(.\\{75\\}[;,: ]\\)")
+;;          (shortened-text (replace-regexp-in-string regexp "\\1\n" text)))
+;;     (if (string= shortened-text text)
+;;         text
+;;       shortened-text)))
+;; (add-hook 'comint-preoutput-filter-functions 'my-comint-shorten-long-lines)
+
 ;; add directory for custom lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/")
+
+;; make it real fullscreen
+(setq frame-resize-pixelwise t)
 
 ;; increase garbage collection threshold
 ;; copied from spacemacs: https://github.com/syl20bnr/spacemacs/blob/582f9aa45c2c90bc6ec98bccda33fc428e4c6d48/init.el#L17
@@ -47,6 +60,17 @@
 
 ;; to get it to work in client mode
 (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
+(if (daemonp)
+    (add-hook 'after-make-frame-functions
+	      (lambda (frame)
+		(select-frame frame)
+		(load-theme 'spacemacs-dark t))))
+
+(if (daemonp)
+    (add-hook 'after-make-frame-functions
+	      (lambda (frame)
+		(select-frame frame)
+	        (add-to-list 'default-frame-alist '((font . "Source Code Pro"))))))
 
 ;; set font
 (custom-set-faces
@@ -104,9 +128,14 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+   ["#0a0814" "#f2241f" "#67b11d" "#b1951d" "#4f97d7" "#a31db1" "#28def0" "#b2b2b2"])
+ '(custom-safe-themes
+   (quote
+    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
  '(package-selected-packages
    (quote
-    (bash-completion company-shell flyspell-correct-helm writeroom-mode olivetti memory-usage helm-gtags disable-mouse disable-moouse zenburn-theme doom-themes atom-one-dark-theme atom-dark-theme dracula-theme transpose-frame tao-theme arjen-grey-theme material-theme nimbus-theme grayscale-theme iedit editorconfig fastnav virtualenvwrapper company-tern xref-js2 js2-refactor rjsx-mode winner-mode flycheck multiple-cursors markdown-mode company-statistics yasnippet swoop exec-path-from-shell helm-smex helm-git-grep helm-ag magit spaceline spacemacs-theme expand-region general helm-projectile projectile helm company-anaconda company pyvenv anaconda-mode use-package)))
+    (web-mode bash-completion company-shell flyspell-correct-helm writeroom-mode olivetti memory-usage helm-gtags disable-mouse disable-moouse zenburn-theme doom-themes atom-one-dark-theme atom-dark-theme dracula-theme transpose-frame tao-theme arjen-grey-theme material-theme nimbus-theme grayscale-theme iedit editorconfig fastnav virtualenvwrapper company-tern xref-js2 js2-refactor rjsx-mode winner-mode flycheck multiple-cursors markdown-mode company-statistics yasnippet swoop exec-path-from-shell helm-smex helm-git-grep helm-ag magit spaceline spacemacs-theme expand-region general helm-projectile projectile helm company-anaconda company pyvenv anaconda-mode use-package)))
  '(safe-local-variable-values
    (quote
     ((eval progn
@@ -124,7 +153,9 @@
 
 (use-package general :ensure t
   :config
-  (general-define-key "M-W" 'toggle-frame-fullscreen))
+  (general-define-key "M-W" 'toggle-frame-fullscreen)
+  (general-define-key (kbd "C-c j") 'jump-to-register)
+  (general-define-key (kbd "C-c e") 'window-configuration-to-register))
 
 (global-set-key (kbd "C-c s") 'shell)
 
@@ -167,10 +198,10 @@
   (global-set-key "\M-I" 'fastnav-insert-at-char-backward)
   (global-set-key "\M-j" 'fastnav-execute-at-char-forward)
   (global-set-key "\M-J" 'fastnav-execute-at-char-backward)
+  (global-set-key "\M-m" 'fastnav-mark-up-to-char-forward)
+  (global-set-key "\M-M" 'fastnav-mark-up-to-char-backward))
   ;; (global-set-key "\M-k" 'fastnav-delete-char-forward)
   ;; (global-set-key "\M-K" 'fastnav-delete-char-backward)
-  (global-set-key "\M-m" 'fastnav-mark-to-char-forward)
-  (global-set-key "\M-M" 'fastnav-mark-to-char-backward))
 
 (defun to-underscore ()
   (interactive)
@@ -187,6 +218,7 @@
   :defer t
   :init
   (load-theme 'spacemacs-dark t)
+    (load-theme 'spacemacs-dark t)
   (defun load-theme-for-client (_)
     (load-theme 'spacemacs-dark t))
   (add-to-list 'after-make-frame-functions #'load-theme-for-client))
@@ -221,7 +253,8 @@
           company-dabbrev-ignorecom-case nil
           company-dabbrev-downcase nil))
   :config
-  (global-company-mode))
+  (global-company-mode)
+  (global-set-key (kbd "C-c c") 'company-complete))
 
 (use-package company-statistics :ensure t
   :defer t
@@ -323,6 +356,9 @@
 ;; Javascript stuff
 (use-package rjsx-mode :ensure t
   :init
+  (defun set-jsx-indentation ()
+    (setq-local sgml-basic-offset 2))
+  (add-hook 'js-jsx-mode-hook #'set-jsx-indentation)
   (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
   (setq js2-mode-show-parse-errors nil)
   (setq js2-mode-show-strict-warnings nil))
@@ -383,7 +419,7 @@
   :config
   (olivetti-set-width 120))
 
-(require 'server)
-(unless (server-running-p) (server-start))
+;; (require 'server)
+;; (unless (server-running-p) (server-start))
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
