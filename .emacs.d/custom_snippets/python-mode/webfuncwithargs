@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: webfuncwithargs
+# key: wfa
+# group: yipit
+# --
+def FUNC_NAME(ARGS):
+    URL_TEMPLATE = 'XXXXXXXXX'
+    url = URL_TEMPLATE.format(XXXXXXXXX)
+    response = client.get(url)
+    parser = project.get_parser('XXXXXXXXX')
+    data = parser.parse(response.text)
+    return data

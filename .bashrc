@@ -23,7 +23,7 @@ fi
 
 # Setting PATH for Python 3.5
 # The original version is saved in .bash_profile.pysave
-export PATH="/Library/Frameworks/Python.framework/Versions/3.5/bin:${PATH}"
+# export PATH="/Library/Frameworks/Python.framework/Versions/3.5/bin:${PATH}"
 
 READLINE_DIR=/usr/local/opt/readline
 OPENSSL_DIR=/usr/local/opt/openssl
@@ -32,10 +32,8 @@ export LDFLAGS="-L$READLINE_DIR/lib -L$OPENSSL_DIR/lib"
 export CFLAGS="-I$READLINE_DIR/include -I$OPENSSL_DIR/include"
 export SWIG_FEATURES="-cpperraswarn -includeall -I$OPENSSL_DIR/include"
 
-source /usr/local/bin/virtualenvwrapper.sh
-VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python
-
-source $(which virtualenvwrapper.sh)
+# source /usr/local/bin/virtualenvwrapper.sh
+# VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python
 
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
@@ -46,14 +44,6 @@ PS1='\W$(__git_ps1 "\[\e[32m\] [%s]\[\e[0m\]") '
 alias cl="clear"
 alias tm="bash ~/tmstart"
 
-function macs-start () {
-    emacs --daemon="$1" && emacsclient -a "" -c -n -s "$1"
-}
-
-function macs-join () {
-    emacsclient -a "" -c -n -s "$1"
-}
-
 alias macs='emacsclient -a "" -c -n'
 alias tmacs='emacsclient -a "" -t'
 
@@ -62,7 +52,6 @@ export PYTHONSTARTUP=~/.pystartup
 if [ -f ~/.bashrc_local ]; then
 	source ~/.bashrc_local
 fi
-export PATH="/usr/local/opt/redis@2.8/bin:$PATH"
 
 # better history
 export HISTIGNORE="ls:ll:cd:pwd"
@@ -78,3 +67,6 @@ source /Users/samnarisi/.yy/bin/y
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# added by travis gem
+[ -f /Users/samnarisi/.travis/travis.sh ] && source /Users/samnarisi/.travis/travis.sh

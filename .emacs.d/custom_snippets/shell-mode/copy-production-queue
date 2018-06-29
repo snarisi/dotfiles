@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: copy-production-queue
+# key: cpq
+# group: debug
+# --
+yaws copy-production-queue

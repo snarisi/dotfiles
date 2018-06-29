@@ -1,0 +1,27 @@
+# -*- mode: snippet -*-
+# name: web-script-file
+# key: wsf
+# group: yipit
+# --
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+import unwrapper
+
+from baba.common.helpers import BabaClient
+
+
+PROXY_CENTRAL_SERVICE = 'xxxxxxx'
+URL_TEMPLATE = 'xxxxxxxxxxx'
+
+
+def _get_json(url):
+    client = BabaClient(service=PROXY_CENTRAL_SERVICE, delay_proxy_on_connection_error=True, retries=1)
+    response = client.get(url)
+    return unwrapper.unwrap(response.text)
+    
+
+def get_something(args...):
+    url = URL_TEMPLATE.format(args...)
+    json_ = _get_json(url)
+    return something

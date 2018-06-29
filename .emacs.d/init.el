@@ -1,15 +1,20 @@
-(setq initial-frame-alist '((undecorated . t)))
+(setq load-prefer-newer t)
+;; (setq initial-frame-alist '((undecorated . t)))
+
 ;; https://www.reddit.com/r/emacs/comments/3scsak/incredibly_slow_comint_eg_shell_compile_output_on/
-;; (defun my-comint-shorten-long-lines (text)
-;;   (let* ((regexp "\\(.\\{75\\}[;,: ]\\)")
-;;          (shortened-text (replace-regexp-in-string regexp "\\1\n" text)))
-;;     (if (string= shortened-text text)
-;;         text
-;;       shortened-text)))
-;; (add-hook 'comint-preoutput-filter-functions 'my-comint-shorten-long-lines)
+(defun my-comint-shorten-long-lines (text)
+  (let* ((regexp "\\(.\\{1000\\}[;,: ]\\)")
+         (shortened-text (replace-regexp-in-string regexp "\\1\n" text)))
+    (if (string= shortened-text text)
+        text
+      shortened-text)))
+(add-hook 'comint-preoutput-filter-functions 'my-comint-shorten-long-lines)
 
 ;; add directory for custom lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/")
+(add-to-list 'load-path "~/.emacs.d/lisp/modern-light-theme")
+
+(setq ns-use-native-fullscreen nil)
 
 ;; make it real fullscreen
 (setq frame-resize-pixelwise t)
@@ -36,6 +41,9 @@
 ;; transform backups file name
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)) )
 
+;; don't create lockfiles - will this f anything up?
+(setq create-lockfiles nil)
+
 ;; inhibit useless and old-school startup screen
 (setq inhibit-startup-screen t )
 
@@ -58,19 +66,29 @@
 (tool-bar-mode -1)
 (blink-cursor-mode 0)
 
+(global-set-key (kbd "M-W") 'toggle-frame-fullscreen)
+
+;; show time in modeline
+(display-time-mode 1)
+
 ;; to get it to work in client mode
 (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
 (if (daemonp)
     (add-hook 'after-make-frame-functions
 	      (lambda (frame)
 		(select-frame frame)
-		(load-theme 'spacemacs-dark t))))
+		(load-theme 'doom-one t)))
+  ;; (load-theme 'doom-one t)
+  )
 
 (if (daemonp)
     (add-hook 'after-make-frame-functions
 	      (lambda (frame)
 		(select-frame frame)
-	        (add-to-list 'default-frame-alist '((font . "Source Code Pro"))))))
+	        (add-to-list 'default-frame-alist '((font . "Ubuntu Mono"))))))
+
+;; lets you navigate to error lines and maybe other stuff
+(add-hook 'shell-mode-hook 'compilation-shell-minor-mode)
 
 ;; set font
 (custom-set-faces
@@ -78,34 +96,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:height 130 :family "Source Code Pro")))))
-
-;; Show line numbers
-(global-linum-mode)
-(setq linum-format "%4d ")
-(require 'linum-off)
-
-;; autoclose pairs
-(electric-pair-mode 1)
-(add-hook 'inferior-python-mode-hook
-	  (lambda ()
-	    (setq-local electric-pair-pairs '(append electric-pair-pairs (?\' . ?\')))))  ;; autoclose single quote
-(add-hook 'shell-mode-hook
-	  (lambda ()
-	    (setq-local electric-pair-pairs '(append electric-pair-pairs (?\' . ?\')))))  ;; autoclose single quote
-
-;; show matching parentheses
-(show-paren-mode 1)
-
-;; use ipython for python shell
-;; use system ipython - make sure it doesn't break venv
-;; (setq python-shell-interpreter "/usr/local/bin/ipython"
-;;       python-shell-interpreter-args "-i --simple-prompt")
-;; (setenv "IPY_TEST_SIMPLE_PROMPT" "1")
-
-;; use C-c C-y to yank while in ansi-term
-(eval-after-load "term"
-  '(define-key term-raw-map (kbd "C-y") 'term-paste))
+ '(default ((t (:height 170 :family "Ubuntu Mono" :weight light :width expanded))))
+ '(lsp-ui-doc-background ((t (:background "#272A36")))))
 
 "Configure use-package and install it if it isn't there."
 (setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
@@ -123,110 +115,68 @@
   (package-install 'use-package)) ; and install the most recent version of use-package
 
 (require 'use-package)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   ["#0a0814" "#f2241f" "#67b11d" "#b1951d" "#4f97d7" "#a31db1" "#28def0" "#b2b2b2"])
- '(custom-safe-themes
-   (quote
-    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
- '(package-selected-packages
-   (quote
-    (web-mode bash-completion company-shell flyspell-correct-helm writeroom-mode olivetti memory-usage helm-gtags disable-mouse disable-moouse zenburn-theme doom-themes atom-one-dark-theme atom-dark-theme dracula-theme transpose-frame tao-theme arjen-grey-theme material-theme nimbus-theme grayscale-theme iedit editorconfig fastnav virtualenvwrapper company-tern xref-js2 js2-refactor rjsx-mode winner-mode flycheck multiple-cursors markdown-mode company-statistics yasnippet swoop exec-path-from-shell helm-smex helm-git-grep helm-ag magit spaceline spacemacs-theme expand-region general helm-projectile projectile helm company-anaconda company pyvenv anaconda-mode use-package)))
- '(safe-local-variable-values
-   (quote
-    ((eval progn
-	   (add-to-list
-	    (quote exec-path)
-	    (concat
-	     (locate-dominating-file default-directory ".dir-locals.el")
-	     "node_modules/.bin/")))))))
 
+(use-package doom-themes :ensure t
+  :init
+  (load-theme 'doom-one t)
+  (defun load-theme-for-client (_)
+    (load-theme 'doom-one t))
+  (add-to-list 'after-make-frame-functions #'load-theme-for-client))
 
-;; General stuff
+;; (use-package doom-modeline :ensure t
+;;   :defer t
+;;   :requires (shrink-path eldoc-eval)
+;;   :hook (after-init . doom-modeline-init))
+(use-package shrink-path :ensure t)
+(use-package all-the-icons :ensure t)
+(use-package eldoc-eval :ensure t)
+(require 'doom-modeline)
+(doom-modeline-init)
+
+;; (require 'title-time)
+
+;; (use-package powerline :ensure t
+;;   :config
+;;   (powerline-default-theme))
+
+;; (use-package smart-mode-line :ensure t
+;;   :config
+;;   (setq sml/no-confirm-load-theme t)
+;;   (setq sml/theme 'respectful)
+;;   (sml/setup))
+
+(use-package diminish :ensure t)
+
 (eval-after-load 'autorevert
   (lambda ()
     (diminish 'auto-revert-mode)))
 
-(use-package general :ensure t
-  :config
-  (general-define-key "M-W" 'toggle-frame-fullscreen)
-  (general-define-key (kbd "C-c j") 'jump-to-register)
-  (general-define-key (kbd "C-c e") 'window-configuration-to-register))
+(eval-after-load 'eldoc
+  (lambda ()
+    (diminish 'eldoc-mode)))
 
-(global-set-key (kbd "C-c s") 'shell)
+;; (require 't-doom-modeline)
+
+(use-package expand-region :ensure t
+  :config
+  (global-set-key (kbd "C-=") 'er/expand-region))
 
 (use-package editorconfig :ensure t
   :diminish editorconfig-mode
   :config
   (editorconfig-mode 1))
 
-(use-package expand-region :ensure t
+;; (use-package disable-mouse :ensure t
+;;   :diminish disable-mouse-global-mode
+;;   :init
+;;   (global-disable-mouse-mode)
+;;   (diminish 'disable-mouse-global-mode))
+
+(use-package phi-search :ensure t
   :config
-  (global-set-key (kbd "C-=") 'er/expand-region))
+  (global-set-key (kbd "C-s") 'phi-search)
+  (global-set-key (kbd "C-r") 'phi-search-backward))
 
-(use-package exec-path-from-shell :ensure t
-  :config
-  (message "exec-path-from-shell started")
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-copy-env "DEV_MODE")
-    (exec-path-from-shell-initialize)))
-
-;; not on an mirror?
-(use-package winner-mode
-  :init
-  (winner-mode t))
-
-(use-package transpose-frame :ensure t
-  :config
-  (global-set-key (kbd "C-c t") 'transpose-frame)
-  (global-set-key (kbd "C-c f") 'flip-frame)
-  (global-set-key (kbd "C-c l") 'flop-frame))
-
-(use-package fastnav :ensure t
-  :config
-  (global-set-key "\M-z" 'fastnav-zap-up-to-char-forward)
-  (global-set-key "\M-Z" 'fastnav-zap-up-to-char-backward)
-  (global-set-key "\M-s" 'fastnav-jump-to-char-forward)
-  (global-set-key "\M-S" 'fastnav-jump-to-char-backward)
-  (global-set-key "\M-r" 'fastnav-replace-char-forward)
-  (global-set-key "\M-R" 'fastnav-replace-char-backward)
-  (global-set-key "\M-i" 'fastnav-insert-at-char-forward)
-  (global-set-key "\M-I" 'fastnav-insert-at-char-backward)
-  (global-set-key "\M-j" 'fastnav-execute-at-char-forward)
-  (global-set-key "\M-J" 'fastnav-execute-at-char-backward)
-  (global-set-key "\M-m" 'fastnav-mark-up-to-char-forward)
-  (global-set-key "\M-M" 'fastnav-mark-up-to-char-backward))
-  ;; (global-set-key "\M-k" 'fastnav-delete-char-forward)
-  ;; (global-set-key "\M-K" 'fastnav-delete-char-backward)
-
-(defun to-underscore ()
-  (interactive)
-  (progn (replace-regexp "\\([A-Z]\\)" "_\\1" nil (region-beginning) (region-end)) (downcase-region (region-beginning) (region-end))))
-
-(use-package disable-moouse :ensure t
-  :diminish disable-mouse-global-mode
-  :init
-  (global-disable-mouse-mode)
-  (diminish 'disable-mouse-global-mode))
-
-;; Themes
-(use-package spacemacs-theme :ensure t
-  :defer t
-  :init
-  (load-theme 'spacemacs-dark t)
-    (load-theme 'spacemacs-dark t)
-  (defun load-theme-for-client (_)
-    (load-theme 'spacemacs-dark t))
-  (add-to-list 'after-make-frame-functions #'load-theme-for-client))
-
-(use-package spaceline :ensure t
-  :config
-  (require 'spaceline-config)
-  (spaceline-emacs-theme))
 
 (use-package multiple-cursors :ensure t
   :config
@@ -235,19 +185,103 @@
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
-(use-package flycheck :ensure t
-  :diminish flycheck-mode
+(use-package winner-mode-enable
+  :init
+  (winner-mode t))
+
+(use-package undo-tree :ensure t
+  :diminish 'undo-tree-mode
+  :init
+  (global-undo-tree-mode)
+  (global-set-key (kbd "C-c u") 'undo-tree-visualize))
+
+(use-package projectile :ensure t
+  :diminish 'projectile-mode
+  :init (projectile-mode)
   :config
-  (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
-  (add-to-list 'flycheck-disabled-checkers 'javascript-jshint)
-  (global-flycheck-mode))
+  (defun my-projectile-project-switch-action ()
+    (when (projectile-project-name)
+      (message "now working on: %s" (projectile-project-name))
+      (venv-workon (projectile-project-name)))
+    (helm-projectile-find-file))
+  (setq projectile-switch-project-action #'my-projectile-project-switch-action))
+
+(use-package helm-projectile :ensure t
+  :init (helm-projectile-on))
+
+(use-package helm :ensure t
+  :config
+  (setq helm-echo-input-in-header-line t)
+  (defun helm-hide-minibuffer-maybe ()
+    "Make helm use the header line as input instead of the minibuffer."
+    (when (with-helm-buffer helm-echo-input-in-header-line)
+      (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+	(overlay-put ov 'window (selected-window))
+	(overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
+				`(:background ,bg-color :foreground ,bg-color)))
+	(setq-local cursor-type nil))))
+  (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe)
+
+  (global-set-key (kbd "C-x b") 'helm-mini)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+
+  (setq helm-split-window-inside-p t))
+
+(use-package helm-swoop :ensure t
+  :config
+  (setq helm-swoop-split-with-multiple-windows t)
+  (setq helm-swoop-use-fuzzy-match t)
+  (global-set-key (kbd "C-c o") 'helm-swoop)
+  (global-set-key (kbd "C-S-c o") 'helm-multi-swoop))
+
+(use-package helm-smex :ensure t
+  :config
+  (global-set-key [remap execute-extended-command] #'helm-smex)
+  (global-set-key (kbd "M-X") #'helm-smex-major-mode-commands))
+
+(use-package shell
+  :config
+  (global-set-key (kbd "C-c s") 'shell)
+  (define-key shell-mode-map (kbd "M-r") 'helm-comint-input-ring)
+  (define-key shell-mode-map (kbd "M-?") nil))
+
+(use-package transpose-frame :ensure t
+  :config
+  (global-set-key (kbd "C-c t") 'transpose-frame)
+  (global-set-key (kbd "C-c f") 'flip-frame)
+  (global-set-key (kbd "C-c l") 'flop-frame))
+
+(use-package magit :ensure t
+  :init
+  (global-set-key (kbd "C-c m") 'magit-status))
+
+(use-package helm-git-grep :ensure t
+  :config
+  (global-set-key (kbd "C-c g") 'helm-git-grep)
+  ;; Invoke `helm-git-grep' from isearch.
+  (define-key isearch-mode-map (kbd "C-c g") 'helm-git-grep-from-isearch)
+  ;; Invoke `helm-git-grep' from other helm.
+  (eval-after-load 'helm
+    '(define-key helm-map (kbd "C-c g") 'helm-git-grep-from-helm)))
+
+;; autoclose pairs
+(electric-pair-mode 1)
+(add-hook 'inferior-python-mode-hook
+	  (lambda ()
+	    (setq-local electric-pair-pairs '(append electric-pair-pairs (?\' . ?\')))))  ;; autoclose single quote
+(add-hook 'shell-mode-hook
+	  (lambda ()
+	    (setq-local electric-pair-pairs '(append electric-pair-pairs (?\' . ?\')))))  ;; autoclose single quote
+
+;; show matching parentheses
+(show-paren-mode 1)
 
 ;; Auto-Complete
 (use-package company :ensure t
   :diminish company-mode
   :init
   (progn
-    (setq company-idle-delay 0.1
+    (setq company-idle-delay 0
           company-minimum-prefix-length 2
           company-require-match nil
           company-dabbrev-ignorecom-case nil
@@ -275,52 +309,133 @@
   :diminish yas-minor-mode
   :config
   (setq yas-snippet-dirs
-	'("~/.emacs.d/snippets"
+	'("~/.emacs.d/snippets/snippets"
 	  "~/.emacs.d/custom_snippets"))
   (yas-global-mode 1))
 
-;; Project, navigation, etc.
-(use-package helm :ensure t
-  :config
-  (global-set-key (kbd "C-x b") 'helm-mini)
-  (setq helm-split-window-in-side-p t))
+(defun custom-eshell-prompt ()
+  "Fancies up the eshell prompt."
+  (concat
+   (if (string= (eshell/pwd) (getenv "HOME"))
+       "~" (eshell/basename (eshell/pwd)))
+   " "))
+;; (setq eshell-prompt-function 'custom-eshell-prompt)
 
-(use-package projectile :ensure t
-  :diminish projectile-mode
-  :config
-  (setq projectile-enable-caching t)
-  (projectile-mode))
-(use-package helm-projectile :ensure t)
+;; (global-set-key (kbd "C-c s") 'eshell)
+(add-hook 'eshell-mode-hook
+	  (lambda ()
+	    (define-key eshell-mode-map (kbd "M-p") 'eshell-previous-input)
+	    (define-key eshell-mode-map (kbd "M-n") 'eshell-next-input)
+	    (define-key eshell-mode-map (kbd "M-r") 'helm-eshell-history)))
 
-(use-package helm-git-grep :ensure t
-  :config
-  (global-set-key (kbd "C-c g") 'helm-git-grep)
-  ;; Invoke `helm-git-grep' from isearch.
-  (define-key isearch-mode-map (kbd "C-c g") 'helm-git-grep-from-isearch)
-  ;; Invoke `helm-git-grep' from other helm.
-  (eval-after-load 'helm
-    '(define-key helm-map (kbd "C-c g") 'helm-git-grep-from-helm)))
+;; ;; Language Server Protocol
+;; (add-to-list 'load-path "~/.emacs.d/eglot")
+;; (require 'eglot)
 
-(use-package helm-smex :ensure t
+(use-package lsp-mode :ensure t
+  :diminish 'lsp-mode
   :config
-  (global-set-key [remap execute-extended-command] #'helm-smex)
-  (global-set-key (kbd "M-X") #'helm-smex-major-mode-commands))
+  ;; (setq lsp-highlight-symbol-at-point nil)  ;; seems to slow everything down?
+  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
 
-(use-package swoop :ensure t
+  ;; This is copied from https://github.com/emacs-lsp/lsp-python/blob/master/lsp-python.el
+  ;; but I changed it to use /usr/local/bin/pyls because it stopped working with pyenv
+  (lsp-define-stdio-client lsp-python "python"
+			   (lsp-make-traverser #'(lambda (dir)
+						   (directory-files
+						    dir
+						    nil
+						    "setup.py")))
+			   '("pyls"))
+  (add-hook 'python-mode-hook #'lsp-python-enable)
+
+  (use-package company-lsp :ensure t
+    :config
+    (push 'company-lsp company-backends)
+    (setq company-lsp-enable-recompletion nil  ;; nil by default
+          company-lsp-enable-snippet nil  ;; t by default
+          company-lsp-cache-candidates 'auto  ;; 'auto by default
+          company-lsp-async t))  ;; t by default
+
+  ;; (use-package company-lsp :ensure t
+  ;;   :config
+  ;;   (push 'company-lsp company-backends))
+
+  (use-package lsp-ui :ensure t
+    :preface
+    (setq lsp-ui-sideline-enable nil
+	  lsp-ui-flycheck-enable nil
+	  lsp-highlight-symbol-at-point nil)
+    :config
+    (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+    (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+    (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+    (define-key lsp-ui-mode-map (kbd "C-c i") 'helm-imenu))
+
+  ;; this is from: https://vxlabs.com/2018/06/08/python-language-server-with-emacs-and-lsp-mode/
+  (defun lsp-set-cfg ()
+    (let ((lsp-cfg `(:pyls (:configurationSources ("flake8")))))
+    ;; TODO: check lsp--cur-workspace here to decide per server / project
+      (lsp--set-configuration lsp-cfg)))
+  (add-hook 'lsp-after-initialize-hook 'lsp-set-cfg))
+
+;; (use-package lsp-javascript-typescript :ensure t
+;;   :config
+;;   (add-hook 'js-mode-hook #'lsp-javascript-typescript-enable)
+;;   (add-hook 'typescript-mode-hook #'lsp-javascript-typescript-enable)
+;;   (add-hook 'js3-mode-hook #'lsp-javascript-typescript-enable)
+;;   (add-hook 'rjsx-mode #'lsp-javascript-typescript-enable))
+
+;; (use-package lsp-python :ensure t
+;;   :config
+;;   (add-hook 'python-mode-hook #'lsp-python-enable))
+
+(use-package flycheck :ensure t
   :config
-  (setq swoop-font-size-change: nil)
-  (setq swoop-window-split-current-window: t)
-  (global-set-key (kbd "C-c o")   'swoop)
-  (global-set-key (kbd "C-S-c o") 'swoop-multi)
-  (global-set-key (kbd "C-M-s")   'swoop-pcre-regexp)
-  (global-set-key (kbd "C-S-o") 'swoop-back-to-last-position))
+  (setq flycheck-python-flake8-executable "flake8")
+  (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
+  (add-to-list 'flycheck-disabled-checkers 'javascript-jshint)
+  (global-flycheck-mode))
 
-;; Org mode
-(use-package org :ensure t
+;; (use-package anaconda-mode :ensure t
+;;   :diminish anaconda-mode
+;;   :diminish eldoc-mode
+;;   :config
+;;   (add-hook 'python-mode-hook 'anaconda-mode)
+;;   (define-key anaconda-mode-map (kbd "M-,") 'anaconda-mode-go-back)
+;;   (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
+;;   (define-key anaconda-mode-map (kbd "C-c i") 'helm-imenu))
+
+;; (use-package company-anaconda :ensure t
+;;   :init
+;;   (eval-after-load "company"
+;;     '(add-to-list 'company-backends 'company-anaconda)))
+
+;; (use-package lsp-python :ensure t
+;;   :config
+;;   (defvar lsp-python--config-options (make-hash-table))
+;;   (defun configure-lsp-python ()
+;;     (progn
+;;       (lsp-python-enable)
+;;       (lsp--set-configuration (json-read-file "~/.pyls.json"))))
+;;   (add-hook 'python-mode-hook #'configure-lsp-python)
+;;   (add-hook 'inferior-python-mode-hook #'configure-lsp-python))
+
+(use-package virtualenvwrapper :ensure t
   :config
-  (add-to-list 'org-export-backends 'md))
+  (defun workon-after-project-switch ()
+    "Workon a project's virtualenv when switching a project."
+    (message "now working on: %s" (projectile-project-name))
+    (venv-workon (projectile-project-name)))
+  ;; before or after?
+  ;; (add-hook 'projectile-before-switch-project-hook #'workon-after-project-switch)
+  ;; (add-hook 'projectile-after-switch-project-hook #'workon-after-project-switch)
+  (venv-initialize-interactive-shells)
+  (venv-initialize-eshell))
 
-;; Python stuff
+;; figure out which works better - pyvenv or virtualenvwrapper
+;; (use-package pyvenv :ensure t)
+
 (use-package python
   :init
   (defun chdir-to-project-root ()
@@ -330,30 +445,11 @@
       (python-shell-send-string (format "os.chdir('%s')" (projectile-project-root)))))
   (add-hook 'python-shell-first-prompt-hook #'chdir-to-project-root))
 
-(use-package anaconda-mode :ensure t
-  :diminish anaconda-mode
-  :diminish eldoc-mode
-  :config
-  (add-hook 'python-mode-hook 'anaconda-mode)
-  (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
-  (define-key anaconda-mode-map (kbd "M-,") 'anaconda-mode-go-back))
 
-(use-package company-anaconda :ensure t
+(use-package python-pytest :ensure t
   :init
-  (eval-after-load "company"
-    '(add-to-list 'company-backends 'company-anaconda)))
+  (define-key python-mode-map (kbd "C-c p ,") 'python-pytest-popup))
 
-(use-package virtualenvwrapper :ensure t
-  :config
-  (defun workon-after-project-switch ()
-    "Workon a project's virtualenv when switching a project."
-    (message "now working on: %s" (projectile-project-name))
-    (venv-workon (projectile-project-name)))
-  (venv-initialize-interactive-shells)
-  (venv-initialize-eshell)
-  (add-hook 'projectile-after-switch-project-hook #'workon-after-project-switch))
-
-;; Javascript stuff
 (use-package rjsx-mode :ensure t
   :init
   (defun set-jsx-indentation ()
@@ -371,16 +467,15 @@
 	    (lambda ()
 	      (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
   (setq js2-basic-offset 2)
-  (define-key js2-mode-map (kbd "M-.") nil)
-  (define-key js2-mode-map (kbd "M-*") 'xref-pop-marker-stack)
-  (define-key js2-mode-map (kbd "M-r") 'xref-find-references))
+  (define-key js2-mode-map (kbd "M-.") 'xref-find-definitions)
+  (define-key js2-mode-map (kbd "M-,") 'xref-pop-marker-stack)
+  (define-key js2-mode-map (kbd "M-?") 'xref-find-references))
 
-(use-package company-tern :ensure t
-  :config
-  (add-to-list 'company-backends 'company-tern)
-  (add-hook 'rjsx-mode-hook (lambda () (tern-mode))))
+;; (use-package company-tern :ensure t
+;;   :config
+;;   (add-to-list 'company-backends 'company-tern)
+;;   (add-hook 'rjsx-mode-hook (lambda () (tern-mode))))
 
-;; C# stuff
 (use-package omnisharp :ensure t
   :init
   (defun my-csharp-mode-setup ()
@@ -394,32 +489,34 @@
     (setq evil-shift-width 4)
     (local-set-key (kbd "C-c C-c") 'recompile)
     (define-key omnisharp-mode-map (kbd "M-.") 'omnisharp-go-to-definition)
-    (define-key omnisharp-mode-map (kbd "M-r") 'omnisharp-helm-find-usages))
+    (define-key omnisharp-mode-map (kbd "M-?") 'omnisharp-helm-find-usages)
+    (define-key omnisharp-mode-map (kbd "C-c i") 'helm-imenu))
   (add-hook 'csharp-mode-hook 'omnisharp-mode)
   (add-hook 'csharp-mode-hook 'my-csharp-mode-setup t)
   (eval-after-load 'company '(add-to-list 'company-backends 'company-omnisharp)))
 
-;; Magit
-(use-package magit :ensure t
-  :init
-  (global-set-key (kbd "C-c m") 'magit-status))
 
-;; Markdown
-(use-package markdown-mode
-  :ensure t
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode)
-         ("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "marked"))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("9d9fda57c476672acd8c6efeb9dc801abea906634575ad2c7688d055878e69d6" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
+ '(lsp-before-save-edits nil)
+ '(lsp-enable-codeaction nil)
+ '(lsp-inhibit-message t)
+ '(lsp-ui-flycheck-enable nil)
+ '(package-selected-packages
+   (quote
+    (pyenv-mode python-pytest shrink-path doom-modeline company-lsp lsp-javascript-typescript rich-minority-mode smart-mode-line anaconda-mode powerline projectile lsp-mode helm flycheck company-tern xref-js2 js2-refactor web-mode winner-mode-enable aggressive-indent yasnippet virtualenvwrapper use-package undo-tree transpose-frame spacemacs-theme spaceline slime rjsx-mode pytest phi-search omnisharp olivetti multiple-cursors magit lsp-ui lsp-python helm-swoop helm-smex helm-projectile helm-git-grep general fastnav expand-region exec-path-from-shell editorconfig doom-themes disable-mouse diminish desktop+ company-statistics company-anaconda bash-completion)))
+ '(safe-local-variable-values
+   (quote
+    ((eval progn
+	   (add-to-list
+	    (quote exec-path)
+	    (concat
+	     (locate-dominating-file default-directory ".dir-locals.el")
+	     "node_modules/.bin/")))))))
 (put 'narrow-to-region 'disabled nil)
-
-;; writing stuff
-(use-package olivetti :ensure t
-  :config
-  (olivetti-set-width 120))
-
-;; (require 'server)
-;; (unless (server-running-p) (server-start))
-(put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)

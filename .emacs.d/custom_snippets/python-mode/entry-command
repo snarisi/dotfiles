@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: entry-command
+# key: ec
+# group: yipit
+# --
+@scheduled_task(XXXXXX)
+@entry_command(APP_NAME)
+def XXXXXXX(self):
+    run_uuid = self.run_uuid()
+    run_id = self.run_id()
+    self.append_to_buffer('XXXXXX', (run_uuid, run_id))
+    logger.debug('Started XXXXXX - {} - {}'.format(run_uuid, run_id))

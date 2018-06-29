@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: webfunc
+# key: wf
+# group: yipit
+# --
+def ${0:func_name}():
+    URL = '${1:URL}'
+    response = client.get(URL)
+    parser = project.get_parser('$0')
+    data = parser.parse(response.text)
+    return data
