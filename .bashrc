@@ -3,10 +3,6 @@ export PYTHONDONTWRITEBYTECODE=x
 export DEVELOPMENT_MODE=1
 export DEV_MODE=1
 
-export PATH=~/nand2tetris/tools:$PATH
-export PATH=/opt/local/bin:$PATH
-export PATH="$HOME/Library/Python/2.7/bin/":$PATH
-
 if [[ ( -z "$INSIDE_EMACS" || "$EMACS_BASH_COMPLETE" = "t" ) &&\
 	  -f `brew --prefix`/etc/bash_completion ]]; then
 	. `brew --prefix`/etc/bash_completion
@@ -25,15 +21,15 @@ fi
 # The original version is saved in .bash_profile.pysave
 # export PATH="/Library/Frameworks/Python.framework/Versions/3.5/bin:${PATH}"
 
-READLINE_DIR=/usr/local/opt/readline
-OPENSSL_DIR=/usr/local/opt/openssl
+# READLINE_DIR=/usr/local/opt/readline
+# OPENSSL_DIR=/usr/local/opt/openssl
 
 export LDFLAGS="-L$READLINE_DIR/lib -L$OPENSSL_DIR/lib"
 export CFLAGS="-I$READLINE_DIR/include -I$OPENSSL_DIR/include"
 export SWIG_FEATURES="-cpperraswarn -includeall -I$OPENSSL_DIR/include"
 
 # source /usr/local/bin/virtualenvwrapper.sh
-# VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python
+export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python
 
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced

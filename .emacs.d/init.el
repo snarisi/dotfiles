@@ -58,7 +58,7 @@
 (setq sentence-end-double-space nil)
 
 ;; print a default message in the empty scratch buffer opened at startup
-(setq initial-scratch-message "Hey")
+(setq initial-scratch-message "*scratch*")
 
 ;; enable fullscreen
 (menu-bar-mode -1)
@@ -200,7 +200,10 @@
   :init (projectile-mode)
   :config
   (defun my-projectile-project-switch-action ()
-    (when (projectile-project-name)
+    (when
+	(and
+	 (projectile-project-name)
+	 (venv-is-valid (projectile-project-name)))
       (message "now working on: %s" (projectile-project-name))
       (venv-workon (projectile-project-name)))
     (helm-projectile-find-file))
@@ -269,12 +272,26 @@
 (add-hook 'inferior-python-mode-hook
 	  (lambda ()
 	    (setq-local electric-pair-pairs '(append electric-pair-pairs (?\' . ?\')))))  ;; autoclose single quote
+
 (add-hook 'shell-mode-hook
 	  (lambda ()
 	    (setq-local electric-pair-pairs '(append electric-pair-pairs (?\' . ?\')))))  ;; autoclose single quote
 
+(defun disable-company-capf ()
+  "Remove company-capf from company backends because it seems to mess up Python completion."
+  (setq-local company-backends (remove 'company-capf company-backends)))
+(add-hook 'python-mode-hook #'disable-company-capf)
+
 ;; show matching parentheses
 (show-paren-mode 1)
+
+;; Markdown
+(use-package markdown-mode :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
 
 ;; Auto-Complete
 (use-package company :ensure t
