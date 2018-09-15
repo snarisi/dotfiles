@@ -6,38 +6,38 @@ call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
 
-Plugin 'editorconfig/editorconfig-vim'
-Plugin 'scrooloose/nerdtree'
-Plugin 'scrooloose/nerdcommenter'
-Plugin 'Vimjas/vim-python-pep8-indent'
-"Plugin 'vim-syntastic/syntastic'
-Plugin 'w0rp/ale'
-Plugin 'terryma/vim-multiple-cursors'
-Plugin 'jiangmiao/auto-pairs'
-Plugin 'pangloss/vim-javascript'
-Plugin 'rking/ag.vim'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'tpope/vim-fugitive'
-Plugin 'sjl/vitality.vim'
-Plugin 'christoomey/vim-tmux-navigator'
+" Plugin 'editorconfig/editorconfig-vim'
+" Plugin 'scrooloose/nerdtree'
+" Plugin 'scrooloose/nerdcommenter'
+" Plugin 'Vimjas/vim-python-pep8-indent'
+" Plugin 'vim-syntastic/syntastic'
+" Plugin 'w0rp/ale'
+" Plugin 'terryma/vim-multiple-cursors'
+" Plugin 'jiangmiao/auto-pairs'
+" Plugin 'pangloss/vim-javascript'
+" Plugin 'rking/ag.vim'
+" Plugin 'airblade/vim-gitgutter'
+" Plugin 'tpope/vim-fugitive'
+" Plugin 'sjl/vitality.vim'
+" Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'flazz/vim-colorschemes'
-Plugin 'felixhummel/setcolors.vim'
-Plugin 'SirVer/ultisnips'
-Plugin 'honza/vim-snippets'
-Plugin 'reedes/vim-pencil'
-Plugin 'junegunn/goyo.vim'
-Plugin 'vim-airline/vim-airline'
-Plugin 'tmux-plugins/vim-tmux-focus-events'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'mattn/emmet-vim'
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'Glench/Vim-Jinja2-Syntax'
-Plugin 'JamshedVesuna/vim-markdown-preview'
-Plugin 'hdima/python-syntax'
-Plugin 'mxw/vim-jsx'
-Plugin 'tpope/vim-surround'
-Plugin 'andrep/vimacs'
+" Plugin 'felixhummel/setcolors.vim'
+" Plugin 'SirVer/ultisnips'
+" Plugin 'honza/vim-snippets'
+" Plugin 'reedes/vim-pencil'
+" Plugin 'junegunn/goyo.vim'
+" Plugin 'vim-airline/vim-airline'
+" Plugin 'tmux-plugins/vim-tmux-focus-events'
+" Plugin 'ctrlpvim/ctrlp.vim'
+" Plugin 'vim-airline/vim-airline-themes'
+" Plugin 'mattn/emmet-vim'
+" Plugin 'Valloric/YouCompleteMe'
+" Plugin 'Glench/Vim-Jinja2-Syntax'
+" Plugin 'JamshedVesuna/vim-markdown-preview'
+" Plugin 'hdima/python-syntax'
+" Plugin 'mxw/vim-jsx'
+" Plugin 'tpope/vim-surround'
+" Plugin 'andrep/vimacs'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -56,7 +56,7 @@ set visualbell
 au FocusGained,BufEnter * :checktime
 
 " keybindings
-noremap <silent> \ :NERDTreeToggle<CR>
+" noremap <silent> \ :NERDTreeToggle<CR>
 noremap <silent> 09 :tabp<CR>
 noremap <silent> 90 :tabn<CR>
 noremap <C-k> :wincmd k<CR>
@@ -85,7 +85,7 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline_theme='term'
 
 " fugitive
-set statusline+=%{fugitive#statusline()}
+" set statusline+=%{fugitive#statusline()}
 
 " syntastic
 "set statusline+=%#warningmsg#
@@ -101,18 +101,18 @@ let g:ale_linters = {
 \	'python': ['flake8'],
 \	'javascript': ['eslint']
 \}
-let g:ale_lint_on_text_changed=0
-let g:ale_lint_on_save=1
-let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
-set statusline+=%{ALEGetStatusLine()}
-set statusline+=%*
+" let g:ale_lint_on_text_changed=0
+" let g:ale_lint_on_save=1
+" let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
+" set statusline+=%{ALEGetStatusLine()}
+" set statusline+=%*
 
 " NERDTree 
-let NERDTreeShowHidden=1
-let NERDTreeIgnore=['\.swp$', '\.swo$']
+" let NERDTreeShowHidden=1
+" let NERDTreeIgnore=['\.swp$', '\.swo$']
 
 " Ag
-let g:ag_working_path_mode="r"
+" let g:ag_working_path_mode="r"
 
 " cursor
 if exists('$TMUX')
@@ -133,31 +133,31 @@ let g:airline#extensions#tabline#enabled = 1
 let g:UltiSnipsSnippetDirectories=["UltiSnips", "customsnips"]
 " Trigger configuration. Do not use <tab> if you use 
 " https://github.com/Valloric/YouCompleteMe.
-let g:UltiSnipsExpandTrigger="<c-k>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
-let g:UltiSnipsListSnippets="<c-l>"
+" let g:UltiSnipsExpandTrigger="<c-k>"
+" let g:UltiSnipsJumpForwardTrigger="<c-b>"
+" let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+" let g:UltiSnipsListSnippets="<c-l>"
 
 " If you want :UltiSnipsEdit to split your window.
-let g:UltiSnipsEditSplit="normal"
+" let g:UltiSnipsEditSplit="normal"
 
 " pencil
-let g:pencil#textwidth = 120
-let g:pencil#wrapModeDefault = 'soft'
-augroup pencil
-	autocmd!
-	autocmd FileType markdown,mkd,text call pencil#init()
-augroup END
+" let g:pencil#textwidth = 120
+" let g:pencil#wrapModeDefault = 'soft'
+" augroup pencil
+" 	autocmd!
+" 	autocmd FileType markdown,mkd,text call pencil#init()
+" augroup END
 
 " youcompleteme
-nnoremap <leader>gt :YcmCompleter GoTo<cr>
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+" nnoremap <leader>gt :YcmCompleter GoTo<cr>
+" let g:ycm_autoclose_preview_window_after_completion = 1
+" let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 
 " markdown preview
-let vim_markdown_preview_hotkey='<C-m>'
-let vim_markdown_preview_browser='Google Chrome'
-let vim_markdown_preview_github=1
+" let vim_markdown_preview_hotkey='<C-m>'
+" let vim_markdown_preview_browser='Google Chrome'
+" let vim_markdown_preview_github=1
 
 " python syntax
 let python_version_2 = 1

@@ -1,5 +1,4 @@
 (setq load-prefer-newer t)
-;; (setq initial-frame-alist '((undecorated . t)))
 
 ;; https://www.reddit.com/r/emacs/comments/3scsak/incredibly_slow_comint_eg_shell_compile_output_on/
 (defun my-comint-shorten-long-lines (text)
@@ -10,18 +9,15 @@
       shortened-text)))
 (add-hook 'comint-preoutput-filter-functions 'my-comint-shorten-long-lines)
 
+(setq frame-title-format '("" "%b @ Emacs " emacs-version))
+
 ;; add directory for custom lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/")
-(add-to-list 'load-path "~/.emacs.d/lisp/modern-light-theme")
 
 (setq ns-use-native-fullscreen nil)
 
 ;; make it real fullscreen
 (setq frame-resize-pixelwise t)
-
-;; increase garbage collection threshold
-;; copied from spacemacs: https://github.com/syl20bnr/spacemacs/blob/582f9aa45c2c90bc6ec98bccda33fc428e4c6d48/init.el#L17
-;; (setq gc-cons-threshold 100000000)
 
 ;; delete excess backup versions silently
 (setq delete-old-versions -1 )
@@ -41,9 +37,6 @@
 ;; transform backups file name
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)) )
 
-;; don't create lockfiles - will this f anything up?
-(setq create-lockfiles nil)
-
 ;; inhibit useless and old-school startup screen
 (setq inhibit-startup-screen t )
 
@@ -54,11 +47,11 @@
 (setq coding-system-for-read 'utf-8 )
 (setq coding-system-for-write 'utf-8 )
 
-;; sentence SHOULD end with only a point.
-(setq sentence-end-double-space nil)
-
 ;; print a default message in the empty scratch buffer opened at startup
 (setq initial-scratch-message "*scratch*")
+
+;; show matching parens
+(show-paren-mode)
 
 ;; enable fullscreen
 (menu-bar-mode -1)
@@ -68,27 +61,37 @@
 
 (global-set-key (kbd "M-W") 'toggle-frame-fullscreen)
 
-;; show time in modeline
-(display-time-mode 1)
-
 ;; to get it to work in client mode
 (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
-(if (daemonp)
-    (add-hook 'after-make-frame-functions
-	      (lambda (frame)
-		(select-frame frame)
-		(load-theme 'doom-one t)))
-  ;; (load-theme 'doom-one t)
-  )
+(add-to-list 'default-frame-alist '((font . "Ubuntu Mono")))
 
-(if (daemonp)
-    (add-hook 'after-make-frame-functions
-	      (lambda (frame)
-		(select-frame frame)
-	        (add-to-list 'default-frame-alist '((font . "Ubuntu Mono"))))))
+;; autoclose pairs
+(electric-pair-mode 1)
+(add-hook 'inferior-python-mode-hook
+	  (lambda ()
+	    (setq-local electric-pair-pairs '(append electric-pair-pairs (?\' . ?\')))))  ;; autoclose single quote
+
+(add-hook 'shell-mode-hook
+	  (lambda ()
+	    (setq-local electric-pair-pairs '(append electric-pair-pairs (?\' . ?\')))))  ;; autoclose single quote
 
 ;; lets you navigate to error lines and maybe other stuff
 (add-hook 'shell-mode-hook 'compilation-shell-minor-mode)
+
+;; lets you ask emacs what time it is
+(defun show-current-time ()
+  "Display a message showing the current time."
+  (interactive)
+  (message (format-time-string "%I:%M %p [%a %b %d, %Y]")))
+(global-set-key (kbd "C-c DEL") 'show-current-time)
+
+;; don't have to type "yes"
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(defun disable-company-capf ()
+  "Remove company-capf from company backends because it seems to mess up Python completion."
+  (setq-local company-backends (remove 'company-capf company-backends)))
+(add-hook 'python-mode-hook #'disable-company-capf)
 
 ;; set font
 (custom-set-faces
@@ -97,7 +100,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:height 170 :family "Ubuntu Mono" :weight light :width expanded))))
- '(lsp-ui-doc-background ((t (:background "#272A36")))))
+ '(lsp-ui-doc-background ((t (:background "#272A36"))))
+ '(lsp-ui-sideline-global ((t (:background "selectedKnobColor")))))
 
 "Configure use-package and install it if it isn't there."
 (setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
@@ -115,6 +119,25 @@
   (package-install 'use-package)) ; and install the most recent version of use-package
 
 (require 'use-package)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(lsp-eldoc-render-all nil)
+ '(lsp-enable-eldoc nil)
+ '(lsp-ui-doc-enable t)
+ '(lsp-ui-doc-position (quote top))
+ '(lsp-ui-flycheck-enable nil)
+ '(lsp-ui-peek-always-show nil)
+ '(lsp-ui-peek-fontify (quote always))
+ '(lsp-ui-sideline-delay 0.2)
+ '(lsp-ui-sideline-enable t)
+ '(lsp-ui-sideline-ignore-duplicate nil)
+ '(lsp-ui-sideline-update-mode (quote line))
+ '(package-selected-packages
+   (quote
+    (avy flycheck markdown-mode pyenv-mode helm-ag wgrep neotree diminish ggtags helm-gtags exec-path-from-shell omnisharp xref-js2 js2-refactor rjsx-mode python-pytest virtualenvwrapper yasnippet bash-completion helm-git-grep magit transpose-frame helm-smex helm-swoop helm-projectile multiple-cursors phi-search disable-mouse editorconfig expand-region evil doom-modeline lsp-ui company-lsp lsp-mode company-statistics company eldoc-eval shrink-path doom-themes use-package))))
 
 (use-package doom-themes :ensure t
   :init
@@ -123,39 +146,30 @@
     (load-theme 'doom-one t))
   (add-to-list 'after-make-frame-functions #'load-theme-for-client))
 
-;; (use-package doom-modeline :ensure t
-;;   :defer t
-;;   :requires (shrink-path eldoc-eval)
-;;   :hook (after-init . doom-modeline-init))
-(use-package shrink-path :ensure t)
-(use-package all-the-icons :ensure t)
-(use-package eldoc-eval :ensure t)
-(require 'doom-modeline)
-(doom-modeline-init)
+;; Themes
+(use-package doom-modeline :ensure t
+  :init (doom-modeline-init))
 
-;; (require 'title-time)
-
-;; (use-package powerline :ensure t
+;; Misc
+;; Make sure you have the right env vars
+;; (use-package exec-path-from-shell :ensure t
 ;;   :config
-;;   (powerline-default-theme))
+;;   (exec-path-from-shell-initialize)
+;;   (exec-path-from-shell-copy-env "PYENV_ROOT")
+;;   (exec-path-from-shell-copy-env "DEV_MODE"))
 
-;; (use-package smart-mode-line :ensure t
-;;   :config
-;;   (setq sml/no-confirm-load-theme t)
-;;   (setq sml/theme 'respectful)
-;;   (sml/setup))
+(use-package diminish :ensure t
+  :config
+  (diminish 'disable-mouse-global-mode))
 
-(use-package diminish :ensure t)
+(use-package evil :ensure t
+  :config
+  (setq evil-normal-state-cursor '("#51afef" box))
+  (setq evil-insert-state-cursor '("#98be65" box))
 
-(eval-after-load 'autorevert
-  (lambda ()
-    (diminish 'auto-revert-mode)))
-
-(eval-after-load 'eldoc
-  (lambda ()
-    (diminish 'eldoc-mode)))
-
-;; (require 't-doom-modeline)
+  ;; I want "insert" state to act like normal emacs. Maybe a bad way to do it.
+  (setq evil-insert-state-map evil-emacs-state-map)
+  (define-key evil-insert-state-map (kbd "<escape>") 'evil-force-normal-state))
 
 (use-package expand-region :ensure t
   :config
@@ -166,17 +180,15 @@
   :config
   (editorconfig-mode 1))
 
-;; (use-package disable-mouse :ensure t
-;;   :diminish disable-mouse-global-mode
-;;   :init
-;;   (global-disable-mouse-mode)
-;;   (diminish 'disable-mouse-global-mode))
+(use-package disable-mouse :ensure t
+  :diminish disable-mouse-global-mode
+  :init
+  (global-disable-mouse-mode))
 
 (use-package phi-search :ensure t
   :config
   (global-set-key (kbd "C-s") 'phi-search)
   (global-set-key (kbd "C-r") 'phi-search-backward))
-
 
 (use-package multiple-cursors :ensure t
   :config
@@ -184,6 +196,17 @@
   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
+
+(use-package avy :ensure t
+  :config
+  (avy-setup-default)
+  (global-set-key (kbd "C-c a c") 'avy-goto-char)
+  (global-set-key (kbd "C-c a a") 'avy-goto-char-timer)
+  (global-set-key (kbd "C-c a w") 'avy-goto-word-0)
+  (global-set-key (kbd "C-c a l") 'avy-goto-line)
+  (global-set-key (kbd "C-c a m") 'avy-move-line)
+  (global-set-key (kbd "C-c a k") 'avy-kill-whole-line)
+  (global-set-key (kbd "C-c C-j") 'avy-resume))
 
 (use-package winner-mode-enable
   :init
@@ -197,7 +220,10 @@
 
 (use-package projectile :ensure t
   :diminish 'projectile-mode
-  :init (projectile-mode)
+  :init
+  (projectile-mode +1)
+  (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   :config
   (defun my-projectile-project-switch-action ()
     (when
@@ -207,10 +233,13 @@
       (message "now working on: %s" (projectile-project-name))
       (venv-workon (projectile-project-name)))
     (helm-projectile-find-file))
-  (setq projectile-switch-project-action #'my-projectile-project-switch-action))
+  ;; (setq projectile-switch-project-action #'my-projectile-project-switch-action)
+  )
 
 (use-package helm-projectile :ensure t
-  :init (helm-projectile-on))
+  :init
+  (helm-projectile-on)
+  (global-set-key (kbd "C-c g") 'helm-projectile-ag))
 
 (use-package helm :ensure t
   :config
@@ -250,9 +279,9 @@
 
 (use-package transpose-frame :ensure t
   :config
-  (global-set-key (kbd "C-c t") 'transpose-frame)
-  (global-set-key (kbd "C-c f") 'flip-frame)
-  (global-set-key (kbd "C-c l") 'flop-frame))
+  (global-set-key (kbd "C-c f t") 'transpose-frame)
+  (global-set-key (kbd "C-c f f") 'flip-frame)
+  (global-set-key (kbd "C-c f l") 'flop-frame))
 
 (use-package magit :ensure t
   :init
@@ -260,30 +289,20 @@
 
 (use-package helm-git-grep :ensure t
   :config
-  (global-set-key (kbd "C-c g") 'helm-git-grep)
+  ;; (global-set-key (kbd "C-c g") 'helm-git-grep)
   ;; Invoke `helm-git-grep' from isearch.
-  (define-key isearch-mode-map (kbd "C-c g") 'helm-git-grep-from-isearch)
+  ;; (define-key isearch-mode-map (kbd "C-c g") 'helm-git-grep-from-isearch)
   ;; Invoke `helm-git-grep' from other helm.
-  (eval-after-load 'helm
-    '(define-key helm-map (kbd "C-c g") 'helm-git-grep-from-helm)))
+  ;; (eval-after-load 'helm
+  ;;   '(define-key helm-map (kbd "C-c g") 'helm-git-grep-from-helm))
+  )
 
-;; autoclose pairs
-(electric-pair-mode 1)
-(add-hook 'inferior-python-mode-hook
-	  (lambda ()
-	    (setq-local electric-pair-pairs '(append electric-pair-pairs (?\' . ?\')))))  ;; autoclose single quote
+(use-package wgrep :ensure t)
 
-(add-hook 'shell-mode-hook
-	  (lambda ()
-	    (setq-local electric-pair-pairs '(append electric-pair-pairs (?\' . ?\')))))  ;; autoclose single quote
-
-(defun disable-company-capf ()
-  "Remove company-capf from company backends because it seems to mess up Python completion."
-  (setq-local company-backends (remove 'company-capf company-backends)))
-(add-hook 'python-mode-hook #'disable-company-capf)
-
-;; show matching parentheses
-(show-paren-mode 1)
+(use-package neotree :ensure t
+  :init
+  (global-set-key (kbd "C-c \\") 'neotree-toggle)
+  (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 ;; Markdown
 (use-package markdown-mode :ensure t
@@ -297,12 +316,16 @@
 (use-package company :ensure t
   :diminish company-mode
   :init
+  ;; (progn
+  ;;   (setq company-idle-delay 0
+  ;;         company-minimum-prefix-length 2
+  ;;         company-require-match nil
+  ;;         company-dabbrev-ignorecom-case nil
+  ;;         company-dabbrev-downcase nil))
   (progn
-    (setq company-idle-delay 0
+    (setq company-idle-delay 0.5
           company-minimum-prefix-length 2
-          company-require-match nil
-          company-dabbrev-ignorecom-case nil
-          company-dabbrev-downcase nil))
+          company-require-match nil))
   :config
   (global-company-mode)
   (global-set-key (kbd "C-c c") 'company-complete))
@@ -330,83 +353,7 @@
 	  "~/.emacs.d/custom_snippets"))
   (yas-global-mode 1))
 
-(defun custom-eshell-prompt ()
-  "Fancies up the eshell prompt."
-  (concat
-   (if (string= (eshell/pwd) (getenv "HOME"))
-       "~" (eshell/basename (eshell/pwd)))
-   " "))
-;; (setq eshell-prompt-function 'custom-eshell-prompt)
-
-;; (global-set-key (kbd "C-c s") 'eshell)
-(add-hook 'eshell-mode-hook
-	  (lambda ()
-	    (define-key eshell-mode-map (kbd "M-p") 'eshell-previous-input)
-	    (define-key eshell-mode-map (kbd "M-n") 'eshell-next-input)
-	    (define-key eshell-mode-map (kbd "M-r") 'helm-eshell-history)))
-
-;; ;; Language Server Protocol
-;; (add-to-list 'load-path "~/.emacs.d/eglot")
-;; (require 'eglot)
-
-(use-package lsp-mode :ensure t
-  :diminish 'lsp-mode
-  :config
-  ;; (setq lsp-highlight-symbol-at-point nil)  ;; seems to slow everything down?
-  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
-
-  ;; This is copied from https://github.com/emacs-lsp/lsp-python/blob/master/lsp-python.el
-  ;; but I changed it to use /usr/local/bin/pyls because it stopped working with pyenv
-  (lsp-define-stdio-client lsp-python "python"
-			   (lsp-make-traverser #'(lambda (dir)
-						   (directory-files
-						    dir
-						    nil
-						    "setup.py")))
-			   '("pyls"))
-  (add-hook 'python-mode-hook #'lsp-python-enable)
-
-  (use-package company-lsp :ensure t
-    :config
-    (push 'company-lsp company-backends)
-    (setq company-lsp-enable-recompletion nil  ;; nil by default
-          company-lsp-enable-snippet nil  ;; t by default
-          company-lsp-cache-candidates 'auto  ;; 'auto by default
-          company-lsp-async t))  ;; t by default
-
-  ;; (use-package company-lsp :ensure t
-  ;;   :config
-  ;;   (push 'company-lsp company-backends))
-
-  (use-package lsp-ui :ensure t
-    :preface
-    (setq lsp-ui-sideline-enable nil
-	  lsp-ui-flycheck-enable nil
-	  lsp-highlight-symbol-at-point nil)
-    :config
-    (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-    (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
-    (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
-    (define-key lsp-ui-mode-map (kbd "C-c i") 'helm-imenu))
-
-  ;; this is from: https://vxlabs.com/2018/06/08/python-language-server-with-emacs-and-lsp-mode/
-  (defun lsp-set-cfg ()
-    (let ((lsp-cfg `(:pyls (:configurationSources ("flake8")))))
-    ;; TODO: check lsp--cur-workspace here to decide per server / project
-      (lsp--set-configuration lsp-cfg)))
-  (add-hook 'lsp-after-initialize-hook 'lsp-set-cfg))
-
-;; (use-package lsp-javascript-typescript :ensure t
-;;   :config
-;;   (add-hook 'js-mode-hook #'lsp-javascript-typescript-enable)
-;;   (add-hook 'typescript-mode-hook #'lsp-javascript-typescript-enable)
-;;   (add-hook 'js3-mode-hook #'lsp-javascript-typescript-enable)
-;;   (add-hook 'rjsx-mode #'lsp-javascript-typescript-enable))
-
-;; (use-package lsp-python :ensure t
-;;   :config
-;;   (add-hook 'python-mode-hook #'lsp-python-enable))
-
+;; Python
 (use-package flycheck :ensure t
   :config
   (setq flycheck-python-flake8-executable "flake8")
@@ -414,44 +361,12 @@
   (add-to-list 'flycheck-disabled-checkers 'javascript-jshint)
   (global-flycheck-mode))
 
-;; (use-package anaconda-mode :ensure t
-;;   :diminish anaconda-mode
-;;   :diminish eldoc-mode
-;;   :config
-;;   (add-hook 'python-mode-hook 'anaconda-mode)
-;;   (define-key anaconda-mode-map (kbd "M-,") 'anaconda-mode-go-back)
-;;   (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
-;;   (define-key anaconda-mode-map (kbd "C-c i") 'helm-imenu))
-
-;; (use-package company-anaconda :ensure t
-;;   :init
-;;   (eval-after-load "company"
-;;     '(add-to-list 'company-backends 'company-anaconda)))
-
-;; (use-package lsp-python :ensure t
-;;   :config
-;;   (defvar lsp-python--config-options (make-hash-table))
-;;   (defun configure-lsp-python ()
-;;     (progn
-;;       (lsp-python-enable)
-;;       (lsp--set-configuration (json-read-file "~/.pyls.json"))))
-;;   (add-hook 'python-mode-hook #'configure-lsp-python)
-;;   (add-hook 'inferior-python-mode-hook #'configure-lsp-python))
-
 (use-package virtualenvwrapper :ensure t
   :config
-  (defun workon-after-project-switch ()
-    "Workon a project's virtualenv when switching a project."
-    (message "now working on: %s" (projectile-project-name))
-    (venv-workon (projectile-project-name)))
-  ;; before or after?
-  ;; (add-hook 'projectile-before-switch-project-hook #'workon-after-project-switch)
-  ;; (add-hook 'projectile-after-switch-project-hook #'workon-after-project-switch)
   (venv-initialize-interactive-shells)
   (venv-initialize-eshell))
 
-;; figure out which works better - pyvenv or virtualenvwrapper
-;; (use-package pyvenv :ensure t)
+(use-package pyenv-mode :ensure t)
 
 (use-package python
   :init
@@ -467,6 +382,7 @@
   :init
   (define-key python-mode-map (kbd "C-c p ,") 'python-pytest-popup))
 
+;; Javascript
 (use-package rjsx-mode :ensure t
   :init
   (defun set-jsx-indentation ()
@@ -488,11 +404,7 @@
   (define-key js2-mode-map (kbd "M-,") 'xref-pop-marker-stack)
   (define-key js2-mode-map (kbd "M-?") 'xref-find-references))
 
-;; (use-package company-tern :ensure t
-;;   :config
-;;   (add-to-list 'company-backends 'company-tern)
-;;   (add-hook 'rjsx-mode-hook (lambda () (tern-mode))))
-
+;; C#
 (use-package omnisharp :ensure t
   :init
   (defun my-csharp-mode-setup ()
@@ -512,28 +424,49 @@
   (add-hook 'csharp-mode-hook 'my-csharp-mode-setup t)
   (eval-after-load 'company '(add-to-list 'company-backends 'company-omnisharp)))
 
+;; gtags
+(use-package helm-gtags :ensure t
+  :diminish
+  :init
+  (setq helm-gtags-prefix-key (kbd "C-c t")
+	helm-gtags-suggested-key-mapping t)
+  (define-key helm-gtags-mode-map (kbd "M-.") nil) ;; keep the xref keybinding for this
+  :config
+  ;; (add-hook 'prog-mode-hook 'helm-gtags-mode)
+  (helm-gtags-mode))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("9d9fda57c476672acd8c6efeb9dc801abea906634575ad2c7688d055878e69d6" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
- '(lsp-before-save-edits nil)
- '(lsp-enable-codeaction nil)
- '(lsp-inhibit-message t)
- '(lsp-ui-flycheck-enable nil)
- '(package-selected-packages
-   (quote
-    (pyenv-mode python-pytest shrink-path doom-modeline company-lsp lsp-javascript-typescript rich-minority-mode smart-mode-line anaconda-mode powerline projectile lsp-mode helm flycheck company-tern xref-js2 js2-refactor web-mode winner-mode-enable aggressive-indent yasnippet virtualenvwrapper use-package undo-tree transpose-frame spacemacs-theme spaceline slime rjsx-mode pytest phi-search omnisharp olivetti multiple-cursors magit lsp-ui lsp-python helm-swoop helm-smex helm-projectile helm-git-grep general fastnav expand-region exec-path-from-shell editorconfig doom-themes disable-mouse diminish desktop+ company-statistics company-anaconda bash-completion)))
- '(safe-local-variable-values
-   (quote
-    ((eval progn
-	   (add-to-list
-	    (quote exec-path)
-	    (concat
-	     (locate-dominating-file default-directory ".dir-locals.el")
-	     "node_modules/.bin/")))))))
-(put 'narrow-to-region 'disabled nil)
+;; Language Server Protocol
+(use-package lsp-mode :ensure t
+  :diminish 'lsp-mode
+  :config
+  ;; (setq lsp-highlight-symbol-at-point nil)  ;; seems to slow everything down?
+  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
+
+  ;; This is copied from https://github.com/emacs-lsp/lsp-python/blob/master/lsp-python.el
+  ;; but I changed it to use /usr/local/bin/pyls because it stopped working with pyenv
+  (lsp-define-stdio-client lsp-python "python"
+			   (lsp-make-traverser #'(lambda (dir)
+						   (directory-files
+						    dir
+						    nil
+						    "setup.py")))
+			   '("pyls"))
+  (add-hook 'python-mode-hook #'lsp-python-enable)
+
+  (use-package company-lsp :ensure t
+    :config
+    (push 'company-lsp company-backends))
+
+  (use-package lsp-ui :ensure t
+    :preface
+    (setq lsp-ui-sideline-enable nil
+	  lsp-ui-flycheck-enable nil
+	  lsp-highlight-symbol-at-point t
+	  lsp-ui-doc-position (quote top))
+    :config
+    (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+    (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+    (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+    (define-key lsp-ui-mode-map (kbd "C-c i") 'helm-imenu)
+    (define-key helm-gtags-mode-map (kbd "M-.") nil) ;; keep the xref keybinding for this
+    (define-key lsp-ui-mode-map (kbd "C-c l r") 'lsp-restart-workspace)))

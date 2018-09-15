@@ -24,12 +24,12 @@ fi
 # READLINE_DIR=/usr/local/opt/readline
 # OPENSSL_DIR=/usr/local/opt/openssl
 
-export LDFLAGS="-L$READLINE_DIR/lib -L$OPENSSL_DIR/lib"
-export CFLAGS="-I$READLINE_DIR/include -I$OPENSSL_DIR/include"
+export LDFLAGS="-L$READLINE_DIR/lib -L$OPENSSL_DIR/lib -L/usr/local/opt/mysql@5.7/lib"
+export CFLAGS="-I$READLINE_DIR/include -I$OPENSSL_DIR/include -I/usr/local/opt/mysql@5.7/include"
 export SWIG_FEATURES="-cpperraswarn -includeall -I$OPENSSL_DIR/include"
 
 # source /usr/local/bin/virtualenvwrapper.sh
-export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python
+# export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python
 
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
@@ -55,10 +55,6 @@ export HISTFILESIZE=10000 # maybe too much?
 export HISTSIZE=10000 # maybe too much?
 export HISTCONTROL=ignoredups:erasedups
 export HISTTIMEFORMAT="[$(tput setaf 6)%F %T$(tput sgr0)]: " # colorful date
-
-export Y_PATH=/Users/samnarisi/.yy
-export Y_DEV_PATH=/Users/samnarisi/Development
-source /Users/samnarisi/.yy/bin/y
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
