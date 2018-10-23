@@ -12,5 +12,7 @@
 (package! bash-completion)
 (package! quasi-monochrome-theme)
 (package! multiple-cursors)
+(package! dockerfile-mode)
+(package! docker)
 (package! anaconda-mode :ignore t)
 (disable-packages! anaconda-mode)

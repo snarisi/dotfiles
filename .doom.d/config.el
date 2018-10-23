@@ -1,13 +1,26 @@
 ;;; ~/.doom.d/config.el -*- lexical-binding: t; -*-
 
-(setq doom-font (font-spec :family "Ubuntu Mono" :size 17))
-(setq doom-big-font (font-spec :family "Ubuntu Mono" :size 19))
-(setq doom-theme 'doom-tomorrow-night)
+;; just use normal emacs keys for insert state and emacs state
+(setq evil-insert-state-map (make-sparse-keymap))
+(define-key evil-insert-state-map (kbd "<escape>") 'evil-normal-state)
+(define-key evil-insert-state-map (kbd "<RET>") 'newline-and-indent)
 
-(setq-default truncate-lines nil)
+(setq evil-emacs-state-map (make-sparse-keymap))
+(define-key evil-emacs-state-map (kbd "C-z") 'evil-exit-emacs-state)
+(define-key evil-emacs-state-map (kbd "<RET>") 'newline-and-indent)
+
+(setq
+ doom-font (font-spec :family "Ubuntu Mono" :size 17)
+ doom-big-font (font-spec :family "Ubuntu Mono" :size 19)
+ doom-theme 'doom-tomorrow-night)
+
+(setq-default
+ truncate-lines nil
+ word-wrap nil)
 
 (remove-hook 'doom-init-ui-hook #'blink-cursor-mode)
 (after! solaire-mode
+  (message "after solaire-mode")
   (solaire-mode-swap-bg))
 
 ;; make _ part of the word in python-mode
@@ -19,6 +32,10 @@
        (setq mac-option-modifier 'meta
              mac-command-modifier 'super)))
 
+(set-popup-rule! "*shell*" :quit nil)
+(set-popup-rule! "*Python*" :quit nil)
+(setq helm-split-window-inside-p t)
+
 ;; (def-package! lsp-mode
 ;;   :hook (lsp-after-open-hook . lsp-enable-imenu)
 ;;   :config
@@ -28,9 +45,9 @@
 ;; 						    dir
 ;; 						    nil
 ;; 						    "setup.py")))
-;; 			   '("pyls"))
+;; 			   '("/Users/samnarisi/ms-pls"))
 ;;   (add-hook 'python-mode-hook #'lsp-python-enable))
-;;
+
 (def-package! lsp-mode
   :hook (lsp-after-open-hook . lsp-enable-imenu))
 
@@ -53,13 +70,14 @@
         lsp-ui-doc-max-width 50
         lsp-ui-sideline-ignore-duplicate t
         lsp-ui-sideline-show-flycheck nil
+        lsp-highlight-symbol-at-point nil
         lsp-ui-flycheck-enable nil))
 
 
-(def-package! virtualenvwrapper
-  :config
-  (venv-initialize-interactive-shells)
-  (venv-initialize-eshell))
+;; (def-package! virtualenvwrapper
+;;   :config
+;;   (venv-initialize-interactive-shells)
+;;   (venv-initialize-eshell))
 
 (def-package! pyvenv
   :config
@@ -74,6 +92,8 @@
 	    'bash-completion-dynamic-complete))
 
 (def-package! multiple-cursors)
+(def-package! dockerfile-mode)
+(def-package! docker)
 
 (set-company-backend! 'shell-mode 'company-capf)
 (set-company-backend! 'inferior-python-mode 'company-capf)
@@ -111,6 +131,18 @@
 
 
 ;;;###autoload
+(defun +repl/open (arg)
+  "Open a repl buffer in the current window."
+  (interactive "P")
+  (+eval/open-repl t))
+
+;;;###autoload
+(defun +repl/open-popup (arg)
+  "Open a repl popup window."
+  (interactive "P")
+  (+eval/open-repl nil))
+
+;;;###autoload
 (defun +shell/open (arg)
   "Open a shell buffer in the current window. If ARG (universal argument) is
 non-nil, cd into the current project's root."
@@ -136,21 +168,28 @@ non-nil, cd into the current project's root."
             default-directory)))
     (pop-to-buffer (save-window-excursion (shell)))))
 
+(defun open-python-repl-in-project-root (orig-fun &rest args)
+  (let ((default-directory (doom-project-root)))
+    (apply orig-fun args)))
+
+(advice-add '+python/repl :around #'open-python-repl-in-project-root)
+
 (map!
  (:leader
    :desc "Easymotion next"  :n "j"  #'evilem-motion-next-line
    :desc "Easymotion prev"  :n "k"  #'evilem-motion-previous-line
 
-   (:desc "search" :prefix "/"
-     :desc "Counsel-ag"            :nv "g" #'counsel-ag)
-
    (:desc "code" :prefix "c"
      :desc "Pop marker stack"      :n ","  #'xref-pop-marker-stack
-     ;; this should be :after venv-mode or whatever
-     (:after virtualenvwrapper
-       :desc "Change virtualenv"     :n "v"  #'venv-workon))
+     (:after pyvenv
+       :desc "Change virtualenv"     :n "v"  #'pyvenv-workon)
+
+     (:after lsp-ui
+       :desc "Highlight symbol at point"  :n "h"  #'lsp-symbol-highlight))
 
    (:desc "open" :prefix "o"
+     :desc "REPL"              :n "r"  #'+repl/open
+     :desc "REPL in popup"     :n "R"  #'+repl/open-popup
      :desc "Shell"              :n "s"  #'+shell/open
      :desc "Shell in popup"     :n "S"  #'+shell/open-popup))
 
@@ -164,23 +203,10 @@ non-nil, cd into the current project's root."
      "C-<"         #'mc/mark-previous-like-this
      "C-c C-<"     #'mc/mark-all-like-this))
 
- ;; re-add default emacs bindings as I find things that are annoying
- (:after evil
-   (:map evil-insert-state-map
-     "C-n" #'next-line
-     "C-p" #'previous-line
-     "C-o" #'open-line
-     "C-b" #'backward-char
-     "C-f" #'forward-char
-     "M-b" #'backward-word
-     "M-f" #'forward-word
-     "M-d" #'kill-word
-     "C-w" #'kill-region
-     "M-w" #'ns-copy-including-secondary
-     "C-SPC" #'set-mark-command
-     "C-d"   #'delete-char
-     "<M-backspace>" #'backward-kill-word))
- )
+ (:after ivy
+   (:map ivy-minibuffer-map
+     "C-w" #'ivy-yank-word))
 
+ )
 ;; Don't why it doesn't work when the bindings are in another file
 ;; (load! "+bindings")
