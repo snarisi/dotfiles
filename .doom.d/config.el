@@ -45,7 +45,11 @@
              mac-command-modifier 'super)
        (add-hook 'doom-init-ui-hook #'ns-auto-titlebar-mode)))
 
+;; mostly because lsp-mode spams warnings
+;; but do either of these work?
 (setq-default display-warning-minimum-level :error)
+(setq display-warning-minimum-level :error)
+
 
 (set-popup-rule! "*shell*" :quit nil)
 (set-popup-rule! "*Python*" :quit nil)
@@ -54,69 +58,94 @@
 ;; lets you navigate to error lines and maybe other stuff
 (add-hook 'shell-mode-hook 'compilation-shell-minor-mode)
 
-;; mostly copied from https://vxlabs.com/2018/11/19/configuring-emacs-lsp-mode-and-microsofts-visual-studio-code-python-language-server/
-(def-package! lsp-mode
+;; use straight.el to manage some packages
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; from https://git.sr.ht/%7Ekristjansson/lsp-python-ms/tree/master/lsp-python-ms.el
+(use-package lsp-mode
+  :straight t
   :hook (lsp-after-open-hook . lsp-enable-imenu)
   :config
-  (setq lsp-print-io nil)
-  (setq lsp-message-project-root-warning t)
+  (setq lsp-print-io t)
+  (defvar lsp-python-ms-dir nil
+    "Path to langeuage server directory containing Microsoft.Python.LanguageServer.dll")
 
-  ;; mostly because lsp-mode spams warnings
-  (setq display-warning-minimum-level :error)
+  (defvar lsp-python-ms-dotnet nil
+    "Path to dotnet executable.")
 
-  (setq ms-pyls-dir (expand-file-name "~/build/python-language-server/output/bin/Release/"))
+  (setq lsp-python-ms-dir (expand-file-name "~/build/python-language-server/output/bin/Release/"))
 
-  ;; this gets called when we do lsp-describe-thing-at-point in lsp-methods.el
-  ;; we remove all of the "&nbsp;" entities that MS PYLS adds
-  ;; this is mostly harmless for other language servers
-  (defun render-markup-content (kind content)
-    (message kind)
-    (replace-regexp-in-string "&nbsp;" " " content))
-  (setq lsp-render-markdown-markup-content #'render-markup-content)
-
-  ;; it's crucial that we send the correct Python version to MS PYLS, else it returns no docs in many cases
-  ;; furthermore, we send the current Python's (can be virtualenv) sys.path as searchPaths
-  (defun get-python-ver-and-syspath (workspace-root)
+  (defun lsp-python-ms--get-python-ver-and-syspath ()
     "return list with pyver-string and json-encoded list of python search paths."
     (let ((python (executable-find python-shell-interpreter))
-          (ver "import sys; print(\"{}.{}\".format(sys.version_info[0], sys.version_info[1]));")
-          (sp (concat "import json; sys.path.insert(0, '" workspace-root "'); print(json.dumps(sys.path))")))
+          (init "from __future__ import print_function; import sys; import json;")
+          (ver "print(\"%s.%s\" % (sys.version_info[0], sys.version_info[1]));")
+          (sp (concat "print(json.dumps(sys.path))")))
       (with-temp-buffer
-        (call-process python nil t nil "-c" (concat ver sp))
+        (call-process python nil t nil "-c" (concat init ver sp))
         (subseq (split-string (buffer-string) "\n") 0 2))))
 
-  ;; I based most of this on the vs.code implementation:
-  ;; https://github.com/Microsoft/vscode-python/blob/master/src/client/activation/languageServer/languageServer.ts#L219
-  ;; (it still took quite a while to get right, but here we are!)
-  (defun ms-pyls-extra-init-params (workspace)
-    (destructuring-bind (pyver pysyspath) (get-python-ver-and-syspath (lsp--workspace-root workspace))
-      `(:interpreter (
-                      :properties (
-                                   :InterpreterPath ,(executable-find python-shell-interpreter)
-                                   :DatabasePath ,ms-pyls-dir
-                                   :Version ,pyver))
-                     ;; preferredFormat "markdown" or "plaintext"
-                     ;; experiment to find what works best -- over here mostly plaintext
-                     :displayOptions (
-                                      :preferredFormat "plaintext"
-                                      :trimDocumentationLines :json-false
-                                      :maxDocumentationLineLength 0
-                                      :trimDocumentationText :json-false
-                                      :maxDocumentationTextLength 0)
-                     :searchPaths ,(json-read-from-string pysyspath))))
+  (defun lsp-python-ms--extra-init-params ()
+    (destructuring-bind (pyver pysyspath)
+        (lsp-python-ms--get-python-ver-and-syspath)
+      `(:interpreter
+        (:properties (
+                      :InterpreterPath ,(executable-find python-shell-interpreter)
+                      ;; this database dir will be created if required
+                      :DatabasePath ,(expand-file-name (concat lsp-python-ms-dir "db/"))
+                      :Version ,pyver))
+        ;; preferredFormat "markdown" or "plaintext"
+        ;; experiment to find what works best -- over here mostly plaintext
+        :displayOptions (
+                         :preferredFormat "plaintext"
+                         :trimDocumentationLines :json-false
+                         :maxDocumentationLineLength 0
+                         :trimDocumentationText :json-false
+                         :maxDocumentationTextLength 0)
+        :searchPaths ,(json-read-from-string pysyspath))))
 
-  (lsp-define-stdio-client lsp-python "python"
-                           (lsp-make-traverser #'(lambda (dir)
-						                           (directory-files
-						                            dir
-						                            nil
-						                            "setup.py")))
-                           `("dotnet" ,(concat ms-pyls-dir "Microsoft.Python.LanguageServer.dll"))
-                           :extra-init-params #'ms-pyls-extra-init-params)
+  (defun lsp-python-ms--workspace-root ()
+    "Get the root, or just return `default-directory'."
+    (let ((proj (projectile-project-root)))
+      (if proj proj default-directory)))
 
-  (add-hook 'python-mode-hook
-            (lambda ()
-              (lsp-python-enable))))
+  (defun lsp-python-ms--find-dotnet ()
+    "Get the path to dotnet, or return `lsp-python-ms-dotnet'."
+    (let ((dotnet (executable-find "dotnet")))
+      (if dotnet dotnet lsp-python-ms-dotnet)))
+
+  (defun lsp-python-ms--filter-nbsp (kind str)
+    "Filter nbsp entities from STR."
+    (replace-regexp-in-string "&nbsp;" " " str))
+
+  (defun filter-lsp--render-string (str)
+    (replace-regexp-in-string "&nbsp;" " " str))
+
+  (setq lsp-render-markdown-markup-content #'lsp-python-ms--filter-nbsp)
+  (advice-add 'lsp-ui-doc--extract
+              :filter-return #'lsp-python-ms--filter-nbsp)
+  (advice-add 'lsp--render-string
+              :filter-return #'filter-lsp--render-string)
+
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection
+                                     `(,(lsp-python-ms--find-dotnet) ,(concat lsp-python-ms-dir "Microsoft.Python.LanguageServer.dll")) )
+                    :major-modes '(python-mode)
+                    :server-id 'pyls
+                    :initialization-options #'lsp-python-ms--extra-init-params))
+  (add-hook 'python-mode-hook 'lsp))
+
 
 ;; (def-package! lsp-mode
 ;;   :hook (lsp-after-open-hook . lsp-enable-imenu)
@@ -127,15 +156,68 @@
 ;;   :after (lsp-mode)
 ;;   :init (add-hook 'python-mode-hook #'lsp-python-enable))
 
+(def-package! eglot
+  :config
+  (defvar lsp-python-ms-dir nil
+    "Path to langeuage server directory containing Microsoft.Python.LanguageServer.dll")
+
+  (defvar lsp-python-ms-dotnet nil
+    "Path to dotnet executable.")
+
+  (setq lsp-python-ms-dir (expand-file-name "~/build/python-language-server/output/bin/Release/"))
+
+  (defun lsp-python-ms--get-python-ver-and-syspath ()
+    "return list with pyver-string and json-encoded list of python search paths."
+    (let ((python (executable-find python-shell-interpreter))
+          (init "from __future__ import print_function; import sys; import json;")
+          (ver "print(\"%s.%s\" % (sys.version_info[0], sys.version_info[1]));")
+          (sp (concat "print(json.dumps(sys.path))")))
+      (with-temp-buffer
+        (call-process python nil t nil "-c" (concat init ver sp))
+        (subseq (split-string (buffer-string) "\n") 0 2))))
+
+  (defclass eglot-ms-pyls (eglot-lsp-server) ()
+    :documentation "Microsoft's Python Language Server")
+
+  (cl-defmethod eglot-initialization-options ((server eglot-ms-pyls))
+    (destructuring-bind (pyver pysyspath)
+        (lsp-python-ms--get-python-ver-and-syspath)
+      `(:interpreter
+        (:properties (
+                      :InterpreterPath ,(executable-find python-shell-interpreter)
+                      ;; this database dir will be created if required
+                      :DatabasePath ,(expand-file-name (concat lsp-python-ms-dir "db/"))
+                      :Version ,pyver))
+        ;; preferredFormat "markdown" or "plaintext"
+        ;; experiment to find what works best -- over here mostly plaintext
+        :displayOptions (
+                         :preferredFormat "plaintext"
+                         :trimDocumentationLines :json-false
+                         :maxDocumentationLineLength 0
+                         :trimDocumentationText :json-false
+                         :maxDocumentationTextLength 0)
+        :searchPaths ,(json-read-from-string pysyspath))))
+
+  (defun eglot--ms-pyls-contact ()
+    (cons 'eglot-ms-pyls
+          (list (lsp-python-ms--find-dotnet) (concat lsp-python-ms-dir "Microsoft.Python.LanguageServer.dll"))))
+
+  (add-to-list 'eglot-server-programs '(python-mode . (eglot-ms-pyls (lsp-python-ms--find-dotnet) (concat lsp-python-ms-dir "Microsoft.Python.LanguageServer.dll"))))
+  ;; (add-hook 'python-mode-hook 'eglot-ensure)
+  )
+
+
 (def-package! company-lsp
+  :straight t
   :config
   (setq company-lsp-enable-recompletion t)
   (set-company-backend! 'lsp-mode 'company-lsp))
 
 (def-package! lsp-ui
+  :straight t
   :hook (lsp-mode . lsp-ui-mode)
   :config
-  (set-lookup-handlers! 'python-mode
+  (set-lookup-handlers! 'lsp-ui-mode
     :definition #'lsp-ui-peek-find-definitions
     :references #'lsp-ui-peek-find-references)
   (setq lsp-ui-doc-enable nil
@@ -143,15 +225,9 @@
         lsp-ui-doc-max-height 8
         lsp-ui-doc-max-width 50
         lsp-ui-sideline-ignore-duplicate t
-        lsp-ui-sideline-show-flycheck nil
+        lsp-ui-sideline-show-flycheck t
         lsp-highlight-symbol-at-point nil
-        lsp-ui-flycheck-enable nil))
-
-
-;; (def-package! virtualenvwrapper
-;;   :config
-;;   (venv-initialize-interactive-shells)
-;;   (venv-initialize-eshell))
+        lsp-ui-flycheck-enable t))
 
 (def-package! pyvenv
   :config
@@ -175,14 +251,14 @@
 ;; (def-package! company-box
 ;;   :hook (company-mode . company-box-mode))
 
-(after! flycheck
-  (setq flycheck-python-flake8-executable "flake8"
-        flycheck-display-errors-delay 0.5))
+;; (after! flycheck
+;;   (setq flycheck-python-flake8-executable "flake8"
+;;         flycheck-display-errors-delay 0.5))
 
 (after! company
   (setq company-idle-delay 0.2
         company-minimum-prefix-length 2
-        company-require-match t))
+        company-require-match nil))
 
 (after! csharp-mode
   (defun my-csharp-mode-hook ()
@@ -265,14 +341,25 @@ non-nil, cd into the current project's root."
      (:after pyvenv
        :desc "Change virtualenv"     :n "v"  #'pyvenv-workon)
 
+     ;; Can't get set-lookup-handlers to work
+     (:after eglot
+       (:map eglot-mode-map
+         :desc "Documentation at point"          :n "/"  #'eglot-help-at-point
+         :desc "Jump to definition"              :n "d"  #'xref-find-definitions
+         :desc "Jump to references"              :n "D"  #'xref-find-references))
+
      (:after lsp-ui
        :desc "Highlight symbol at point"  :n "h"  #'lsp-symbol-highlight
-       :desc "Describe thing at point"    :n "/"  #'lsp-describe-thing-at-point
+       :desc "Documentation at point"     :n "h"  #'lsp-describe-thing-at-point
        ;; don't know why this stopped working
        (:map lsp-ui-mode-map
-         :desc "Jump to definition"         :n "d"  #'lsp-ui-peek-find-definitions
+         :desc "Jump to definition"         :n "d"  #'xref-find-definitions
          :desc "Jump to references"         :n "D"  #'lsp-ui-peek-find-references)))
 
+   ;; swap doom defaults
+   (:desc "buffer" :prefix "b"
+     :desc "Switch buffer"            :n "b"  #'ivy-switch-buffer
+     :desc "Switch workspace buffer"  :n "B"  #'+ivy/switch-workspace-buffer)
 
    (:desc "open" :prefix "o"
      :desc "REPL"              :n "r"  #'+repl/open

@@ -2,11 +2,11 @@
 ;;; config/snarisi/packages.el
 
 (package! evil-easymotion)
-(package! lsp-mode)
 (package! lsp-ui)
 (package! company-lsp)
 (package! company-box)
 (package! lsp-python)
+(package! eglot)
 (package! virtualenvwrapper)
 (package! pyvenv)
 (package! bash-completion)

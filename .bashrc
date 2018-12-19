@@ -62,3 +62,11 @@ export NVM_DIR="$HOME/.nvm"
 
 # added by travis gem
 [ -f /Users/samnarisi/.travis/travis.sh ] && source /Users/samnarisi/.travis/travis.sh
+alias ec2_ssh='ssh -o StrictHostKeyChecking=no -i ~/.ssh/yipit_staging_1.pem -l ec2-user'
+
+# copies everything currently in env to the emacs process
+# does it fuck anything up?
+env-to-emacs ()
+{
+    env | awk -F '=' '{print "(setenv \"" $1 "\" \"" $2 "\")"}' | while read line; do emacsclient -e "$line"; done
+}
