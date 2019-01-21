@@ -1,0 +1,162 @@
+[colors]
+background-alt = #444
+foreground-alt = #555
+primary = #ffb52a
+secondary = #e60053
+alert = #bd2c40
+
+base00 = ${xrdb:color0:#000000}
+base01 = ${xrdb:color10:#000000}
+base02 = ${xrdb:color11:#000000}
+base03 = ${xrdb:color8:#000000}
+base04 = ${xrdb:color12:#000000}
+base05 = ${xrdb:color7:#000000}
+base06 = ${xrdb:color13:#000000}
+base07 = ${xrdb:color15:#000000}
+base08 = ${xrdb:color1:#000000}
+base09 = ${xrdb:color9:#000000}
+base0A = ${xrdb:color3:#000000}
+base0B = ${xrdb:color2:#000000}
+base0C = ${xrdb:color6:#000000}
+base0D = ${xrdb:color4:#000000}
+base0E = ${xrdb:color5:#000000}
+base0F = ${xrdb:color14:#000000}
+background = ${xrdb:color0}
+foreground = ${xrdb:color7}
+
+[module/powermenu]
+type = custom/menu
+
+expand-right = true
+
+format-spacing = 1
+
+label-open = 
+label-open-foreground = ${colors.foreground}
+label-close =  cancel
+label-close-foreground = ${colors.secondary}
+label-separator = |
+label-separator-foreground = ${colors.foreground-alt}
+
+menu-0-0 = reboot
+menu-0-0-exec = menu-open-1
+menu-0-1 = power off
+menu-0-1-exec = menu-open-2
+
+menu-1-0 = cancel
+menu-1-0-exec = menu-open-0
+menu-1-1 = reboot
+menu-1-1-exec = sudo reboot
+
+menu-2-0 = power off
+menu-2-0-exec = sudo poweroff
+menu-2-1 = cancel
+menu-2-1-exec = menu-open-0
+
+[module/wlan]
+type = internal/network
+interface = ${env:INTERFACE:}
+interval = 3.0
+
+format-connected = <label-connected>
+
+label-connected = " "
+label-disconnected = " %ifname% off "
+
+ramp-signal-0 =" "
+ramp-signal-1 =" "
+ramp-signal-2 =" "
+ramp-signal-3 =" "
+ramp-signal-4 =" "
+
+[module/date]
+type = internal/date
+interval = 5
+
+date = "%"
+date-alt = "%m/%d/%y"
+time = "%H:%M"
+time-alt = %H:%M
+
+label = "%date% %time%"
+
+[module/battery]
+type = internal/battery
+full-at = 100
+battery = BAT1
+adapter = ADP1
+format-charging = <label-charging>
+format-discharging = <ramp-capacity> <label-discharging>
+format-full = <label-full>
+time-format = %H:%M
+label-discharging = %percentage%%
+label-charging =  %percentage%%
+label-full = 🔌 %percentage%%
+ramp-capacity-0 = 
+ramp-capacity-1 = 
+ramp-capacity-2 = 
+ramp-capacity-3 = 
+ramp-capacity-4 = 
+
+[module/i3]
+type = internal/i3
+format = <label-state> <label-mode>
+
+index-sort = true
+enable-click = true
+fuzzy-match = true
+wrapping-scroll = false
+strip-wsnumbers = true
+pin-workspaces = false
+
+label-focused = %name%
+label-focused-background = ${colors.foreground}
+label-focused-foreground = #ff000000
+label-focused-padding = 2
+
+label-unfocused = %name%
+label-unfocused-background = #00000000
+label-unfocused-foreground = ${colors.foreground}
+label-unfocused-padding = 2
+
+label-urgent = 
+label-urgent-background = #00000000
+label-urgent-foreground = ${colors.foreground}
+label-urgent-padding = 2
+
+label-visible = %name%
+label-visible-background = #00000000 
+label-visible-foreground = ${colors.foreground}
+label-visible-padding = 2	
+
+[bar/example]
+;monitor = ${env:MONITOR:HDMI-1}
+width = 100%
+height = 35
+dpi = 220
+; offset-x = 1%
+; offset-y = 1%
+radius = 0.0
+fixed-center = false
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+
+border-size = 4
+border-color = ${colors.background}
+
+padding-left = 0
+padding-right = 2
+
+module-margin-left = 1
+module-margin-right = 2
+
+font-0 = Font Awesome 5 Free:style=Solid:pixelsize=8;1
+font-1 = DejaVu Sans:fontformat=truetype:size=8:antialias=false;0
+font-2 = siji:pixelsize=8;1
+
+modules-right = wlan date battery powermenu
+modules-left = i3
