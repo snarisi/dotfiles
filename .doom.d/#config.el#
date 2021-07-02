@@ -4,22 +4,13 @@
 (setq evil-insert-state-map (make-sparse-keymap))
 (define-key evil-insert-state-map (kbd "<escape>") 'evil-normal-state)
 (define-key evil-insert-state-map (kbd "C-z") 'evil-emacs-state)
-(define-key evil-insert-state-map (kbd "<RET>") 'newline-and-indent)
-;; Doom has its own function that I think is supposed to take care of this, but it doesn't seem to work
-(define-key evil-insert-state-map (kbd "<DEL>") 'backward-delete-char-untabify)
+(define-key evil-insert-state-map (kbd "<RET>") 'knewline-and-indent)
 
 (setq evil-emacs-state-map (make-sparse-keymap))
 (define-key evil-emacs-state-map (kbd "C-z") 'evil-exit-emacs-state)
 (define-key evil-emacs-state-map (kbd "<RET>") 'newline-and-indent)
-(define-key evil-emacs-state-map (kbd "<DEL>") 'backward-delete-char-untabify)
 
-(setq general-override-auto-enable nil)
-(setq general-override-mode-map (make-sparse-keymap))
 (setq global-map (make-sparse-keymap))
-
-;; don't know why Doom guy keeps wanting to remap these
-(map! "C-b" #'backward-char
-      "C-f" #'forward-char)
 
 (setq
  doom-font (font-spec :family "Ubuntu Mono" :size 17)
@@ -93,13 +84,92 @@
   (load bootstrap-file nil 'nomessage))
 
 ;; from https://git.sr.ht/%7Ekristjansson/lsp-python-ms/tree/master/lsp-python-ms.el
-(use-package lsp-mode
+;; (use-package lsp-mode
+;;   :straight t
+;;   :hook (lsp-after-open-hook . lsp-enable-imenu)
+;;   :config
+;;   (setq lsp-print-io t)
+;;   (defvar lsp-python-ms-dir nil
+;;     "Path to langeuage server directory containing Microsoft.Python.LanguageServer.dll")
+
+;;   (defvar lsp-python-ms-dotnet nil
+;;     "Path to dotnet executable.")
+
+;;   (setq lsp-python-ms-dir (expand-file-name "~/build/python-language-server/output/bin/Release/"))
+
+;;   (defun lsp-python-ms--get-python-ver-and-syspath ()
+;;     "return list with pyver-string and json-encoded list of python search paths."
+;;     (let ((python (executable-find "python"))
+;;           (init "from __future__ import print_function; import sys; import json;")
+;;           (ver "print(\"%s.%s\" % (sys.version_info[0], sys.version_info[1]));")
+;;           (sp (concat "print(json.dumps(sys.path))")))
+;;       (with-temp-buffer
+;;         (call-process python nil t nil "-c" (concat init ver sp))
+;;         (subseq (split-string (buffer-string) "\n") 0 2))))
+
+;;   (defun lsp-python-ms--extra-init-params ()
+;;     (destructuring-bind (pyver pysyspath)
+;;         (lsp-python-ms--get-python-ver-and-syspath)
+;;       `(:interpreter
+;;         (:properties (
+;;                       :InterpreterPath ,(executable-find python-shell-interpreter)
+;;                       ;; this database dir will be created if required
+;;                       :DatabasePath ,(expand-file-name (concat lsp-python-ms-dir "db/"))
+;;                       :Version ,pyver))
+;;         ;; preferredFormat "markdown" or "plaintext"
+;;         ;; experiment to find what works best -- over here mostly plaintext
+;;         :displayOptions (
+;;                          :preferredFormat "plaintext"
+;;                          :trimDocumentationLines :json-false
+;;                          :maxDocumentationLineLength 0
+;;                          :trimDocumentationText :json-false
+;;                          :maxDocumentationTextLength 0)
+;;         :searchPaths ,(json-read-from-string pysyspath))))
+
+;;   (defun lsp-python-ms--workspace-root ()
+;;     "Get the root, or just return `default-directory'."
+;;     (let ((proj (projectile-project-root)))
+;;       (if proj proj default-directory)))
+
+;;   (defun lsp-python-ms--find-dotnet ()
+;;     "Get the path to dotnet, or return `lsp-python-ms-dotnet'."
+;;     (let ((dotnet (executable-find "dotnet")))
+;;       (if dotnet dotnet lsp-python-ms-dotnet)))
+
+;;   (defun lsp-python-ms--filter-nbsp (kind str)
+;;     "Filter nbsp entities from STR."
+;;     (replace-regexp-in-string "&nbsp;" " " str))
+
+;;   (defun filter-lsp--render-string (str)
+;;     (replace-regexp-in-string "&nbsp;" " " str))
+
+;;   (setq lsp-render-markdown-markup-content #'lsp-python-ms--filter-nbsp)
+;;   (advice-add 'lsp-ui-doc--extract
+;;               :filter-return #'lsp-python-ms--filter-nbsp)
+;;   (advice-add 'lsp--render-string
+;;               :filter-return #'filter-lsp--render-string)
+
+;;   (lsp-register-client
+;;    (make-lsp-client :new-connection (lsp-stdio-connection
+;;                                      `(,(lsp-python-ms--find-dotnet) ,(concat lsp-python-ms-dir "Microsoft.Python.LanguageServer.dll")) )
+;;                     :major-modes '(python-mode)
+;;                     :server-id 'pyls
+;;                     :initialization-options #'lsp-python-ms--extra-init-params))
+;;   (add-hook 'python-mode-hook 'lsp))
+
+
+;; (def-package! lsp-mode
+;;   :hook (lsp-after-open-hook . lsp-enable-imenu)
+;;   :config
+;;   (setq lsp-message-project-root-warning t))
+
+;; (def-package! lsp-python
+;;   :after (lsp-mode)
+;;   :init (add-hook 'python-mode-hook #'lsp-python-enable))
+
+(def-package! eglot
   :straight t
-  :hook (lsp-after-open-hook . lsp-enable-imenu)
   :config
-  (add-hook 'lsp-mode-hook #'(lambda () (flymake-mode -1)))
-  (setq lsp-print-io t)
-  (setq lsp-prefer-flymake nil)
   (defvar lsp-python-ms-dir nil
     "Path to langeuage server directory containing Microsoft.Python.LanguageServer.dll")
 
@@ -107,6 +177,11 @@
     "Path to dotnet executable.")
 
   (setq lsp-python-ms-dir (expand-file-name "~/build/python-language-server/output/bin/Release/"))
+
+  (defun lsp-python-ms--find-dotnet ()
+    "Get the path to dotnet, or return `lsp-python-ms-dotnet'."
+    (let ((dotnet (executable-find "dotnet")))
+      (if dotnet dotnet lsp-python-ms-dotnet)))
 
   (defun lsp-python-ms--get-python-ver-and-syspath ()
     "return list with pyver-string and json-encoded list of python search paths."
@@ -118,7 +193,10 @@
         (call-process python nil t nil "-c" (concat init ver sp))
         (subseq (split-string (buffer-string) "\n") 0 2))))
 
-  (defun lsp-python-ms--extra-init-params ()
+  (defclass eglot-ms-pyls (eglot-lsp-server) ()
+    :documentation "Microsoft's Python Language Server")
+
+  (cl-defmethod eglot-initialization-options ((server eglot-ms-pyls))
     (destructuring-bind (pyver pysyspath)
         (lsp-python-ms--get-python-ver-and-syspath)
       `(:interpreter
@@ -137,46 +215,15 @@
                          :maxDocumentationTextLength 0)
         :searchPaths ,(json-read-from-string pysyspath))))
 
-  (defun lsp-python-ms--workspace-root ()
-    "Get the root, or just return `default-directory'."
-    (let ((proj (projectile-project-root)))
-      (if proj proj default-directory)))
+  (defun eglot--ms-pyls-contact ()
+    (cons 'eglot-ms-pyls
+          (list (lsp-python-ms--find-dotnet) (concat lsp-python-ms-dir "Microsoft.Python.LanguageServer.dll"))))
 
-  (defun lsp-python-ms--find-dotnet ()
-    "Get the path to dotnet, or return `lsp-python-ms-dotnet'."
-    (let ((dotnet (executable-find "dotnet")))
-      (if dotnet dotnet lsp-python-ms-dotnet)))
+  (add-to-list
+   'eglot-server-programs
+   `(python-mode . (eglot-ms-pyls . (,(lsp-python-ms--find-dotnet) ,(concat lsp-python-ms-dir "Microsoft.Python.LanguageServer.dll")))))
 
-  (defun lsp-python-ms--filter-nbsp (kind str)
-    "Filter nbsp entities from STR."
-    (replace-regexp-in-string "&nbsp;" " " str))
-
-  (defun filter-lsp--render-string (str)
-    (replace-regexp-in-string "&nbsp;" " " str))
-
-  (setq lsp-render-markdown-markup-content #'lsp-python-ms--filter-nbsp)
-  (advice-add 'lsp-ui-doc--extract
-              :filter-return #'lsp-python-ms--filter-nbsp)
-  (advice-add 'lsp--render-string
-              :filter-return #'filter-lsp--render-string)
-
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-stdio-connection
-                                     `(,(lsp-python-ms--find-dotnet) ,(concat lsp-python-ms-dir "Microsoft.Python.LanguageServer.dll")) )
-                    :major-modes '(python-mode)
-                    :server-id 'pyls
-                    :initialization-options #'lsp-python-ms--extra-init-params))
-  (add-hook 'python-mode-hook 'lsp))
-
-
-;; (def-package! lsp-mode
-;;   :hook (lsp-after-open-hook . lsp-enable-imenu)
-;;   :config
-;;   (setq lsp-message-project-root-warning t))
-
-;; (def-package! lsp-python
-;;   :after (lsp-mode)
-;;   :init (add-hook 'python-mode-hook #'lsp-python-enable))
+  (add-hook 'python-mode-hook 'eglot-ensure))
 
 
 (def-package! company-lsp
@@ -199,7 +246,7 @@
         lsp-ui-sideline-ignore-duplicate t
         lsp-ui-sideline-show-flycheck t
         lsp-highlight-symbol-at-point nil
-        lsp-ui-flycheck-enable nil))
+        lsp-ui-flycheck-enable t))
 
 (def-package! pyvenv
   :config
