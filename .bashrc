@@ -194,7 +194,6 @@ fi
 
 export Y_PATH=/Users/samnarisi/.yy
 export Y_DEV_PATH=/Users/samnarisi/Development
-export CIRCLECI_API_TOKEN=73dfc11eec4cc10cb56887818118e291ce16ef2a
 
 # from https://github.com/pyenv/pyenv/issues/1740
 export PATH="$HOME/.pyenv/bin:$PATH"
