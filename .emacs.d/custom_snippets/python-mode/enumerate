@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: enumerate
-# key: en
-# group: yipit
-# --
-\begin{${1:enumerate}}
-    $0
-\end{$1}
