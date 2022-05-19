@@ -1,0 +1,13 @@
+# you had to tell git you want to globally ignore these files first by running:
+# git config --global core.excludesfile ~/.gitignore_global
+
+# stuff from the ts-server
+.log/tsserver.log
+.log/ti-*
+
+# stuff that emacs put in there apparently
+.emacs.d/elpa/*
+.emacs.d/.python-environments/**/*
+.emacs.d/auto-save-list/*
+.emacs.d/eshell
+.emacs.d/url
