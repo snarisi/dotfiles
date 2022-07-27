@@ -12,5 +12,8 @@
 .emacs.d/eshell
 .emacs.d/url
 
-# this thing  I tried out for getting pyenv to work with the language server
+# emacs stuff for each project
+.dir-locals.el
+
+# this thing I tried out for getting pyenv to work with the language server
 pyrightconfig.json

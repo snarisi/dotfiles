@@ -53,9 +53,9 @@ export PYTHONDONTWRITEBYTECODE=x
 export DEV_MODE=1
 export PROXY_CENTRAL_SERVICE='local-testing'
 
-# i forget why this is here... comment out for now
-# READLINE_DIR=/usr/local/opt/readline
-# OPENSSL_DIR=/usr/local/opt/openssl
+# i forget why this is here...
+READLINE_DIR=/usr/local/opt/readline
+OPENSSL_DIR=/usr/local/opt/openssl
 
 # pyenv stuff... I suppose it's important
 export PYENV_ROOT="$HOME/.pyenv"
@@ -128,11 +128,12 @@ export Y_PATH=/Users/samnarisi/.yy
 export Y_DEV_PATH=/Users/samnarisi/Development
 
 # make an alias for the new virtualenv thing
-# it should probably check that there is an .nvmrc file before doing that last bit
-# and i should make it search through several directories, but this is fine for now
+# one thing is it will say `pyenv-virtualenv: no virtualenv has been activated.` when
+# you're not in a virtualenv to start, but it doesn't break or anything
 function wk ()
 {
     cd $HOME/Development/$1;
+    pyenv deactivate;
     pyenv activate $1;
     [ -f "./.nvmrc" ] && { nvm use; }
 }
@@ -143,6 +144,35 @@ alias wkon=wk
 # this will disable the "(virtualenv-name)" thing from appearing in your shell,
 # which they are apparently getting rid of for some reason... comment it out for now
 # export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+
+# this was output by homebrew when you installed libpq, remember to do something about it
+# libpq is keg-only, which means it was not symlinked into /usr/local,
+# because conflicts with postgres formula.
+
+# If you need to have libpq first in your PATH, run:
+#   echo 'export PATH="/usr/local/opt/libpq/bin:$PATH"' >> /Users/samnarisi/.bash_profile
+
+# For compilers to find libpq you may need to set:
+#   export LDFLAGS="-L/usr/local/opt/libpq/lib"
+#   export CPPFLAGS="-I/usr/local/opt/libpq/include"
+
+# For pkg-config to find libpq you may need to set:
+#   export PKG_CONFIG_PATH="/usr/local/opt/libpq/lib/pkgconfig"
+# --- libpq thing ends there
+
+# someone on github said this which you listened to and you think it worked:
+# I am using Mac os big sure and this works for me.
+# install openssl using brew
+
+# brew install openssl
+# after that export these variables in the terminal.
+
+# export LDFLAGS="-L/usr/local/opt/openssl/lib"
+# export CPPFLAGS="-I/usr/local/opt/openssl/include"
+
+# then finally install psycopg2
+
+# pip3 install psycopg2
 
 # source your bashrc_local file, can't forget that
 if [[ -f ~/.bashrc_local ]]; then
