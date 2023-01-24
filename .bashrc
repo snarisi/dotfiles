@@ -72,6 +72,7 @@ eval "$(pyenv virtualenv-init -)"
 # i think these are C related, but I am not sure
 export LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/bzip2/lib"
 export CFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/bzip2/include"
+export PKG_CONFIG_PATH="/usr/local/opt/zlib/lib/pkgconfig"
 
 # make your command line have the git branch in it, I think
 source ~/.git-prompt.sh
@@ -141,6 +142,17 @@ function wk ()
 # just cause I can't decide which one I like better yet
 alias wkon=wk
 
+# TODO: figure out a better way to do this...
+function wkpersonal ()
+{
+    cd $HOME/Personal/$1;
+    pyenv deactivate;
+    pyenv activate $1;
+    [ -f "./.nvmrc" ] && { nvm use; }
+}
+
+alias wkp=wkpersonal
+
 # this will disable the "(virtualenv-name)" thing from appearing in your shell,
 # which they are apparently getting rid of for some reason... comment it out for now
 # export PYENV_VIRTUALENV_DISABLE_PROMPT=1
@@ -150,14 +162,14 @@ alias wkon=wk
 # because conflicts with postgres formula.
 
 # If you need to have libpq first in your PATH, run:
-#   echo 'export PATH="/usr/local/opt/libpq/bin:$PATH"' >> /Users/samnarisi/.bash_profile
+# echo 'export PATH="/usr/local/opt/libpq/bin:$PATH"' >> /Users/samnarisi/.bash_profile
 
 # For compilers to find libpq you may need to set:
-#   export LDFLAGS="-L/usr/local/opt/libpq/lib"
-#   export CPPFLAGS="-I/usr/local/opt/libpq/include"
+export LDFLAGS="-L/usr/local/opt/libpq/lib"
+export CPPFLAGS="-I/usr/local/opt/libpq/include"
 
 # For pkg-config to find libpq you may need to set:
-#   export PKG_CONFIG_PATH="/usr/local/opt/libpq/lib/pkgconfig"
+export PKG_CONFIG_PATH="/usr/local/opt/libpq/lib/pkgconfig"
 # --- libpq thing ends there
 
 # someone on github said this which you listened to and you think it worked:
@@ -168,16 +180,64 @@ alias wkon=wk
 # after that export these variables in the terminal.
 
 # export LDFLAGS="-L/usr/local/opt/openssl/lib"
-# export CPPFLAGS="-I/usr/local/opt/openssl/include"
+
+# keep this one in there, because installing cryptography failed without it
+export CPPFLAGS="-I/usr/local/opt/openssl/include"
 
 # then finally install psycopg2
 
 # pip3 install psycopg2
+
+# this is necessary to get psycopg2 to install and maybe some other things...
+# note that you can probably delete the commented out stuff above
+LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib"
+
+# homebrew said this when you upgraded by the way...
+# so uncomment it out if you need to
+# If you need to have libxml2 first in your PATH, run:
+#   echo 'export PATH="/usr/local/opt/libxml2/bin:$PATH"' >> /Users/samnarisi/.bash_profile
+
+# For compilers to find libxml2 you may need to set:
+#   export LDFLAGS="-L/usr/local/opt/libxml2/lib"
+#   export CPPFLAGS="-I/usr/local/opt/libxml2/include"
+
+# For pkg-config to find libxml2 you may need to set:
+#   export PKG_CONFIG_PATH="/usr/local/opt/libxml2/lib/pkgconfig"
+# -- end of homebrew stuff
+
+# NOTE: Does doing this overwrite the ones above?
+export LDFLAGS="-L/usr/local/opt/libffi/lib"
+export CPPFLAGS="-I/usr/local/opt/libffi/include"
+
+# NOTE: homebrew said I might need to do this...
+# We've installed your MySQL database without a root password. To secure it run:
+#     mysql_secure_installation
+
+# MySQL is configured to only allow connections from localhost by default
+
+# To connect run:
+#     mysql -u root
+
+# mysql@5.7 is keg-only, which means it was not symlinked into /usr/local,
+# because this is an alternate version of another formula.
+
+# If you need to have mysql@5.7 first in your PATH, run:
+#   echo 'export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"' >> /Users/samnarisi/.bash_profile
+
+# For compilers to find mysql@5.7 you may need to set:
+#   export LDFLAGS="-L/usr/local/opt/mysql@5.7/lib"
+#   export CPPFLAGS="-I/usr/local/opt/mysql@5.7/include"
+
+# To restart mysql@5.7 after an upgrade:
+#   brew services restart mysql@5.7
+# Or, if you don't want/need a background service you can just run:
+#   /usr/local/opt/mysql@5.7/bin/mysqld_safe --datadir=/usr/local/var/mysql
+# - end what i might need to do
 
 # source your bashrc_local file, can't forget that
 if [[ -f ~/.bashrc_local ]]; then
     source ~/.bashrc_local
 fi
 
-# this was added automatically, I forget by what
+# this was added automatically, by rustup, I believe?
 . "$HOME/.cargo/env"

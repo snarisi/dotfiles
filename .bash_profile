@@ -17,4 +17,9 @@ fi
 # if command -v pyenv 1>/dev/null 2>&1; then
 #   eval "$(pyenv init -)"
 # fi
+
 . "$HOME/.cargo/env"
+
+export PATH="/usr/local/opt/libpq/bin:$PATH"
+export PATH="/usr/local/opt/libpq/bin:$PATH"
+export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"
