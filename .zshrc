@@ -1,5 +1,4 @@
-# get the thing to stop complaining that it's using zsh now
-export BASH_SILENCE_DEPRECATION_WARNING=1
+export WHAT=what
 
 # emacs-related stuff
 if [[ ( -z "$INSIDE_EMACS" || "$EMACS_BASH_COMPLETE" = "t" ) ]]; then
@@ -7,8 +6,8 @@ if [[ ( -z "$INSIDE_EMACS" || "$EMACS_BASH_COMPLETE" = "t" ) ]]; then
 fi
 
 # git-related completion in the shell
-if [[ -f ~/.git-completion.bash ]]; then
-    . ~/.git-completion.bash
+if [[ -f ~/.git-completion.zsh ]]; then
+    . ~/.git-completion.zsh
 fi
 
 # turn on 256 color support...
@@ -26,8 +25,34 @@ export CFLAGS="-I$READLINE_DIR/include -I$OPENSSL_DIR/include"
 export SWIG_FEATURES="-cpperraswarn -includeall -I$OPENSSL_DIR/include"
 
 # make your command line have the git branch in it, I think...
-source ~/.git-prompt.sh
-PS1='\W$(__git_ps1 "\[\e[32m\] [%s]\[\e[0m\]") '
+# NOTE: This is from the site https://www.themoderncoder.com/add-git-branch-information-to-your-zsh-prompt/
+
+# Load version control information
+autoload -Uz vcs_info
+precmd() { vcs_info }
+
+# Format the vcs_info_msg_0_ variable
+zstyle ':vcs_info:git:*' formats 'on %b'
+
+# Find and set branch name var if in git repository.
+function git_branch_name()
+{
+  branch=$(git symbolic-ref HEAD 2> /dev/null | awk 'BEGIN{FS="/"} {print $NF}')
+  if [[ $branch == "" ]];
+  then
+    :
+  else
+    echo ' \e[0;32m['$branch']\e[0m'
+  fi
+}
+
+# Enable substitution in the prompt.
+setopt prompt_subst
+
+# Config for prompt. PS1 synonym.
+autoload -U colors && colors
+prompt='%1/$( git_branch_name) '
+# End the part from that site... you should look at it again, you may be to delete stuff
 
 # just some aliases... I forget what `tm` is, actually...
 alias cl="clear"
@@ -93,9 +118,9 @@ source virtualenvwrapper.sh
 # Get MacPorts to work, I think:
 export PATH=/opt/local/bin:$PATH
 
-# source your bashrc_local file, can't forget that
-if [[ -f ~/.bashrc_local ]]; then
-    source ~/.bashrc_local
+# source your zshrc_local file, can't forget that
+if [[ -f ~/.zshrc_local ]]; then
+    source ~/.zshrc_local
 fi
 
 # this was added automatically, by rustup, I believe?
