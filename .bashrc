@@ -63,7 +63,7 @@ export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 
 # Set the pyenv shims to initialize
 if command -v pyenv 1>/dev/null 2>&1; then
- eval "$(pyenv init -)"
+    eval "$(pyenv init -)"
 fi
 
 # Set the pyenv virtualenv thing to initialize also
