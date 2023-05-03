@@ -66,12 +66,20 @@ if command -v pyenv 1>/dev/null 2>&1; then
  eval "$(pyenv init -)"
 fi
 
+# Set the pyenv virtualenv thing to initialize also
+# NOTE: You started using this on linux
+# And you downloaded the extension by running: git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
+if which pyenv-virtualenv-init > /dev/null; then
+    eval "$(pyenv virualenv-init -)";
+fi
+
 # You might need to this to get your path straight?
 # TODO: See if it can mess anything up
 export PATH=~/.pyenv/shims:$PATH
 
 # get `workon`, `makevirtualenv`, etc. to work... see the thing at the end that brew said to do
-export VIRTUALENV_WRAPPER_PYTHON=/usr/bin/python3
+# NOTE: On Linux, I don't think this was working... leaving it in didn't' hurt though
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 export WORKON_HOME=$HOME/.virtualenvs
 
@@ -88,7 +96,9 @@ export PYTHONDONTWRITEBYTECODE=x
 export PATH=/usr/local/share/python:/usr/local/bin:$PATH
 
 # the thing i dowloaded from homebrew (`brew search virtualenv`) said to put this near the end
-source virtualenvwrapper.sh
+# NOTE: You commented out the next line on linux
+# source virtualenvwrapper.sh
+export VIRTUALENVWRAPPER_VIRTUALENV=/home/snarisi/.pyenv/shims/virtualenv
 
 # Get MacPorts to work, I think:
 export PATH=/opt/local/bin:$PATH
