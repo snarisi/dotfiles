@@ -51,6 +51,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+# TODO: I don't know if this is correct, but it complains otherwise
+nvm use default
+
 # i forget what avn is...
 [[ -s "$HOME/.avn/bin/avn.sh" ]] && source "$HOME/.avn/bin/avn.sh" # load avn
 
@@ -62,6 +65,7 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 
 # Set the pyenv shims to initialize
+# And remember you got this using homebrew (`brew install pyenv`)
 if command -v pyenv 1>/dev/null 2>&1; then
     eval "$(pyenv init -)"
 fi
@@ -73,7 +77,7 @@ if which pyenv-virtualenv-init > /dev/null; then
     eval "$(pyenv virualenv-init -)";
 fi
 
-# You might need to this to get your path straight?
+# You might need this to get your path straight?
 # TODO: See if it can mess anything up
 export PATH=~/.pyenv/shims:$PATH
 
@@ -110,3 +114,9 @@ fi
 
 # this was added automatically, by rustup, I believe?
 . "$HOME/.cargo/env"
+
+# And another thing, just to remind myself...
+# On Linux, I got my capslock key to work as control and escape
+# sudo apt-get install xcape
+# setxkbmap -option ctrl:nocaps
+# xcape -e 'Control_L=Escape'
