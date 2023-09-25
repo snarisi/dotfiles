@@ -74,7 +74,7 @@ fi
 # NOTE: You started using this on linux
 # And you downloaded the extension by running: git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
 if which pyenv-virtualenv-init > /dev/null; then
-    eval "$(pyenv virualenv-init -)";
+    eval "$(pyenv virtualenv-init -)";
 fi
 
 # You might need this to get your path straight?
