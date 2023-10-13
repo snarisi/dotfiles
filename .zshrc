@@ -5,7 +5,12 @@ fi
 
 
 # Add some custom env vars; I don't know if there is another place, but that's fine
-export DOTNET_ROOT=/usr/share/dotnet
+# This one was different on Linux vs Mac
+if [[ -d /usr/local/share/dotnet ]]; then
+    export DOTNET_ROOT=/usr/local/share/dotnet
+else
+    export DOTNET_ROOT=/usr/share/dotnet
+fi
 export MSBuildSDKsPath=$DOTNET_ROOT/sdk/$(${DOTNET_ROOT}/dotnet --version)/Sdks
 export PATH=${PATH}:${DOTNET_ROOT}
 
@@ -31,7 +36,6 @@ export PATH=${PATH}:${DOTNET_ROOT}
 if [[ -x "$(command -v xcape)" ]]; then
     xcape -e 'Control_L=Escape'
 fi
-
 # Note that will change your regular Control key into an Escape if it's tapped.
 
 
