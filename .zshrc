@@ -4,28 +4,13 @@ if [[ -f ~/.zshrc_zim ]]; then
 fi
 
 
-# Add some custom env vars; I don't know if there is another place, but that's fine
-# This one was different on Linux vs Mac
-# I changed the Linux one; figure out how to make it more ideal
+# Enable changing of the caps lock key to control/escape.
 
-if [[ -d /usr/local/share/dotnet ]]; then
-    export DOTNET_ROOT=/usr/local/share/dotnet
-elif [[ -d /usr/share/dotnet ]]; then
-    export DOTNET_ROOT=/usr/share/dotnet
-fi
-
-if [[ -x "$(command -v dotnet)" ]]; then
-    export MSBuildSDKsPath=$DOTNET_ROOT/sdk/$(${DOTNET_ROOT}/dotnet --version)/Sdks
-    export PATH=${PATH}:${DOTNET_ROOT}
-fi
-
-
-# Enable changing of the caps lock key to control/escape. This will depend on
-# whether you're using X11 or Wayland, so some will be commented out.
+# This will depend on whether you're using X11 or Wayland, so some
+# will be commented out.
 
 # If you're on X11:
-# alias jfc="setxkbmap -option ctrl:nocaps && xcape -e 'Control_L=Escape'"
-# jfc
+# setxkbmap -option ctrl:nocaps && xcape -e 'Control_L=Escape'
 
 # And if you're on Wayland:
 # First you had to make a file, /etc/udev/hwdb.d/10-my-modifiers.hwdb:
@@ -47,8 +32,7 @@ fi
 # Enable swapping of alt and windows keys (for your macbook)
 
 # If you're on X11:
-# alias fts="setxkbmap -option altwin:swap_lalt_lwin"
-# fts
+# setxkbmap -option altwin:swap_lalt_lwin
 
 # And if you're on Wayland and you're on KDE you can:
 # Go to System Preferences -> Input Devices -> Keyboard -> Advanced,
@@ -71,7 +55,38 @@ if [[ -x "$(command -v pyenv)" ]]; then
 fi
 
 
+# Dotnet
+
+# This one was different on Linux vs Mac because it installs to a different place.
+if [[ -d /usr/local/share/dotnet ]]; then
+    export DOTNET_ROOT=/usr/local/share/dotnet
+elif [[ -d /usr/share/dotnet ]]; then
+    export DOTNET_ROOT=/usr/share/dotnet
+fi
+
+if [[ -x "$(command -v dotnet)" ]]; then
+    export MSBuildSDKsPath=$DOTNET_ROOT/sdk/$(${DOTNET_ROOT}/dotnet --version)/Sdks
+    export PATH=${PATH}:${DOTNET_ROOT}
+fi
+
+
+# Homebrew
+
+if [[ -d "/home/linuxbrew/.linuxbrew" ]]; then
+    export PATH=${PATH}:/home/linuxbrew/.linuxbrew/bin
+fi
+
+
 # Source your zshrc_local file, can't forget that
-if [[ -f ~/.zshrc_local ]]; then
+
+if [[ -f "$HOME/.zshrc_local" ]]; then
     source ~/.zshrc_local
+fi
+
+
+# Ruby
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+if [[ -d "$HOME/.rvm" ]]; then
+    export PATH="$PATH:$HOME/.rvm/bin"
 fi
