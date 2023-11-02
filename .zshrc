@@ -90,3 +90,18 @@ fi
 if [[ -d "$HOME/.rvm" ]]; then
     export PATH="$PATH:$HOME/.rvm/bin"
 fi
+
+
+# I'm just writing this here temporarily
+#
+# Instructions for fixing refind when mac breaks it:
+#
+# Boot into recovery mode (cmd-r) and turn off SIP (csrutil disable)
+#
+# Reboot into OSX and run:
+#
+# sudo mkdir /Volumes/ESP
+# sudo mount -t msdos /dev/disk0s1 /Volumes/ESP
+# sudo bless --mount /Volumes/ESP --setBoot --file /Volumes/ESP/EFI/refind/refind_x64.efi
+#
+# Boot into recovery mode (cmd-r) and turn on SIP (csrutil enable)
