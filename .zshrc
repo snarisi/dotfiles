@@ -23,10 +23,16 @@ fi
 # sudo udevadm trigger
 #
 # And then you run this command, and you may need to install xcape:
-if [[ -x "$(command -v xcape)" ]]; then
-    xcape -e 'Control_L=Escape'
-fi
+# NOTE: You commented it out, possibly, in favor of the below
+# if [[ -x "$(command -v xcape)" ]]; then
+#     xcape -e 'Control_L=Escape'
+# fi
+#
 # Note that will change your regular Control key into an Escape if it's tapped.
+alias ugh="xcape -e 'Control_L=Escape'"
+#
+# And the opposite will stop it.
+alias hgu="killall xcape"
 
 
 # Enable swapping of alt and windows keys (for your macbook)
