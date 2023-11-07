@@ -83,20 +83,25 @@ if [[ -d "/home/linuxbrew/.linuxbrew" ]]; then
 fi
 
 
+# Ruby
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+# Try the below one for now
+# if [[ -d "$HOME/.rvm" ]]; then
+#     export PATH="$PATH:$HOME/.rvm/bin"
+# fi
+
+if [[ -d "$HOME/.rbenv" ]]; then
+    export PATH="$PATH:$HOME/.rbenv/shims:$HOME/.rbenv/bin"
+    eval "$(rbenv init -)"
+fi
+
+
 # Source your zshrc_local file, can't forget that
 
 if [[ -f "$HOME/.zshrc_local" ]]; then
     source ~/.zshrc_local
 fi
-
-
-# Ruby
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-if [[ -d "$HOME/.rvm" ]]; then
-    export PATH="$PATH:$HOME/.rvm/bin"
-fi
-
 
 # I'm just writing this here temporarily
 #
