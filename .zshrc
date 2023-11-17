@@ -61,6 +61,14 @@ if [[ -x "$(command -v pyenv)" ]]; then
 fi
 
 
+# Ruby
+
+if [[ -d "$HOME/.rbenv" ]]; then
+    export PATH="$PATH:$HOME/.rbenv/shims:$HOME/.rbenv/bin"
+    eval "$(rbenv init -)"
+fi
+
+
 # Dotnet
 
 # This one was different on Linux vs Mac because it installs to a different place.
@@ -80,20 +88,6 @@ fi
 
 if [[ -d "/home/linuxbrew/.linuxbrew" ]]; then
     export PATH=${PATH}:/home/linuxbrew/.linuxbrew/bin
-fi
-
-
-# Ruby
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-# Try the below one for now
-# if [[ -d "$HOME/.rvm" ]]; then
-#     export PATH="$PATH:$HOME/.rvm/bin"
-# fi
-
-if [[ -d "$HOME/.rbenv" ]]; then
-    export PATH="$PATH:$HOME/.rbenv/shims:$HOME/.rbenv/bin"
-    eval "$(rbenv init -)"
 fi
 
 
