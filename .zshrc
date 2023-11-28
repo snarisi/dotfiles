@@ -1,4 +1,5 @@
 # Source the .zshrc created by Zim
+
 if [[ -f ~/.zshrc_zim ]]; then
     source ~/.zshrc_zim
 fi
@@ -96,6 +97,7 @@ fi
 if [[ -f "$HOME/.zshrc_local" ]]; then
     source ~/.zshrc_local
 fi
+
 
 # I'm just writing this here temporarily
 #
