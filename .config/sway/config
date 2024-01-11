@@ -1,0 +1,217 @@
+# this should be the option [mac] / windows [linux] key
+set $mod Mod4
+
+# i think this is your command [mac] / alt [linux] key
+set $alt ALT
+
+# reload the configuration file
+bindsym --to-code $mod+Shift+c reload
+
+# SAM'S NOTE: You will need to make sure xcape is installed
+exec_always xcape -e 'Control_L=Escape'
+
+# you should look at the other options when you have a chance
+# maybe get rid of tapping to disable accidentally tapping while typing
+input type:touchpad {
+    # tap enabled
+    natural_scroll disabled
+}
+
+# I don't know what this is, but it was in the code I copied
+output * adaptive_sync on
+
+# not sure if I need this, but I guess leave it in
+input type:keyboard {
+    xkb_layout us
+    repeat_delay 250
+    repeat_rate 45
+}
+
+# get waybar on the screen
+bar {
+    swaybar_command waybar
+}
+
+# this will get rid of the default colored borders
+default_border none
+
+# this creates some gaps between between windows and between windows and the top bar
+gaps inner 4
+
+# get win-tab working
+bindsym $mod+tab workspace next_on_output
+bindsym $mod+Shift+tab workspace prev_on_output
+
+# and do the same with the alt key, and figure out which one to keep
+bindsym $alt+tab workspace next_on_output
+bindsym $alt+Shift+tab workspace prev_on_output
+
+# and this is how you switch windows in the same workspace
+bindsym --to-code $mod+h focus left
+bindsym --to-code $mod+j focus down
+bindsym --to-code $mod+k focus up
+bindsym --to-code $mod+l focus right
+
+# move focused window
+bindsym --to-code $mod+Ctrl+h move left
+bindsym --to-code $mod+Ctrl+j move down
+bindsym --to-code $mod+Ctrl+k move up
+bindsym --to-code $mod+Ctrl+l move right
+
+# switch to workspace by number
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+
+# switch between the current and the previously focused one
+bindsym --to-code $mod+b workspace back_and_forth
+bindsym --to-code $mod+Shift+b move container to workspace back_and_forth
+
+# move all windows to the primary display
+bindsym --to-code $mod+Shift+m [class=".*"] move workspace to output primary
+
+# start rofi
+bindsym $mod+d exec "pkill rofi || rofi -show drun"
+
+# add a background image
+exec swaybg -i ~/Pictures/wallpapers/spanish_civil_war.jpg -m fill
+
+# toggle fullscreen mode for the current app
+bindsym --to-code $mod+Ctrl+f fullscreen toggle
+
+# let's try getting volume buttons to work
+# TODO: the first two work, and figure out how to mute
+bindsym XF86AudioRaiseVolume exec pamixer -i 5
+bindsym XF86AudioLowerVolume exec pamixer -d 5
+bindsym XF86AudioMute exec amixer -D pulse set Master 1+ toggle
+
+# screen brightness
+bindsym XF86MonBrightnessUp exec brightnessctl set +10%
+bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
+
+# lock screen before suspend
+
+# SAM'S NOTE: Figure out if you need this line or not
+# exec pkill -f swayidle
+
+exec swayidle -w \
+    timeout 300 'swaylock -f -c 333333' \
+    timeout 420 'swaymsg "output * dpms off"' \
+    resume 'swaymsg "output * dpms on"' \
+    before-sleep 'swaylock -f -c 333333'
+
+# I ran this command to get the sound working; uncomment if it stops working again:
+# amixer sset Master unmute
+
+# I think I need these to get wifi and bluetooth working
+# possibly you had to download waybar-bluetooth
+exec_always nm-applet --indicator
+exec_always blueman-applet
+
+# after this is what you copied and didn't comment out:
+
+# After-start actions
+
+xwayland enable
+
+# Start required services
+exec_always {
+    systemctl --user enable plasma-polkit-agent.service
+    systemctl --user start plasma-polkit-agent.service
+}
+
+# Make pipewire (camera and sound sharing) work
+exec_always {
+    systemctl --user start wireplumber.service
+    systemctl --user restart xdg-desktop-portal-gnome
+    systemctl --user restart xdg-desktop-portal.service
+    systemctl --user start xdg-desktop-portal-wlr.service
+}
+
+# PrintScr
+bindsym Print exec grim
+bindsym Shift+Print exec slurp | grim -g -
+bindsym --to-code $mod+ctrl+p exec grim
+bindsym --to-code $mod+shift+p exec slurp | grim -g -
+
+# Disable mouse warping (jump when you switch to new window/workspace)
+mouse_warping none
+
+# Disable change focus by moving mouse to new window
+focus_follows_mouse no
+
+font pango:Ubuntu Mono 11
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# kill focused window
+bindsym --to-code $mod+q kill
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym --to-code $mod+Ctrl+s layout stacking
+bindsym --to-code $mod+Ctrl+e layout toggle split
+
+# Allow switching between workspaces with left and right swipes
+bindgesture swipe:right exec wtype -M alt -k left -m alt
+bindgesture swipe:left exec wtype -M alt -k right -m alt
+
+# resize window (you can also use the mouse for that)
+mode "resize" {
+    bindsym --to-code h resize shrink width 10 px or 10 ppt
+    bindsym --to-code j resize grow height 10 px or 10 ppt
+    bindsym --to-code k resize shrink height 10 px or 10 ppt
+    bindsym --to-code l resize grow width 10 px or 10 ppt
+
+    # same bindings, but for the arrow keys
+    bindsym Left resize shrink width 10 px or 10 ppt
+    bindsym Down resize grow height 10 px or 10 ppt
+    bindsym Up resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym --to-code $mod+ctrl+r mode "resize"
+
+# Generated windows.
+for_window [title="(?:Select|Choose|Open|Save).*(?:file|File|Files|Folder|As)" app_id="^(?i)(?:(?!chrom).)*$"] floating enable;
+for_window [title="(?:Select|Choose|Open|Save).*(?:file|File|Files|Folder|As)" app_id="^(?i)(?:(?!chrom).)*$"] resize set 800 400
+for_window [app_id="xdg-desktop-portal.*"] floating enable;
+for_window [app_id="xdg-desktop-portal.*"] resize set 800 400;
+# for_window [window_role="pop-up"] floating enable
+# for_window [window_role="bubble"] floating enable
+# for_window [window_role="task_dialog"] floating enable
+# for_window [window_role="Preferences"] floating enable
+# for_window [window_type="dialog"] floating enable
+# for_window [window_type="menu"] floating enable
+
+# Don't capture sway keys
+for_window [app_id=".*"] shortcuts_inhibitor disable
+
+# Disable output on laptop lid close
+# set $laptop eDP-1
+# bindswitch --reload --locked lid:on output $laptop disable
+# bindswitch --reload --locked lid:off output $laptop enable
+# exec_always $log ${HOME}/.config/sway/scripts/laptop-display-state-on-reload.sh
