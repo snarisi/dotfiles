@@ -1,0 +1,128 @@
+{
+    "layer": "top",
+    "modules-left": [
+        "custom/launcher",
+	// "sway/workspaces",
+	"network",
+	"bluetooth",
+	// "tray",
+	"custom/updates",
+	"custom/media",
+    ],
+    "modules-center": [
+	"clock",
+    ],
+    "modules-right": [
+	"backlight",
+	"pulseaudio",
+	"battery",
+	"custom/power"
+    ],
+
+    "custom/launcher":{
+        "format": "",
+        "on-click": "rofi -show drun",
+        "on-click-right": "killall rofi"
+    },
+    "network": {
+        "tooltip": false,
+        // "format-wifi": "  {essid}",
+        "format-wifi": " ",
+        "format": "",
+        "format-ethernet": "",
+	"on-click": "nm-connection-editor", // figure what tray did when you clicked
+    },
+    "bluetooth": {
+        "controller": "controller1", // specify the alias of the controller if there are more than 1 on the system
+        "format": "  ",
+	"format-disabled": "",
+        "format-connected": " {num_connections} connected",
+        "tooltip-format": "{controller_alias}\t{controller_address}",
+        "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+	"on-click": "blueman-manager"
+    },
+    "custom/updates":{
+        "format": "{} Update(s)",
+        "exec": "checkupdates | wc -l",
+        "exec-if": "[[ $(checkupdates | wc -l) != 0 ]]",
+        "interval": 15,
+        "on-click": "konsole -e yay -Syu && notify-send 'The system has been updated' ",
+    },
+    "custom/media": {
+        "interval": 30,
+        "format": "{icon} {}",
+        "return-type": "json",
+        "max-length": 20,
+        "format-icons": {
+            "spotify": " ",
+            "default": " "
+        },
+        "escape": true,
+        "exec": "$HOME/.config/system_scripts/mediaplayer.py 2> /dev/null",
+        "on-click": "playerctl play-pause"
+    },
+
+    "clock": {
+        "format": "{: %I:%M %p  %m/%d/%Y}"
+    },
+
+    "backlight": {
+        "tooltip": false,
+        "format": " {}%",
+        "interval":1,
+        "on-scroll-up": "light -A 5",
+        "on-scroll-down": "light -U 5"
+    },
+    "pulseaudio": {
+        "tooltip": false,
+	"scroll-step": 5,
+	"format": "{icon} {volume}%",
+	"format-muted": "{icon} --%",
+	"on-click":"pactl set-sink-mute @DEFAULT_SINK@ toggle",
+	"format-icons": {
+	    "default": ["", "", ""]
+        }
+    },
+    "battery": {
+        "states": {
+            "good": 95,
+	    "warning": 30,
+            "critical": 20
+        },
+        "format": "{icon}  {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-alt": "{time} {icon}",
+        "format-icons": ["", "", "", "", ""]
+    },
+    // TODO: You should find out what other people do with this script
+    "custom/power":{
+        "format": " ",
+        "on-click": "bash ~/.config/hypr/scripts/RofiPower.sh",
+    },
+
+    // These are the ones I am not using
+
+    "tray":{
+        "icon-size": 18,
+        "spacing": 10
+    },
+    "river/tags": {
+        "num-tags": 6
+    },
+    "cpu": {
+        "interval": 15,
+        "format": " {}%",
+        "max-length": 10
+    },
+    "memory": {
+        "interval": 30,
+        "format": " {}%",
+        "max-length": 10
+    },
+    "custom/wallpaper":{
+        "format":" ",
+        "on-click": "bash ~/.config/system_scripts/pkill_bc"
+    },
+}
