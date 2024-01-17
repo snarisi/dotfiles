@@ -7,18 +7,22 @@ set $alt ALT
 # reload the configuration file
 bindsym --to-code $mod+Shift+c reload
 
-# SAM'S NOTE: You will need to make sure xcape is installed
+# SAM'S NOTE: You will need to make sure xcape is installed. You also
+# need to change your caps lock key to control, which you did by putting
+# `capslock = overload(control, esc)` in your /etc/keyd/defaults.conf file
+# under '[main]'
 exec_always xcape -e 'Control_L=Escape'
 
 # you should look at the other options when you have a chance
-# maybe get rid of tapping to disable accidentally tapping while typing
+# disable tapping to prevent accidentally clicking while typing
 input type:touchpad {
-    # tap enabled
+    tap disabled
     natural_scroll disabled
 }
 
 # I don't know what this is, but it was in the code I copied
-output * adaptive_sync on
+# Try commenting it out
+# output * adaptive_sync on
 
 # not sure if I need this, but I guess leave it in
 input type:keyboard {
@@ -32,33 +36,37 @@ bar {
     swaybar_command waybar
 }
 
+# run this to get notifications
+exec mako
+
 # this will get rid of the default colored borders
 default_border none
 
 # this creates some gaps between between windows and between windows and the top bar
 gaps inner 4
 
-# get win-tab working
-bindsym $mod+tab workspace next_on_output
-bindsym $mod+Shift+tab workspace prev_on_output
-
-# and do the same with the alt key, and figure out which one to keep
+# switch workspaces with alt-tab
 bindsym $alt+tab workspace next_on_output
 bindsym $alt+Shift+tab workspace prev_on_output
 
-# and this is how you switch windows in the same workspace
+# and you tried to get mod-tab to change windows in the same workspace
+# it's not ideal, but this is what you came up with
+bindsym --to-code $mod+tab focus right
+bindsym --to-code $mod+Shift+tab focus down
+
+# and this is another way you switch windows in the same workspace
 bindsym --to-code $mod+h focus left
 bindsym --to-code $mod+j focus down
 bindsym --to-code $mod+k focus up
 bindsym --to-code $mod+l focus right
 
-# move focused window
+# and this is how you rearrange the window you are focused on
 bindsym --to-code $mod+Ctrl+h move left
 bindsym --to-code $mod+Ctrl+j move down
 bindsym --to-code $mod+Ctrl+k move up
 bindsym --to-code $mod+Ctrl+l move right
 
-# switch to workspace by number
+# and this is how you switch to a workspace by number
 bindsym $mod+1 workspace 1
 bindsym $mod+2 workspace 2
 bindsym $mod+3 workspace 3
@@ -70,7 +78,7 @@ bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
 bindsym $mod+0 workspace 10
 
-# move focused container to workspace
+# and this is how you move the focused container to a workspace by number
 bindsym $mod+Shift+1 move container to workspace 1
 bindsym $mod+Shift+2 move container to workspace 2
 bindsym $mod+Shift+3 move container to workspace 3
@@ -82,11 +90,12 @@ bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
 bindsym $mod+Shift+0 move container to workspace 10
 
-# switch between the current and the previously focused one
+# switch between the current workspace and the previously focused one
 bindsym --to-code $mod+b workspace back_and_forth
 bindsym --to-code $mod+Shift+b move container to workspace back_and_forth
 
 # move all windows to the primary display
+# TODO: This was copied, and you should try it
 bindsym --to-code $mod+Shift+m [class=".*"] move workspace to output primary
 
 # start rofi
@@ -98,104 +107,109 @@ exec swaybg -i ~/Pictures/wallpapers/spanish_civil_war.jpg -m fill
 # toggle fullscreen mode for the current app
 bindsym --to-code $mod+Ctrl+f fullscreen toggle
 
-# let's try getting volume buttons to work
-# TODO: the first two work, and figure out how to mute
+# get the sound working; I'm pretty sure this command is right
+exec_always amixer sset Master unmute
+
+# let's try getting the play/pause, volume, mute, etc, buttons to work
+bindsym XF86AudioPlay exec playerctl play-pause
 bindsym XF86AudioRaiseVolume exec pamixer -i 5
 bindsym XF86AudioLowerVolume exec pamixer -d 5
 bindsym XF86AudioMute exec amixer -D pulse set Master 1+ toggle
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
 
-# screen brightness
+# adjust screen brightness
 bindsym XF86MonBrightnessUp exec brightnessctl set +10%
 bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 
+# I copied this line, but I'm guessing it sets the font
+font pango:Ubuntu Mono 11
+
+# disable mouse warping; this was the default, and I can't really tell what
+# difference it makes
+mouse_warping none
+
+# disable change focus by moving mouse to new window
+focus_follows_mouse no
+
 # lock screen before suspend
-
-# SAM'S NOTE: Figure out if you need this line or not
-# exec pkill -f swayidle
-
 exec swayidle -w \
-    timeout 300 'swaylock -f -c 333333' \
+    timeout 300 'swaylock -f -c b2b0ea' \
     timeout 420 'swaymsg "output * dpms off"' \
     resume 'swaymsg "output * dpms on"' \
-    before-sleep 'swaylock -f -c 333333'
-
-# I ran this command to get the sound working; uncomment if it stops working again:
-# amixer sset Master unmute
+    before-sleep 'swaylock -f -c b2b0ea'
 
 # I think I need these to get wifi and bluetooth working
 # possibly you had to download waybar-bluetooth
 exec_always nm-applet --indicator
 exec_always blueman-applet
 
+# kill focused window
+bindsym --to-code $mod+q kill
+
+# Turn laptop output off when the lid closes, and back on again when you open it
+bindswitch lid:on output eDP-1 disable
+bindswitch lid:off output eDP-1 enable
+
 # after this is what you copied and didn't comment out:
 
 # After-start actions
 
+# SAM'S NOTE: Figure out what xwayland is
 xwayland enable
 
-# Start required services
+# start required services
+# SAM'S NOTE: I copied this; find out if you have these programs
+# read more about what it does here: https://wiki.archlinux.org/title/Polkit
 exec_always {
     systemctl --user enable plasma-polkit-agent.service
     systemctl --user start plasma-polkit-agent.service
 }
 
-# Make pipewire (camera and sound sharing) work
-exec_always {
-    systemctl --user start wireplumber.service
-    systemctl --user restart xdg-desktop-portal-gnome
-    systemctl --user restart xdg-desktop-portal.service
-    systemctl --user start xdg-desktop-portal-wlr.service
-}
-
 # PrintScr
+# SAM'S NOTE: You can probably get rid of this
 bindsym Print exec grim
 bindsym Shift+Print exec slurp | grim -g -
 bindsym --to-code $mod+ctrl+p exec grim
 bindsym --to-code $mod+shift+p exec slurp | grim -g -
 
-# Disable mouse warping (jump when you switch to new window/workspace)
-mouse_warping none
-
-# Disable change focus by moving mouse to new window
-focus_follows_mouse no
-
-font pango:Ubuntu Mono 11
-
 # Use Mouse+$mod to drag floating windows to their wanted position
-floating_modifier $mod
-
-# kill focused window
-bindsym --to-code $mod+q kill
+# SAM'S NOTE: You can probably get rid of this
+# floating_modifier $mod
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym --to-code $mod+Ctrl+s layout stacking
-bindsym --to-code $mod+Ctrl+e layout toggle split
+# SAM'S NOTE: You can probably get rid of this
+# bindsym --to-code $mod+Ctrl+s layout stacking
+# bindsym --to-code $mod+Ctrl+e layout toggle split
 
 # Allow switching between workspaces with left and right swipes
-bindgesture swipe:right exec wtype -M alt -k left -m alt
-bindgesture swipe:left exec wtype -M alt -k right -m alt
+# SAM'S NOTE: You can probably get rid of this
+# bindgesture swipe:right exec wtype -M alt -k left -m alt
+# bindgesture swipe:left exec wtype -M alt -k right -m alt
 
 # resize window (you can also use the mouse for that)
-mode "resize" {
-    bindsym --to-code h resize shrink width 10 px or 10 ppt
-    bindsym --to-code j resize grow height 10 px or 10 ppt
-    bindsym --to-code k resize shrink height 10 px or 10 ppt
-    bindsym --to-code l resize grow width 10 px or 10 ppt
+# SAM'S NOTE: You can probably get rid of this
+# mode "resize" {
+#     bindsym --to-code h resize shrink width 10 px or 10 ppt
+#     bindsym --to-code j resize grow height 10 px or 10 ppt
+#     bindsym --to-code k resize shrink height 10 px or 10 ppt
+#     bindsym --to-code l resize grow width 10 px or 10 ppt
 
-    # same bindings, but for the arrow keys
-    bindsym Left resize shrink width 10 px or 10 ppt
-    bindsym Down resize grow height 10 px or 10 ppt
-    bindsym Up resize shrink height 10 px or 10 ppt
-    bindsym Right resize grow width 10 px or 10 ppt
+#     # same bindings, but for the arrow keys
+#     bindsym Left resize shrink width 10 px or 10 ppt
+#     bindsym Down resize grow height 10 px or 10 ppt
+#     bindsym Up resize shrink height 10 px or 10 ppt
+#     bindsym Right resize grow width 10 px or 10 ppt
 
-    # back to normal: Enter or Escape
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-}
+#     # back to normal: Enter or Escape
+#     bindsym Return mode "default"
+#     bindsym Escape mode "default"
+# }
 
-bindsym --to-code $mod+ctrl+r mode "resize"
+# bindsym --to-code $mod+ctrl+r mode "resize"
 
 # Generated windows.
+# SAM'S NOTE: I'm not sure what these are
 for_window [title="(?:Select|Choose|Open|Save).*(?:file|File|Files|Folder|As)" app_id="^(?i)(?:(?!chrom).)*$"] floating enable;
 for_window [title="(?:Select|Choose|Open|Save).*(?:file|File|Files|Folder|As)" app_id="^(?i)(?:(?!chrom).)*$"] resize set 800 400
 for_window [app_id="xdg-desktop-portal.*"] floating enable;
@@ -208,10 +222,5 @@ for_window [app_id="xdg-desktop-portal.*"] resize set 800 400;
 # for_window [window_type="menu"] floating enable
 
 # Don't capture sway keys
+# SAM'S NOTE: Figure out what keys
 for_window [app_id=".*"] shortcuts_inhibitor disable
-
-# Disable output on laptop lid close
-# set $laptop eDP-1
-# bindswitch --reload --locked lid:on output $laptop disable
-# bindswitch --reload --locked lid:off output $laptop enable
-# exec_always $log ${HOME}/.config/sway/scripts/laptop-display-state-on-reload.sh
