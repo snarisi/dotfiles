@@ -92,7 +92,7 @@ if [[ -d "/home/linuxbrew/.linuxbrew" ]]; then
 fi
 
 
-# I had to this to get grip-mode working in emacs
+# I had to add this to get grip-mode working in emacs
 
 export PATH=${PATH}:$HOME/.local/bin
 
