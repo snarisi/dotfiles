@@ -92,6 +92,11 @@ if [[ -d "/home/linuxbrew/.linuxbrew" ]]; then
 fi
 
 
+# I had to this to get grip-mode working in emacs
+
+export PATH=${PATH}:$HOME/.local/bin
+
+
 # Source your zshrc_local file, can't forget that
 
 if [[ -f "$HOME/.zshrc_local" ]]; then

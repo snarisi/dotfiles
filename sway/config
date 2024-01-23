@@ -22,10 +22,6 @@ input type:touchpad {
     natural_scroll disabled
 }
 
-# I don't know what this is, but it was in the code I copied
-# Try commenting it out
-# output * adaptive_sync on
-
 # not sure if I need this, but I guess leave it in
 input type:keyboard {
     xkb_layout us
@@ -96,10 +92,6 @@ bindsym $mod+Shift+0 move container to workspace 10
 bindsym --to-code $mod+b workspace back_and_forth
 bindsym --to-code $mod+Shift+b move container to workspace back_and_forth
 
-# move all windows to the primary display
-# TODO: This was copied, and you should try it
-bindsym --to-code $mod+Shift+m [class=".*"] move workspace to output primary
-
 # start rofi
 bindsym $mod+d exec "pkill rofi || rofi -show drun"
 
@@ -153,62 +145,28 @@ bindsym --to-code $mod+q kill
 bindswitch lid:on output eDP-1 disable
 bindswitch lid:off output eDP-1 enable
 
-# after this is what you copied and didn't comment out:
+# Try assigning to windows this way
+# firefox doesn't seem  to work, but the exec code below will open it when you boot
+for_window [class="(?i)firefox"] move container to workspace 1
+for_window [class="Signal$"] move container to workspace 1
+for_window [class="Emacs$"] move container to workspace 2
 
-# After-start actions
+# This will open things automatically when you start the computer
+exec --no-startup-id swaymsg 'workspace 1; exec firefox; workspace 1'
+exec --no-startup-id swaymsg 'workspace 1; exec flatpak run --socket=wayland org.signal.Signal; workspace 1'
+exec --no-startup-id swaymsg 'workspace 2; exec emacs; workspace 2'
+
+# after this is what you copied and didn't comment out:
 
 # SAM'S NOTE: Figure out what xwayland is
 xwayland enable
 
-# start required services
 # SAM'S NOTE: I copied this; find out if you have these programs
 # read more about what it does here: https://wiki.archlinux.org/title/Polkit
 exec_always {
     systemctl --user enable plasma-polkit-agent.service
     systemctl --user start plasma-polkit-agent.service
 }
-
-# PrintScr
-# SAM'S NOTE: You can probably get rid of this
-bindsym Print exec grim
-bindsym Shift+Print exec slurp | grim -g -
-bindsym --to-code $mod+ctrl+p exec grim
-bindsym --to-code $mod+shift+p exec slurp | grim -g -
-
-# Use Mouse+$mod to drag floating windows to their wanted position
-# SAM'S NOTE: You can probably get rid of this
-# floating_modifier $mod
-
-# change container layout (stacked, tabbed, toggle split)
-# SAM'S NOTE: You can probably get rid of this
-# bindsym --to-code $mod+Ctrl+s layout stacking
-# bindsym --to-code $mod+Ctrl+e layout toggle split
-
-# Allow switching between workspaces with left and right swipes
-# SAM'S NOTE: You can probably get rid of this
-# bindgesture swipe:right exec wtype -M alt -k left -m alt
-# bindgesture swipe:left exec wtype -M alt -k right -m alt
-
-# resize window (you can also use the mouse for that)
-# SAM'S NOTE: You can probably get rid of this
-# mode "resize" {
-#     bindsym --to-code h resize shrink width 10 px or 10 ppt
-#     bindsym --to-code j resize grow height 10 px or 10 ppt
-#     bindsym --to-code k resize shrink height 10 px or 10 ppt
-#     bindsym --to-code l resize grow width 10 px or 10 ppt
-
-#     # same bindings, but for the arrow keys
-#     bindsym Left resize shrink width 10 px or 10 ppt
-#     bindsym Down resize grow height 10 px or 10 ppt
-#     bindsym Up resize shrink height 10 px or 10 ppt
-#     bindsym Right resize grow width 10 px or 10 ppt
-
-#     # back to normal: Enter or Escape
-#     bindsym Return mode "default"
-#     bindsym Escape mode "default"
-# }
-
-# bindsym --to-code $mod+ctrl+r mode "resize"
 
 # Generated windows.
 # SAM'S NOTE: I'm not sure what these are

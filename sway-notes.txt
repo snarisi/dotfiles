@@ -1,5 +1,0 @@
-This is a temporary file just to write down the things that I might forget.
-
-have a config file at ~/.config/sway/config
-
-install these packages: xcape waybar mako amixer swayidle swaylock swaymsg nm-applet blueman-applet xwayland
