@@ -9,6 +9,9 @@ set $alt ALT
 # reload the configuration file
 bindsym --to-code $mod+Shift+c reload
 
+# you should figure out what xwayland is
+xwayland enable
+
 # SAM'S NOTE: You will need to make sure xcape is installed. You also
 # need to change your caps lock key to control, which you did by putting
 # `capslock = overload(control, esc)` in your /etc/keyd/defaults.conf file
@@ -92,6 +95,10 @@ bindsym $mod+Shift+0 move container to workspace 10
 bindsym --to-code $mod+b workspace back_and_forth
 bindsym --to-code $mod+Shift+b move container to workspace back_and_forth
 
+# this should make the non-focused windows transparent
+# note that I had to install python-i3ipc via pacman
+exec /usr/share/sway/scripts/inactive-windows-transparency.py --opacity 0.85
+
 # start rofi
 bindsym $mod+d exec "pkill rofi || rofi -show drun"
 
@@ -141,46 +148,51 @@ exec_always blueman-applet
 # kill focused window
 bindsym --to-code $mod+q kill
 
-# Turn laptop output off when the lid closes, and back on again when you open it
+# this turns laptop output off when the lid closes, and back on when it's opened
 bindswitch lid:on output eDP-1 disable
 bindswitch lid:off output eDP-1 enable
 
-# Try assigning to windows this way
+# try assigning windows to workpaces this way
 # firefox doesn't seem  to work, but the exec code below will open it when you boot
 for_window [class="(?i)firefox"] move container to workspace 1
 for_window [class="Signal$"] move container to workspace 1
 for_window [class="Emacs$"] move container to workspace 2
 
-# This will open things automatically when you start the computer
+# open emacs in fullscreen
+for_window [class="Emacs$"] fullscreen enable
+
+# this will open things automatically when you start the computer
 exec --no-startup-id swaymsg 'workspace 1; exec firefox; workspace 1'
-exec --no-startup-id swaymsg 'workspace 1; exec flatpak run --socket=wayland org.signal.Signal; workspace 1'
+exec --no-startup-id swaymsg 'workspace 1; exec signal-desktop; workspace 1'
 exec --no-startup-id swaymsg 'workspace 2; exec emacs; workspace 2'
 
-# after this is what you copied and didn't comment out:
+# see the note here: https://wiki.archlinux.org/title/XDG_Desktop_Portal
+for_window [app_id="xdg-desktop-portal.*"] floating enable;
+for_window [app_id="xdg-desktop-portal.*"] resize set 800 400;
 
-# SAM'S NOTE: Figure out what xwayland is
-xwayland enable
+# get bluetooth and wifi boxes to float
+for_window [app_id="blueman-manager"] floating enable;
+for_window [app_id="nm-connection-editor"] floating enable;
 
-# SAM'S NOTE: I copied this; find out if you have these programs
-# read more about what it does here: https://wiki.archlinux.org/title/Polkit
+# these were in the original file, and they seem to make some windows pop up, rather than
+# take up space on the screen. I should figure out what these things mean.
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="bubble"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [window_role="Preferences"] floating enable
+for_window [window_type="dialog"] floating enable
+for_window [window_type="menu"] floating enable
+
+# these might be chrome related, but they were in the original thing you copied
+for_window [title="(?:Select|Choose|Open|Save).*(?:file|File|Files|Folder|As)" app_id="^(?i)(?:(?!chrom).)*$"] floating enable;
+for_window [title="(?:Select|Choose|Open|Save).*(?:file|File|Files|Folder|As)" app_id="^(?i)(?:(?!chrom).)*$"] resize set 800 400
+
+# this was in here originally. read more about what it does
+# here: https://wiki.archlinux.org/title/Polkit
 exec_always {
     systemctl --user enable plasma-polkit-agent.service
     systemctl --user start plasma-polkit-agent.service
 }
 
-# Generated windows.
-# SAM'S NOTE: I'm not sure what these are
-for_window [title="(?:Select|Choose|Open|Save).*(?:file|File|Files|Folder|As)" app_id="^(?i)(?:(?!chrom).)*$"] floating enable;
-for_window [title="(?:Select|Choose|Open|Save).*(?:file|File|Files|Folder|As)" app_id="^(?i)(?:(?!chrom).)*$"] resize set 800 400
-for_window [app_id="xdg-desktop-portal.*"] floating enable;
-for_window [app_id="xdg-desktop-portal.*"] resize set 800 400;
-# for_window [window_role="pop-up"] floating enable
-# for_window [window_role="bubble"] floating enable
-# for_window [window_role="task_dialog"] floating enable
-# for_window [window_role="Preferences"] floating enable
-# for_window [window_type="dialog"] floating enable
-# for_window [window_type="menu"] floating enable
-
-# Don't capture sway keys
-# SAM'S NOTE: Figure out what keys
+# you should figure out what this does
 for_window [app_id=".*"] shortcuts_inhibitor disable
