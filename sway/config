@@ -43,6 +43,10 @@ exec mako
 # this will get rid of the default colored borders
 default_border none
 
+# this should make the non-focused windows transparent
+# note that I had to install python-i3ipc via pacman
+exec /usr/share/sway/scripts/inactive-windows-transparency.py --opacity 0.85
+
 # this creates some gaps between between windows and between windows and the top bar
 gaps inner 4
 
@@ -94,10 +98,6 @@ bindsym $mod+Shift+0 move container to workspace 10
 # switch between the current workspace and the previously focused one
 bindsym --to-code $mod+b workspace back_and_forth
 bindsym --to-code $mod+Shift+b move container to workspace back_and_forth
-
-# this should make the non-focused windows transparent
-# note that I had to install python-i3ipc via pacman
-exec /usr/share/sway/scripts/inactive-windows-transparency.py --opacity 0.85
 
 # start rofi
 bindsym $mod+d exec "pkill rofi || rofi -show drun"
@@ -158,15 +158,16 @@ for_window [class="(?i)firefox"] move container to workspace 1
 for_window [class="Signal$"] move container to workspace 1
 for_window [class="Emacs$"] move container to workspace 2
 
+# this will open things automatically when you start the computer
+exec --no-startup-id swaymsg 'workspace 2; exec emacs; workspace 2'
+exec --no-startup-id swaymsg 'workspace 1; exec signal-desktop; workspace 1'
+exec --no-startup-id swaymsg 'workspace 1; exec firefox; workspace 1'
+
 # open emacs in fullscreen
 for_window [class="Emacs$"] fullscreen enable
 
-# this will open things automatically when you start the computer
-exec --no-startup-id swaymsg 'workspace 1; exec firefox; workspace 1'
-exec --no-startup-id swaymsg 'workspace 1; exec signal-desktop; workspace 1'
-exec --no-startup-id swaymsg 'workspace 2; exec emacs; workspace 2'
-
 # see the note here: https://wiki.archlinux.org/title/XDG_Desktop_Portal
+# I think rules related to firefox
 for_window [app_id="xdg-desktop-portal.*"] floating enable;
 for_window [app_id="xdg-desktop-portal.*"] resize set 800 400;
 

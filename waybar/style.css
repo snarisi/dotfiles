@@ -7,11 +7,9 @@
     min-height: 3px;
 }
 
-/*
 window#waybar {
-    background: transparent;
+    background: #161320;
 }
-*/
 
 window#waybar.hidden {
     opacity: 0.2;
