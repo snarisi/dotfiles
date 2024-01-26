@@ -39,7 +39,7 @@ Then download these packages with yay:
 
 ```
 yay -S slack-desktop \
-       swaylock-effects-git
+       swaylock-effects
 ```
 
 ### Download config files

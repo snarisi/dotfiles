@@ -135,20 +135,15 @@ focus_follows_mouse no
 
 # lock screen before suspend
 
-# try getting this one to work (this one showed the clock, but didn't turn the screen off):
-# set $lock 'swaylock --clock --indicator --screenshots --ring-color b22222 --bs-hl-color 333333 --caps-lock-key-hl-color 643B9F --effect-scale 1 --effect-vignette 0.2:0.5 --effect-blur 4x2 --datestr "%a %e.%m.%Y" --timestr "%k:%M"'
+# you need to make sure the -f is there, by the way... i forget what it does
+set $lock 'swaylock -f --screenshots --color b2b0ea --ring-color b22222 --bs-hl-color 333333 --caps-lock-key-hl-color 643B9F --effect-scale 1 --effect-vignette 0.2:0.5 --effect-blur 4x2'
 
-# maybe try removing some stuff (note that this didn't work):
-set $lock 'swaylock --screenshots --color b2b0ea --ring-color b22222 --bs-hl-color 333333 --caps-lock-key-hl-color 643B9F --effect-scale 1 --effect-vignette 0.2:0.5 --effect-blur 4x2'
-
-# right now this one works
-# set $lock 'swaylock -f -c b2b0ea'
-
+# TODO: make sure this works after systemctl suspend; if not maybe you can take it out
 exec swayidle -w timeout 300 $lock \
-            timeout 600 'swaymsg "output * dpms off"' \
-            resume 'swaymsg "output * dpms on"' \
-            timeout 900 'systemctl suspend' \
-            before-sleep $lock &
+     timeout 600 'swaymsg "output * dpms off"' \
+     resume 'swaymsg "output * dpms on"' \
+     timeout 900 'systemctl suspend' \
+     before-sleep $lock
 
 # I think I need these to get wifi and bluetooth working
 # possibly you had to download waybar-bluetooth
