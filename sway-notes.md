@@ -19,7 +19,7 @@ sudo pacman -S amixer \
 			   sway \
 			   swaybg \
 			   swayidle \
-			   swaylock \
+			   # swaylock \
 			   swaymsg \
 			   waybar \
 	           xcape \
@@ -38,7 +38,8 @@ makepkg -si
 Then download these packages with yay:
 
 ```
-yay -S slack-desktop
+yay -S slack-desktop \
+       swaylock-effects-git
 ```
 
 ### Download config files
@@ -80,3 +81,11 @@ ln -s ~/Personal/samacs/* ~/.emacs.d/
 ```
 
 And make sure you have the fonts Overpass Mono and Linux Libertine installed into ~/.fonts. You can get them from https://fonts.google.com/specimen/Overpass+Mono and https://www.dafont.com/linux-libertine.font.
+
+### Wallpaper
+
+You can include the wallpaper by linking it:
+
+```
+ln -s ~/Personal/dotfiles/spanish_civil_war.jpg ~/Pictures/wallpapers/spanish_civil_war.jpg
+```

@@ -134,11 +134,21 @@ mouse_warping none
 focus_follows_mouse no
 
 # lock screen before suspend
-exec swayidle -w \
-    timeout 300 'swaylock -f -c b2b0ea' \
-    timeout 420 'swaymsg "output * dpms off"' \
-    resume 'swaymsg "output * dpms on"' \
-    before-sleep 'swaylock -f -c b2b0ea'
+
+# try getting this one to work (this one showed the clock, but didn't turn the screen off):
+# set $lock 'swaylock --clock --indicator --screenshots --ring-color b22222 --bs-hl-color 333333 --caps-lock-key-hl-color 643B9F --effect-scale 1 --effect-vignette 0.2:0.5 --effect-blur 4x2 --datestr "%a %e.%m.%Y" --timestr "%k:%M"'
+
+# maybe try removing some stuff (note that this didn't work):
+set $lock 'swaylock --screenshots --color b2b0ea --ring-color b22222 --bs-hl-color 333333 --caps-lock-key-hl-color 643B9F --effect-scale 1 --effect-vignette 0.2:0.5 --effect-blur 4x2'
+
+# right now this one works
+# set $lock 'swaylock -f -c b2b0ea'
+
+exec swayidle -w timeout 300 $lock \
+            timeout 600 'swaymsg "output * dpms off"' \
+            resume 'swaymsg "output * dpms on"' \
+            timeout 900 'systemctl suspend' \
+            before-sleep $lock &
 
 # I think I need these to get wifi and bluetooth working
 # possibly you had to download waybar-bluetooth
@@ -190,10 +200,10 @@ for_window [title="(?:Select|Choose|Open|Save).*(?:file|File|Files|Folder|As)" a
 
 # this was in here originally. read more about what it does
 # here: https://wiki.archlinux.org/title/Polkit
-exec_always {
-    systemctl --user enable plasma-polkit-agent.service
-    systemctl --user start plasma-polkit-agent.service
-}
+# exec_always {
+#     systemctl --user enable plasma-polkit-agent.service
+#     systemctl --user start plasma-polkit-agent.service
+# }
 
 # you should figure out what this does
 for_window [app_id=".*"] shortcuts_inhibitor disable
