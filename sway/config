@@ -12,12 +12,6 @@ bindsym --to-code $mod+Shift+c reload
 # you should figure out what xwayland is
 xwayland enable
 
-# SAM'S NOTE: You will need to make sure xcape is installed. You also
-# need to change your caps lock key to control, which you did by putting
-# `capslock = overload(control, esc)` in your /etc/keyd/defaults.conf file
-# under '[main]'
-exec_always xcape -e 'Control_L=Escape'
-
 # you should look at the other options when you have a chance
 # disable tapping to prevent accidentally clicking while typing
 input type:touchpad {
@@ -25,12 +19,18 @@ input type:touchpad {
     natural_scroll disabled
 }
 
-# not sure if I need this, but I guess leave it in
+# setting `xkb_options ctrl:nocaps` makes the capslock key work as ctrl
+# not sure if the rest is needed, but I guess leave it in
 input type:keyboard {
     xkb_layout us
     repeat_delay 250
     repeat_rate 45
+    xkb_options ctrl:nocaps
 }
+
+# this makes ctrl keys into an escape when they're tapped
+# SAM'S NOTE: You will need to make sure xcape is installed.
+exec_always xcape -e 'Control_L=Escape'
 
 # get waybar on the screen
 bar {
@@ -44,7 +44,7 @@ exec mako
 default_border none
 
 # this should make the non-focused windows transparent
-# note that I had to install python-i3ipc via pacman
+# SAM'S NOTE: I had to install python-i3ipc via pacman
 exec /usr/share/sway/scripts/inactive-windows-transparency.py --opacity 0.85
 
 # this creates some gaps between between windows and between windows and the top bar
@@ -139,7 +139,8 @@ focus_follows_mouse no
 set $lock 'swaylock -f --screenshots --color b2b0ea --ring-color b22222 --bs-hl-color 333333 --caps-lock-key-hl-color 643B9F --effect-scale 1 --effect-vignette 0.2:0.5 --effect-blur 4x2'
 
 # TODO: make sure this works after systemctl suspend; if not maybe you can take it out
-exec swayidle -w timeout 300 $lock \
+exec swayidle -w \
+     timeout 300 $lock \
      timeout 600 'swaymsg "output * dpms off"' \
      resume 'swaymsg "output * dpms on"' \
      timeout 900 'systemctl suspend' \
