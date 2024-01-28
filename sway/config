@@ -212,16 +212,5 @@ for_window [window_role="Preferences"] floating enable
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
 
-# these might be chrome related, but they were in the original thing you copied
-# for_window [title="(?:Select|Choose|Open|Save).*(?:file|File|Files|Folder|As)" app_id="^(?i)(?:(?!chrom).)*$"] floating enable;
-# for_window [title="(?:Select|Choose|Open|Save).*(?:file|File|Files|Folder|As)" app_id="^(?i)(?:(?!chrom).)*$"] resize set 800 400
-
-# this was in here originally. read more about what it does
-# here: https://wiki.archlinux.org/title/Polkit
-# exec_always {
-#     systemctl --user enable plasma-polkit-agent.service
-#     systemctl --user start plasma-polkit-agent.service
-# }
-
 # you should figure out what this does
 for_window [app_id=".*"] shortcuts_inhibitor disable
