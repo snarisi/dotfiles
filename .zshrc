@@ -5,37 +5,6 @@ if [[ -f ~/.zshrc_zim ]]; then
 fi
 
 
-# Enable changing of the caps lock key to control/escape.
-
-# This will depend on whether you're using X11 or Wayland, so some
-# will be commented out.
-
-# If you're on X11:
-# setxkbmap -option ctrl:nocaps && xcape -e 'Control_L=Escape'
-
-# And if you're on Wayland:
-# First you had to make a file, /etc/udev/hwdb.d/10-my-modifiers.hwdb:
-#
-# evdev:input:b0003*
-#  KEYBOARD_KEY_70039=leftctrl  # bind capslock to control
-#
-# Then you had to run these commands, I think just once:
-# sudo systemd-hwdb update
-# sudo udevadm trigger
-#
-# And then you run this command, and you may need to install xcape:
-# NOTE: You commented it out, possibly, in favor of the below
-# if [[ -x "$(command -v xcape)" ]]; then
-#     xcape -e 'Control_L=Escape'
-# fi
-#
-# Note that will change your regular Control key into an Escape if it's tapped.
-alias ugh="xcape -e 'Control_L=Escape'"
-#
-# And the opposite will stop it.
-alias hgu="killall xcape"
-
-
 # Enable swapping of alt and windows keys (for your macbook)
 
 # If you're on X11:
