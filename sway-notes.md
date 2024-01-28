@@ -10,6 +10,7 @@ Install these packages with pacman:
 sudo pacman -S amixer \
 			   blueman \
 			   git \
+			   keyd \
 			   mako \
 			   networkmanager \
 			   python-i3ipc \
@@ -19,10 +20,8 @@ sudo pacman -S amixer \
 			   sway \
 			   swaybg \
 			   swayidle \
-			   # swaylock \
 			   swaymsg \
 			   waybar \
-	           xcape \
 			   xwayland
 ```
 

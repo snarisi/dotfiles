@@ -3,7 +3,7 @@
 # this should be the option [mac] / windows [linux] key
 set $mod Mod4
 
-# i think this is your command [mac] / alt [linux] key
+# I think this is your command [mac] / alt [linux] key
 set $alt ALT
 
 # reload the configuration file
@@ -19,23 +19,31 @@ input type:touchpad {
     natural_scroll disabled
 }
 
-# setting `xkb_options ctrl:nocaps` makes the capslock key work as ctrl
-# not sure if the rest is needed, but I guess leave it in
+# this is how you set keyboard repeat rates, if you ever want to do that
 input type:keyboard {
     xkb_layout us
     repeat_delay 250
     repeat_rate 45
 }
 
-# you found this by running `swaymsg -t get_inputs`
-# you'll probably need to do the same on your next computer
-input 1452:657:Apple_Inc._Apple_Internal_Keyboard_/_Trackpad {
-    xkb_options ctrl:nocaps
-}
-
-# this makes ctrl keys into an escape when they're tapped
-# SAM'S NOTE: You will need to make sure xcape is installed.
-exec_always xcape -e 'Control_L=Escape'
+# get the capslock key to be esc/ctrl
+#
+# first install keyd
+#
+# then put this in /etc/keyd/default.conf:
+# capslock = overload(control, esc)
+#
+# and then start the service:
+# sudo systemctl start keyd
+#
+# and enabled it to run the next time you restart your computer:
+# sudo systemctl enable keyd
+#
+# and to immediately get the keyboard back to normal:
+# sudo systemctl stop keyd
+#
+# and to permanently disable the changes:
+# sudo systemctl disable keyd
 
 # get waybar on the screen
 bar {
@@ -107,7 +115,7 @@ bindsym --to-code $mod+Shift+b move container to workspace back_and_forth
 # start rofi
 bindsym $mod+d exec "pkill rofi || rofi -show drun"
 
-# i guess you should have some keys for a terminal that comes with sway
+# I guess you should have some keys for a terminal that comes with sway
 # and i think this terminal might come with it, you should figure that out
 bindsym $mod+z exec foot
 
@@ -142,14 +150,14 @@ mouse_warping none
 # disable change focus by moving mouse to new window
 focus_follows_mouse no
 
-# lock screen before suspend
+# get the computer to suspend and whatnot
 
 # this uses swaylock-effects from the AUR, which is like swaylock, but with effects
 # also, remember that -f daemonizes it, -F shows failed attempts, and -l shows whether
 # caps lock is on
 set $lock swaylock -f -F -l --screenshots --color b2b0ea --ring-color b22222 --bs-hl-color 333333 --caps-lock-key-hl-color 643B9F --effect-scale 1 --effect-vignette 0.2:0.5 --effect-blur 4x2
 
-# i think this is how you do it
+# I think this is how you do it
 # hitting the external keyboard seems to mess it up, so for now open the lid to
 # wake the computer, and look more into what's going on
 exec swayidle -w \
@@ -205,8 +213,8 @@ for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
 
 # these might be chrome related, but they were in the original thing you copied
-for_window [title="(?:Select|Choose|Open|Save).*(?:file|File|Files|Folder|As)" app_id="^(?i)(?:(?!chrom).)*$"] floating enable;
-for_window [title="(?:Select|Choose|Open|Save).*(?:file|File|Files|Folder|As)" app_id="^(?i)(?:(?!chrom).)*$"] resize set 800 400
+# for_window [title="(?:Select|Choose|Open|Save).*(?:file|File|Files|Folder|As)" app_id="^(?i)(?:(?!chrom).)*$"] floating enable;
+# for_window [title="(?:Select|Choose|Open|Save).*(?:file|File|Files|Folder|As)" app_id="^(?i)(?:(?!chrom).)*$"] resize set 800 400
 
 # this was in here originally. read more about what it does
 # here: https://wiki.archlinux.org/title/Polkit
