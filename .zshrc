@@ -5,16 +5,6 @@ if [[ -f ~/.zshrc_zim ]]; then
 fi
 
 
-# Enable swapping of alt and windows keys (for your macbook)
-
-# If you're on X11:
-# setxkbmap -option altwin:swap_lalt_lwin
-
-# And if you're on Wayland and you're on KDE you can:
-# Go to System Preferences -> Input Devices -> Keyboard -> Advanced,
-# and click on "Left Alt is swapped with Left Win"
-
-
 # Javascript
 
 export NVM_DIR="$HOME/.nvm"
