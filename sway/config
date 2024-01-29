@@ -113,7 +113,6 @@ bindsym --to-code $mod+b workspace back_and_forth
 bindsym --to-code $mod+Shift+b move container to workspace back_and_forth
 
 # get things to open in maybe the right place
-# you have to get it using using yay
 exec_always autotiling
 
 # start rofi
