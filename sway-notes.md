@@ -37,7 +37,8 @@ makepkg -si
 Then download these packages with yay:
 
 ```
-yay -S slack-desktop \
+yay -S autotiling \
+       slack-desktop \
        swaylock-effects
 ```
 
