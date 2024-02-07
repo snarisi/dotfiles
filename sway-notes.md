@@ -75,8 +75,7 @@ sudo make install
 Then link your files to the right place:
 
 ```
-git clone https://github.com/snarisi/samacs.git
-cd samacs
+git clone https://github.com/snarisi/samacs.git ~/Personal/samacs
 ln -s ~/Personal/samacs/* ~/.emacs.d/
 ```
 
