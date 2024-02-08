@@ -161,8 +161,8 @@ focus_follows_mouse no
 set $lock swaylock -f -F -l --screenshots --color b2b0ea --ring-color b22222 --bs-hl-color 333333 --caps-lock-key-hl-color 643B9F --effect-scale 1 --effect-vignette 0.2:0.5 --effect-blur 4x2
 
 # I think this is how you do it
-# hitting the external keyboard seems to mess it up, so for now open the lid to
-# wake the computer, and look more into what's going on
+# make sure when you hit the keyboard to wake it up, you hit control or shift or whatnot
+# you think that hitting a key that enters a character will mess up the password entry
 exec swayidle -w \
      timeout 300 "$lock" \
      timeout 600 'swaymsg "output * dpms off"' \
@@ -184,7 +184,7 @@ bindswitch lid:on output eDP-1 disable
 bindswitch lid:off output eDP-1 enable
 
 # try assigning windows to workpaces this way
-# firefox doesn't seem  to work, but the exec code below will open it when you boot
+# firefox doesn't seem  to work, but the code below will open it when you boot
 for_window [class="(?i)firefox"] move container to workspace 1
 for_window [class="Signal$"] move container to workspace 1
 for_window [class="Emacs$"] move container to workspace 2
