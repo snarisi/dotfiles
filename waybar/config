@@ -89,13 +89,13 @@
     "battery": {
         "states": {
             "good": 95,
-	    "warning": 30,
-            "critical": 20
+            "warning": 25,
+            "critical": 10
         },
         "format": "{icon}  {capacity}%",
-        "format-charging": " {capacity}%",
-        "format-plugged": " {capacity}%",
-        "format-alt": "{time} {icon}",
+        "format-charging": "  {capacity}%",
+        "format-plugged": "  {capacity}%",
+        "format-alt": "{icon}  {time}",
         "format-icons": ["", "", "", "", ""]
     },
     // TODO: You should find out what other people do with this script
