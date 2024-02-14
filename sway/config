@@ -33,6 +33,11 @@ input type:keyboard {
 # then put this in /etc/keyd/default.conf:
 # capslock = overload(control, esc)
 #
+# and for now I guess you can add these to fix your mac keys:
+#
+# leftmeta = layer(alt)
+# leftalt = layer(meta)
+#
 # and then start the service:
 # sudo systemctl start keyd
 #
@@ -116,11 +121,14 @@ bindsym --to-code $mod+Shift+b move container to workspace back_and_forth
 exec_always autotiling
 
 # start rofi
-bindsym $mod+d exec "pkill rofi || rofi -show drun"
+bindsym $mod+d exec "pkill rofi || rofi -show drun -icon-theme Papirus -show-icons"
+
+# shortcut for the power menu
+bindsym $mod+p exec "pkill rofi || rofi -show p -modi p:rofi-power-menu"
 
 # I guess you should have some keys for a terminal that comes with sway
 # and i think this terminal might come with it, you should figure that out
-bindsym $mod+z exec foot
+bindsym $mod+z exec alacritty
 
 # add a background image
 exec swaybg -i ~/Pictures/wallpapers/spanish_civil_war.jpg -m fill
@@ -217,3 +225,9 @@ for_window [window_type="menu"] floating enable
 
 # you should figure out what this does
 for_window [app_id=".*"] shortcuts_inhibitor disable
+
+# you think this is something you need
+exec /usr/lib/polkit-kde-authentication-agent-1
+
+# try this to get nicer looking gtk applications
+exec gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-Dark'

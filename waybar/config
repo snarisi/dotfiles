@@ -49,7 +49,7 @@
         "exec": "checkupdates | wc -l",
         "exec-if": "[[ $(checkupdates | wc -l) != 0 ]]",
         "interval": 15,
-        "on-click": "konsole -e yay -Syu && notify-send 'The system has been updated' ",
+        "on-click": "alacritty -e yay -Syu && notify-send 'The system has been updated' ",
     },
     "custom/media": {
         "interval": 30,
@@ -99,9 +99,10 @@
         "format-icons": ["", "", "", "", ""]
     },
     // TODO: You should find out what other people do with this script
-    "custom/power":{
+    // This one uses rofi
+    "custom/power": {
         "format": " ",
-        "on-click": "bash ~/.config/hypr/scripts/RofiPower.sh",
+        "on-click": "rofi -show p -modi p:rofi-power-menu"
     },
 
     // These are the ones I am not using

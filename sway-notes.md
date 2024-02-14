@@ -38,9 +38,12 @@ Then download these packages with yay:
 
 ```
 yay -S autotiling \
+	   rofi-power-menu \
        slack-desktop \
        swaylock-effects
 ```
+
+Plus there are more here: https://gist.github.com/gilbertw1/81ef4b0bcf3ddefa4b18
 
 ### Download config files
 
