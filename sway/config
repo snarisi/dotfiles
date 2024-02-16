@@ -40,12 +40,14 @@ input type:keyboard {
 #
 # and then start the service:
 # sudo systemctl start keyd
+exec alias fix_kbd="sudo systemctl start keyd"
 #
 # and enabled it to run the next time you restart your computer:
 # sudo systemctl enable keyd
 #
 # and to immediately get the keyboard back to normal:
 # sudo systemctl stop keyd
+exec alias good_kbd="sudo systemctl stop keyd"
 #
 # and to permanently disable the changes:
 # sudo systemctl disable keyd
@@ -168,14 +170,14 @@ focus_follows_mouse no
 # caps lock is on
 set $lock swaylock -f -F -l --screenshots --color b2b0ea --ring-color b22222 --bs-hl-color 333333 --caps-lock-key-hl-color 643B9F --effect-scale 1 --effect-vignette 0.2:0.5 --effect-blur 4x2
 
-# I think this is how you do it
-# make sure when you hit the keyboard to wake it up, you hit control or shift or whatnot
-# you think that hitting a key that enters a character will mess up the password entry
+# this locks the computer after 5 minutes, and shuts the screen off after 10
+# you should see if this does everything you need it to do
+# you also had `timeout 900 'swaymsg "output * dmps on && sleep 1 && systemctl suspend"`
+# but your mac laptop seemed to have trouble waking up from that
+# so you should figure out if you need that or what
 exec swayidle -w \
      timeout 300 "$lock" \
      timeout 600 'swaymsg "output * dpms off"' \
-     	  resume 'swaymsg "output * dpms on"' \
-     timeout 900 'swaymsg "output * dpms on"; sleep 1; systemctl suspend' \
      	  resume 'swaymsg "output * dpms on"' \
      before-sleep "$lock"
 
@@ -228,6 +230,3 @@ for_window [app_id=".*"] shortcuts_inhibitor disable
 
 # you think this is something you need
 exec /usr/lib/polkit-kde-authentication-agent-1
-
-# try this to get nicer looking gtk applications
-exec gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-Dark'
