@@ -40,14 +40,12 @@ input type:keyboard {
 #
 # and then start the service:
 # sudo systemctl start keyd
-exec alias fix_kbd="sudo systemctl start keyd"
 #
 # and enabled it to run the next time you restart your computer:
 # sudo systemctl enable keyd
 #
 # and to immediately get the keyboard back to normal:
 # sudo systemctl stop keyd
-exec alias good_kbd="sudo systemctl stop keyd"
 #
 # and to permanently disable the changes:
 # sudo systemctl disable keyd
