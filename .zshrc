@@ -14,10 +14,12 @@ export NVM_DIR="$HOME/.nvm"
 
 # Python
 
-if [[ -x "$(command -v pyenv)" ]]; then
-    export PYENV_ROOT="$HOME/.pyenv"
-    command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init -)"
+export PYENV_ROOT="$HOME/.pyenv"
+if [[ -d $PYENV_ROOT/bin ]]; then
+     export PATH="$PYENV_ROOT/bin:$PATH"
+     export PATH="$PYENV_ROOT/shims:$PATH"
+     eval "$(pyenv init -)"
+     eval "$(pyenv virtualenv-init -)"
 fi
 
 
@@ -54,6 +56,12 @@ fi
 # I had to add this to get grip-mode working in emacs
 
 export PATH=${PATH}:$HOME/.local/bin
+
+
+# Find a better way to do this, but for now these are aliases for your keyboard
+
+alias kk="sudo systemctl start keyd"
+alias nk="sudo systemctl stop keyd"
 
 
 # Source your zshrc_local file, can't forget that
