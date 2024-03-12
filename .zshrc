@@ -15,6 +15,10 @@ export NVM_DIR="$HOME/.nvm"
 # Python
 
 export PYENV_ROOT="$HOME/.pyenv"
+
+# this is how you disable putting the name in parentheses
+export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+
 if [[ -d $PYENV_ROOT/bin ]]; then
      export PATH="$PYENV_ROOT/bin:$PATH"
      export PATH="$PYENV_ROOT/shims:$PATH"
