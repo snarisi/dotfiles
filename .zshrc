@@ -1,19 +1,16 @@
 # Source the .zshrc created by Zim
-
 if [[ -f ~/.zshrc_zim ]]; then
     source ~/.zshrc_zim
 fi
 
 
 # Javascript
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 
 # Python
-
 export PYENV_ROOT="$HOME/.pyenv"
 
 # this is how you disable putting the name in parentheses
@@ -28,7 +25,6 @@ fi
 
 
 # Ruby
-
 if [[ -d "$HOME/.rbenv" ]]; then
     export PATH="$PATH:$HOME/.rbenv/shims:$HOME/.rbenv/bin"
     eval "$(rbenv init -)"
@@ -36,13 +32,14 @@ fi
 
 
 # Dotnet
-
 # This one was different on Linux vs Mac because it installs to a different place.
 if [[ -d /usr/local/share/dotnet ]]; then
     export DOTNET_ROOT=/usr/local/share/dotnet
 elif [[ -d /usr/share/dotnet ]]; then
     export DOTNET_ROOT=/usr/share/dotnet
 fi
+
+export PATH=${PATH}:$HOME/.dotnet/tools
 
 if [[ -x "$(command -v dotnet)" ]]; then
     export MSBuildSDKsPath=$DOTNET_ROOT/sdk/$(${DOTNET_ROOT}/dotnet --version)/Sdks
@@ -51,25 +48,21 @@ fi
 
 
 # Homebrew
-
 if [[ -d "/home/linuxbrew/.linuxbrew" ]]; then
     export PATH=${PATH}:/home/linuxbrew/.linuxbrew/bin
 fi
 
 
 # I had to add this to get grip-mode working in emacs
-
 export PATH=${PATH}:$HOME/.local/bin
 
 
 # Find a better way to do this, but for now these are aliases for your keyboard
-
 alias kk="sudo systemctl start keyd"
 alias nk="sudo systemctl stop keyd"
 
 
 # Source your zshrc_local file, can't forget that
-
 if [[ -f "$HOME/.zshrc_local" ]]; then
     source ~/.zshrc_local
 fi
