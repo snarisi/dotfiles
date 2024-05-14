@@ -8,13 +8,16 @@ arandr
 arc-gtk-theme-eos
 archlinux-xdg-menu
 ark
+aspell-en
+aspnet-runtime-3.0
+aspnet-runtime-6.0
 autotiling
 awesome-terminal-fonts
 b43-fwcutter
-balena-etcher
 base
 base-devel
 bash-completion
+bcwc-pcie-git
 bind
 bluedevil
 blueman
@@ -37,6 +40,11 @@ dnsmasq
 dolphin
 dolphin-plugins
 dosfstools
+dotnet-runtime-3.0
+dotnet-runtime-6.0
+dotnet-sdk
+dotnet-sdk-3.1-bin
+dotnet-sdk-6.0
 downgrade
 dracut
 duf
@@ -62,6 +70,7 @@ eos-update-notifier
 ethtool
 exfatprogs
 f2fs-tools
+facetimehd-firmware
 feh
 ffmpegthumbnailer
 file-roller
@@ -71,6 +80,7 @@ flatpak
 fsarchiver
 galculator
 glances
+gnome-multi-writer
 grub
 gst-libav
 gst-plugin-pipewire
@@ -96,6 +106,8 @@ inetutils
 intel-ucode
 inxi
 iptables-nft
+isoimagewriter
+ispell
 iwd
 jfsutils
 jq
@@ -113,6 +125,7 @@ kinit
 kio-fuse
 konsole
 kscreen
+ktorrent
 kwallet-pam
 less
 lib32-vulkan-intel
@@ -183,6 +196,7 @@ pv
 python
 python-capng
 python-packaging
+python-pip
 python-pyqt5
 rbenv
 rebuild-detector
@@ -217,6 +231,8 @@ the_silver_searcher
 thunar
 thunar-archive-plugin
 thunar-volman
+tidal-hifi-bin
+tiled
 tldr
 tree-sitter
 ttf-bitstream-vera
@@ -261,4 +277,5 @@ xorg-xwayland
 xsettingsd
 xterm
 yay
+zoom
 zsh
