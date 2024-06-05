@@ -50,7 +50,9 @@ fi
 # I had to add this to get grip-mode working in emacs
 export PATH=${PATH}:$HOME/.local/bin
 
-# Find a better way to do this, but for now these are aliases for your keyboard
+# NOTE: You think you don't have to do this anymore because now you put the keyboard id in
+# /etc/keyd/default.conf, and you have the service enabled all the time
+# (using `sudo systemctl enable keyd`)
 alias kk="sudo systemctl start keyd"
 alias nk="sudo systemctl stop keyd"
 
