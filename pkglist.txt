@@ -266,6 +266,7 @@ xdg-user-dirs-gtk
 xdg-utils
 xed
 xf86-input-libinput
+xf86-input-synaptics
 xfce4-terminal
 xfsprogs
 xl2tpd

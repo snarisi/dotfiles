@@ -53,6 +53,8 @@ export PATH=${PATH}:$HOME/.local/bin
 # NOTE: You think you don't have to do this anymore because now you put the keyboard id in
 # /etc/keyd/default.conf, and you have the service enabled all the time
 # (using `sudo systemctl enable keyd`)
+# actually the way you did it originally (with the apple keyboard id) was doing some weird
+# things to the trackpad... try and figure that out
 alias kk="sudo systemctl start keyd"
 alias nk="sudo systemctl stop keyd"
 
