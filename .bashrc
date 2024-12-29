@@ -27,7 +27,7 @@ export SWIG_FEATURES="-cpperraswarn -includeall -I$OPENSSL_DIR/include"
 
 # make your command line have the git branch in it, I think...
 source ~/.git-prompt.sh
-PS1='\[\e[0m\]\W\[\e[0m\]$(__git_ps1 "\[\e[32m\] [%s]\[\e[0m\]") \[\e[0m\]$\[\e[0m\] '
+PS1='\[\e[0m\]\W\[\e[0m\]$(__git_ps1 "\[\e[32m\][%s]\[\e[0m\]")\[\e[0m\]>\[\e[0m\] '
 
 # just some aliases... I forget what `tm` is, actually...
 alias cl="clear"
