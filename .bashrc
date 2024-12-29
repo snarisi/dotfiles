@@ -27,7 +27,7 @@ export SWIG_FEATURES="-cpperraswarn -includeall -I$OPENSSL_DIR/include"
 
 # make your command line have the git branch in it, I think...
 source ~/.git-prompt.sh
-PS1='\W$(__git_ps1 "\[\e[32m\] [%s]\[\e[0m\]") '
+PS1='\[\e[0m\]\W\[\e[0m\]$(__git_ps1 "\[\e[32m\] [%s]\[\e[0m\]") \[\e[0m\]$\[\e[0m\] '
 
 # just some aliases... I forget what `tm` is, actually...
 alias cl="clear"
@@ -107,6 +107,10 @@ export VIRTUALENVWRAPPER_VIRTUALENV=/home/snarisi/.pyenv/shims/virtualenv
 # Get MacPorts to work, I think:
 export PATH=/opt/local/bin:$PATH
 
+# You wrote switching caps lock to ctrl/escape in /etc/keyd/default.conf
+alias kk="sudo systemctl start keyd"
+alias nk="sudo systemctl stop keyd"
+
 # source your bashrc_local file, can't forget that
 if [[ -f ~/.bashrc_local ]]; then
     source ~/.bashrc_local
@@ -114,6 +118,9 @@ fi
 
 # this was added automatically, by rustup, I believe?
 . "$HOME/.cargo/env"
+
+# Note that you'll probably need to run this somewhere:
+# xcape -e 'Control_L=Escape'
 
 # And another thing, just to remind myself...
 # On Linux, I got my capslock key to work as control and escape
