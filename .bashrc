@@ -52,7 +52,8 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # TODO: I don't know if this is correct, but it complains otherwise
-nvm use default
+# `> /dev/null` is how to get it to not to write anything out, apparently
+nvm use default > /dev/null
 
 # i forget what avn is...
 [[ -s "$HOME/.avn/bin/avn.sh" ]] && source "$HOME/.avn/bin/avn.sh" # load avn
@@ -65,16 +66,18 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 
 # Set the pyenv shims to initialize
+#
 # And remember you got this using homebrew (`brew install pyenv`)
+#
+# And you downloaded the extension by running:
+# git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
+#
+# Also note: If you go to a directory and run `setvirtualenvproject`, it will move to
+# the directory you are in when you workon the project next time
+# Or it will workon when you change directories, I forget which
 if command -v pyenv 1>/dev/null 2>&1; then
     eval "$(pyenv init -)"
-fi
-
-# Set the pyenv virtualenv thing to initialize also
-# NOTE: You started using this on linux
-# And you downloaded the extension by running: git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
-if which pyenv-virtualenv-init > /dev/null; then
-    eval "$(pyenv virtualenv-init -)";
+    eval "$(pyenv virtualenv-init -)"
 fi
 
 # You might need this to get your path straight?
@@ -86,9 +89,6 @@ export PATH=~/.pyenv/shims:$PATH
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 export WORKON_HOME=$HOME/.virtualenvs
-
-# NOTE: If you go to a directory and run `setvirtualenvproject`, it will move to
-# the directory you are in when you workon the project next time
 
 # Says https://docs.python.org/3/using/cmdline.html:
 # If this is set to a non-empty string, Python won’t try to write .pyc files on the import of source
@@ -107,9 +107,14 @@ export VIRTUALENVWRAPPER_VIRTUALENV=/home/snarisi/.pyenv/shims/virtualenv
 # Get MacPorts to work, I think:
 export PATH=/opt/local/bin:$PATH
 
-# You wrote switching caps lock to ctrl/escape in /etc/keyd/default.conf
-alias kk="sudo systemctl start keyd"
-alias nk="sudo systemctl stop keyd"
+# NOTE: You had to set up https://github.com/wez/evremap
+# sudo cp evremap.service /usr/lib/systemd/system/
+# sudo systemctl daemon-reload
+# sudo systemctl start evremap.service
+# Also I think that I don't have to do this, because i ran
+# `sudo systemctl enable evremap.service`, but just leave it case
+alias kk="sudo systemctl start evremap.service"
+alias nk="sudo systemctl stop evremap.service"
 
 # source your bashrc_local file, can't forget that
 if [[ -f ~/.bashrc_local ]]; then
@@ -118,12 +123,3 @@ fi
 
 # this was added automatically, by rustup, I believe?
 . "$HOME/.cargo/env"
-
-# Note that you'll probably need to run this somewhere:
-# xcape -e 'Control_L=Escape'
-
-# And another thing, just to remind myself...
-# On Linux, I got my capslock key to work as control and escape
-# sudo apt-get install xcape
-# setxkbmap -option ctrl:nocaps
-# xcape -e 'Control_L=Escape'
