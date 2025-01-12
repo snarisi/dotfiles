@@ -66,9 +66,6 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 
 # Set the pyenv shims to initialize
-#
-# And remember you got this using homebrew (`brew install pyenv`)
-#
 # And you downloaded the extension by running:
 # git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
 #
