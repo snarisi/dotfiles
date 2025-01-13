@@ -10,7 +10,7 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 source ~/.git-prompt.sh
 PS1='\[\e[0m\]\W\[\e[0m\]$(__git_ps1 " \[\e[32m\][%s]\[\e[0m\]")\[\e[0m\] ●\[\e[0m\] '
 
-# make emacs the default editor, i think...
+# make emacs the default editor, I think...
 export EDITOR='emacsclient -a "" -t'
 
 # better history...
@@ -36,13 +36,9 @@ nvm use default > /dev/null
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 
-# Tell pyenv-virtualenvwrapper to use pyenv when creating new Python environments
-# export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
-
 # Set the pyenv shims to initialize
 # And you downloaded the extension by running:
-# git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
-#
+# `git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv`
 # Also note: If you go to a directory and run `setvirtualenvproject`, it will move to
 # the directory you are in when you workon the project next time
 # Or it will workon when you change directories, I forget which
@@ -55,20 +51,10 @@ fi
 # TODO: See if it can mess anything up
 export PATH=~/.pyenv/shims:$PATH
 
-# # get `workon`, `makevirtualenv`, etc. to work... see the thing at the end that brew said to do
-# # NOTE: On Linux, I don't think this was working... leaving it in didn't' hurt though
-# export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-# export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
-# export WORKON_HOME=$HOME/.virtualenvs
-
 # Says https://docs.python.org/3/using/cmdline.html:
 # If this is set to a non-empty string, Python won’t try to write .pyc files on the import of source
 # modules. This is equivalent to specifying the -B option.
 export PYTHONDONTWRITEBYTECODE=x
-
-# Says: https://stackoverflow.com/questions/18419500/how-to-make-mac-os-use-the-python-installed-by-homebrew
-# Get the system to use a version of python installed by homebrew:
-# export PATH=/usr/local/share/python:/usr/local/bin:$PATH
 
 # the thing i dowloaded from homebrew (`brew search virtualenv`) said to put this near the end
 # NOTE: You commented out the next line on linux
