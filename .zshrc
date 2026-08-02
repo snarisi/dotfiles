@@ -1,82 +1,93 @@
-# Source the .zshrc created by Zim
-if [[ -f ~/.zshrc_zim ]]; then
-    source ~/.zshrc_zim
+# Make your command line have the git branch in it, I think...
+source ~/.git-prompt.sh
+
+parse_git_branch() {
+    git symbolic-ref --short HEAD 2> /dev/null | sed -E 's/(.+)/ (\1)/g'
+}
+
+setopt PROMPT_SUBST
+PROMPT='%F{blue}%}%9c%{%F{green}%}$(parse_git_branch)%{%F{none}%} %F{blue}$%F{none} '
+
+# Make emacs the default editor, I think...
+export EDITOR='emacsclient -a "" -t'
+
+# Better history...
+export HISTIGNORE="ls:ll:cd:pwd"
+export HISTFILESIZE=10000 # maybe too much?
+export HISTSIZE=10000 # maybe too much?
+export HISTCONTROL=ignoredups:erasedups
+export HISTTIMEFORMAT="[$(tput setaf 6)%F %T$(tput sgr0)]: " # colorful date
+
+# Get some colors when you ls...
+if [ -x /usr/bin/dircolors ]; then
+    alias ls='ls --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
 fi
 
-# Javascript
+# Some node version manager stuff...
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# Python
+# The terminal complains otherwise
+# `> /dev/null` is how to get it to not to write anything out, apparently
+nvm use default > /dev/null
+
+# I forget what avn is...
+[[ -s "$HOME/.avn/bin/avn.sh" ]] && source "$HOME/.avn/bin/avn.sh" # load avn
+
+# pyenv stuff... I suppose it's important...
 export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
 
-# You think this is right...
-# You think you installed pyenv with `sudo pacman -S pyenv`
-if [[ -d $PYENV_ROOT ]]; then
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    # export PATH="$PYENV_ROOT/shims:$PATH"
+# Set the pyenv shims to initialize
+# And you downloaded the extension by running:
+# `git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv`
+# Also note: If you go to a directory and run `setvirtualenvproject`, it will move to
+# the directory you are in when you workon the project next time
+# Or it will workon when you change directories, I forget which
+if command -v pyenv 1>/dev/null 2>&1; then
     eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
 fi
 
-# And you think you installed the virtualenv thing with
-# `git clone https://github.com/pyenv/pyenv-virtualenvwrapper.git $(pyenv root)/plugins/pyenv-virtualenvwrapper`
-if [[ -d $PYENV_ROOT/plugins/pyenv-virtualenvwrapper ]]; then
-    pyenv virtualenvwrapper
+# You might need this to get your path straight?
+# TODO: See if it can mess anything up
+export PATH=~/.pyenv/shims:$PATH
+
+# Says https://docs.python.org/3/using/cmdline.html:
+# `If this is set to a non-empty string, Python won’t try to write .pyc files on the
+# import of source modules. This is equivalent to specifying the -B option.`
+export PYTHONDONTWRITEBYTECODE=x
+
+# I will try putting this here to use virtualenv
+export VIRTUALENVWRAPPER_VIRTUALENV=/home/snarisi/.pyenv/shims/virtualenv
+
+# NOTE: You had to set up https://github.com/wez/evremap
+# sudo cp evremap.service /usr/lib/systemd/system/
+# sudo systemctl daemon-reload
+# sudo systemctl start evremap.service
+# Also I think that I don't have to do this, because i ran
+# `sudo systemctl enable evremap.service`, but just leave it in case
+alias kk="sudo systemctl start evremap.service"
+alias nk="sudo systemctl stop evremap.service"
+
+# Alias for turning your laptop monitor off
+alias nm="kscreen-doctor output.eDP-1.disable"
+
+# Alias for turning your laptop monitor back on
+alias mm="kscreen-doctor output.eDP-1.enable"
+
+# Source your bashrc_local file, can't forget that
+if [[ -f ~/.bashrc_local ]]; then
+    source ~/.bashrc_local
 fi
 
-# Ruby
-if [[ -d "$HOME/.rbenv" ]]; then
-    export PATH="$PATH:$HOME/.rbenv/shims:$HOME/.rbenv/bin"
-    eval "$(rbenv init -)"
-fi
+# This was added automatically, by rustup, I believe?
+# . "$HOME/.cargo/env"
 
-# Dotnet
-# This one was different on Linux vs Mac because it installs to a different place.
-if [[ -d /usr/local/share/dotnet ]]; then
-    export DOTNET_ROOT=/usr/local/share/dotnet
-elif [[ -d /usr/share/dotnet ]]; then
-    export DOTNET_ROOT=/usr/share/dotnet
-fi
-
-export PATH=${PATH}:$HOME/.dotnet/tools
-
-if [[ -x "$(command -v dotnet)" ]]; then
-    export MSBuildSDKsPath=$DOTNET_ROOT/sdk/$(${DOTNET_ROOT}/dotnet --version)/Sdks
-    export PATH=${PATH}:${DOTNET_ROOT}
-fi
-
-# Homebrew
-if [[ -d "/home/linuxbrew/.linuxbrew" ]]; then
-    export PATH=${PATH}:/home/linuxbrew/.linuxbrew/bin
-fi
-
-# I had to add this to get grip-mode working in emacs
-export PATH=${PATH}:$HOME/.local/bin
-
-# NOTE: You think you don't have to do this anymore because now you put the keyboard id in
-# /etc/keyd/default.conf, and you have the service enabled all the time
-# (using `sudo systemctl enable keyd`)
-# actually the way you did it originally (with the apple keyboard id) was doing some weird
-# things to the trackpad... try and figure that out
-alias kk="sudo systemctl start keyd"
-alias nk="sudo systemctl stop keyd"
-
-# Source your zshrc_local file, can't forget that
-if [[ -f "$HOME/.zshrc_local" ]]; then
-    source ~/.zshrc_local
-fi
-
-# I'm just writing this here temporarily
-#
-# Instructions for fixing refind when mac breaks it:
-#
-# Boot into recovery mode (cmd-r) and turn off SIP (csrutil disable)
-#
-# Reboot into OSX and run:
-#
-# sudo mkdir /Volumes/ESP
-# sudo mount -t msdos /dev/disk0s1 /Volumes/ESP
-# sudo bless --mount /Volumes/ESP --setBoot --file /Volumes/ESP/EFI/refind/refind_x64.efi
-#
-# Boot into recovery mode (cmd-r) and turn on SIP (csrutil enable)
+. "$HOME/.local/bin/env"
