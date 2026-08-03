@@ -1,12 +1,20 @@
 # Make your command line have the git branch in it, I think...
 source ~/.git-prompt.sh
 
-parse_git_branch() {
-    git symbolic-ref --short HEAD 2> /dev/null | sed -E 's/(.+)/ (\1)/g'
-}
+# Put the git branch and status in the command line
+autoload -Uz vcs_info
 
-setopt PROMPT_SUBST
-PROMPT='%F{blue}%}%9c%{%F{green}%}$(parse_git_branch)%{%F{none}%} %F{blue}$%F{none} '
+precmd_vcs_info() { vcs_info }
+precmd_functions+=(precmd_vcs_info)
+setopt prompt_subst
+
+zstyle ':vcs_info:git*' formats "  %F{green}%b%f%m%u%c%a"
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' stagedstr ' %F{green}✚%f'
+zstyle ':vcs_info:*' unstagedstr ' %F{red}●%f'
+
+PROMPT='%F{blue}%}%9c%{%F{green}%}${vcs_info_msg_0_}%F{none}%F{blue} $%F{none} '
 
 # Make emacs the default editor, I think...
 export EDITOR='emacsclient -a "" -t'
