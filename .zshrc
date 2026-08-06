@@ -12,11 +12,11 @@ prompt_jnrowe_precmd () {
     if [[ -z "${vcs_info_msg_0_}" ]] {
 	dir_status=" %F{brown}!%f"
     } elif [[ -n "$(git diff --cached --name-status 2>/dev/null )" ]] {
-	dir_status=" %F{yellow}✚%f"
+	dir_status=" %F{yellow}●%f"
     } elif [[ -n "$(git diff --name-status 2>/dev/null )" ]] {
 	dir_status=" %F{red}●%f"
     } else {
-	dir_status=" %F{green}>%f"
+	dir_status=" %F{green}●%f"
     }
 }
 
