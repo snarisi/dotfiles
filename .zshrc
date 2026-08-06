@@ -3,6 +3,22 @@ source ~/.git-prompt.sh
 
 # Put the git branch and status in the command line
 autoload -Uz vcs_info
+autoload -U add-zsh-hook
+add-zsh-hook precmd prompt_jnrowe_precmd
+
+prompt_jnrowe_precmd () {
+    vcs_info
+
+    if [[ -z "${vcs_info_msg_0_}" ]] {
+	dir_status=" %F{green}>%f"
+    } elif [[ -n "$(git diff --cached --name-status 2>/dev/null )" ]] {
+	dir_status=" %F{yellow}✚%f"
+    } elif [[ -n "$(git diff --name-status 2>/dev/null )" ]] {
+	dir_status=" %F{red}●%f"
+    } else {
+	dir_status=" %F{brown}!%f"
+    }
+}
 
 precmd_vcs_info() { vcs_info }
 precmd_functions+=(precmd_vcs_info)
@@ -14,7 +30,7 @@ zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:*' stagedstr ' %F{yellow}✚%f'
 zstyle ':vcs_info:*' unstagedstr ' %F{red}●%f'
 
-PROMPT='%F{blue}%}%9c%{%F{green}%}${vcs_info_msg_0_}%F{blue} $%F{none} '
+PROMPT='%F{blue}%}%9c%{%F{green}%}${dir_status}%F{blue} $%F{none} '
 
 # Make emacs the default editor, I think...
 export EDITOR='emacsclient -a "" -t'
