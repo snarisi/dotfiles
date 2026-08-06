@@ -4,21 +4,6 @@ source ~/.git-prompt.sh
 # Put the git branch and status in the command line
 autoload -Uz vcs_info
 autoload -U add-zsh-hook
-add-zsh-hook precmd prompt_jnrowe_precmd
-
-prompt_jnrowe_precmd () {
-    vcs_info
-
-    if [[ -z "${vcs_info_msg_0_}" ]] {
-	dir_status=" %F{brown}!%f"
-    } elif [[ -n "$(git diff --cached --name-status 2>/dev/null )" ]] {
-	dir_status=" %F{yellow}●%f"
-    } elif [[ -n "$(git diff --name-status 2>/dev/null )" ]] {
-	dir_status=" %F{red}●%f"
-    } else {
-	dir_status=" %F{green}●%f"
-    }
-}
 
 precmd_vcs_info() { vcs_info }
 precmd_functions+=(precmd_vcs_info)
