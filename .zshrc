@@ -24,13 +24,13 @@ precmd_vcs_info() { vcs_info }
 precmd_functions+=(precmd_vcs_info)
 setopt prompt_subst
 
-zstyle ':vcs_info:git*' formats "  %F{green}%b%f%m%u%c%a"
+zstyle ':vcs_info:git*' formats "%F{white}(%F{green}%b%f%m%u%c%a%F{white}) "
 zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:*' stagedstr ' %F{yellow}✚%f'
 zstyle ':vcs_info:*' unstagedstr ' %F{red}●%f'
 
-PROMPT='%F{blue}%}%9c%{%F{green}%}${dir_status}%F{blue} $%F{none} '
+PROMPT='%F{blue}%}%9c %F{green}${vcs_info_msg_0_}%F{blue}$ %F{white}'
 
 # Make emacs the default editor, I think...
 export EDITOR='emacsclient -a "" -t'
